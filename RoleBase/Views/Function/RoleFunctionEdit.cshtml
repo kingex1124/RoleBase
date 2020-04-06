@@ -1,0 +1,198 @@
+﻿@model IEnumerable<LoginVO.VO.RoleVO>
+@{
+    ViewBag.Title = "RoleFunctionEdit";
+}
+
+<h2>RoleFunctionEdit</h2>
+
+@if (Session["LoginInfo"] != null)
+{
+    <table class="table table-bordered" id="roleTable">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.RoleID)</th>
+                <th>@Html.DisplayNameFor(model => model.RoleName)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>功能</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.RoleID</td>
+                    <td><label id="labRoleName_@item.RoleID">@item.RoleName</label></td>
+                    <td><lable id="labDescription_@item.RoleID">@item.Description</lable></td>
+                    <td>
+                        @foreach (var securityUrl in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
+                        {
+                            if (securityUrl.Url == "Function/GetFunctionByRole")
+                            {
+                                <button class="btn btn-primary mx-2" onclick="EditRole(@item.RoleID)">編輯</button>
+                                break;
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div><label id="roleNameShow"></label></div>
+    <table class="table table-bordered" id="functionTable" hidden>
+        <thead>
+            <tr>
+                <th>Check</th>
+                <th>FunctionID</th>
+                <th>Url</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody id="functionTableBody">
+        </tbody>
+    </table>
+    foreach (var securityUrl in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
+    {
+        if (securityUrl.Url == "Function/SaveRoleFunctionSetting")
+        {
+            <button class="btn btn-primary" id="saveSetting" hidden onclick="SaveSetting()">儲存設定</button>
+            break;
+        }
+    }
+}
+
+<script>
+    //用來存取角色ID
+    var roleID;
+
+    //按下編輯角色按鈕時觸發的事件
+    function EditRole(id) {
+        $("#roleTable").prop("hidden", true);
+        $("#functionTable").prop("hidden", false);
+        $("#saveSetting").prop("hidden", false);
+        $("#functionTableBody").empty();
+        roleID = id;
+        $("#roleNameShow").text($("#labRoleName_" + id).text());
+
+        //取得該角色所選取的所有功能
+         $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetFunctionByRole", "Function")",
+            data: JSON.stringify({
+                "id": id
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            for (var i = 0; i < data.length; i++) {
+
+                var cell1 = $('<td></td>');
+                var checkBox = $('<input type="checkbox" />').prop("checked", data[i].Check);
+                cell1.append(checkBox);
+
+                var cell2 = $('<td></td>').text(data[i].FunctionID);
+                var cell3 = $('<td></td>').text(data[i].Url);
+                var cell4 = $('<td></td>').text(data[i].Description);
+                var row = $('<tr></tr>').append([cell1, cell2, cell3, cell4]);
+                $("#functionTableBody").append(row);
+            }
+
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+    }
+
+    //按下儲存設定時所觸發的事件
+    function SaveSetting() {
+               var arr = [];
+
+            //取得所選取的table資料組成Json格式
+            $.each($("#functionTableBody > tr"), function (m, n) {
+
+                var functionCheckVO = {};
+
+                $.each(n.cells, function (x, y) {
+
+                    switch (x) {
+                        case 0:
+                            if ($(y.children[0]).prop("checked") != true) {
+                                return false;
+                            }
+                            functionCheckVO.Check = true;
+                            break;
+                        case 1:
+                            functionCheckVO.FunctionID = $(y).text();
+                            break;
+                        case 2:
+                            functionCheckVO.Url = $(y).text();
+                            break;
+                        case 3:
+                            functionCheckVO.Description = $(y).text();
+                            break;
+                        default:
+                    }
+                });
+
+                if (functionCheckVO.Check !== undefined) {
+                     functionCheckVO.RoleID = roleID;
+                    arr.push(functionCheckVO);
+                }
+            });
+
+            //上傳
+        if (arr.length !== 0) {
+
+                    //存取所勾選的資料
+                    $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SaveRoleFunctionSetting", "Function")",
+                    data: JSON.stringify(
+                        arr
+                    ),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Setting success");
+                      window.location.href = "@Url.Action("RoleFunctionEdit", "Function")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+        } else {
+                  //如果通通沒勾選時所觸發的清空方法
+                  $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("SaveRoleFunctionSetting", "Function")",
+                      data: JSON.stringify(
+                          { "roleID": roleID }
+                    ),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Setting success");
+                      window.location.href = "@Url.Action("RoleFunctionEdit", "Function")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+        }
+    }
+</script>

@@ -1,0 +1,98 @@
+﻿@model LoginVO.VO.Account
+@{
+    ViewBag.Title = "ToRegist";
+}
+
+<h2>註冊帳號</h2>
+@*<form method="post" action="/Account/RegistAccount" class="form-horizontal">*@
+<div class="row">
+    <div class="form-group col">
+        <label for="inputAccountName">*@Html.DisplayNameFor(model => model.AccountName)</label>
+        <input type="text" class="form-control" id="textAccountName" name="textAccountName" placeholder="AccountName">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group col">
+        <label for="inputPassword">*@Html.DisplayNameFor(model => model.Password)</label>
+        <input type="password" class="form-control" id="inputPassword" name="inputPassword">
+    </div>
+    <div class="form-group col">
+        <label for="inputPasswordConfirm">*@Html.DisplayNameFor(model => model.PasswordConfirm)</label>
+        <input type="password" class="form-control" id="inputPasswordConfirm" name="inputPasswordConfirm">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group col">
+        <label for="inputUserName">*@Html.DisplayNameFor(model => model.UserName)</label>
+        <input type="text" class="form-control" id="textUserName" name="textUserName" placeholder="UserName">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group  col">
+        <label for="inputEmail">@Html.DisplayNameFor(model => model.Email)</label>
+        <input type="email" class="form-control" id="inputEmail" name="inputEmail" placeholder="Email">
+    </div>
+</div>
+<div class="row">
+    <div class="form-group  col-md-12">
+        <label for="inputPhone">@Html.DisplayNameFor(model => model.Phone)</label>
+        <input type="text" class="form-control" id="textPhone" name="textPhone" placeholder="Phone">
+    </div>
+</div>
+@*</form>*@
+<button type="button" class="btn btn-primary" id="registBtn">Regist</button>
+
+
+<script>
+        (function () {
+
+            $("#registBtn").on("click", function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("RegistAccount", "Account")",
+                    data: JSON.stringify({
+                        "AccountName": $("#textAccountName").val(),
+                        "Password": $("#inputPassword").val(),
+                        "PasswordConfirm": $("#inputPasswordConfirm").val(),
+                        "UserName": $("#textUserName").val(),
+                        "Email": $("#inputEmail").val(),
+                        "Phone": $("#textPhone").val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("success");
+                    window.location.href = "@Url.Action("Login", "Account")";
+                }).fail(function (data) {
+                   
+                    var Message = data.responseJSON.Message;
+                     console.log(Message);
+                    alert(`fail Message:${Message}`);
+                });
+
+
+                @*$.ajax({
+                    type: "POST",
+                    data:JSON.stringify({ "AccountName": $("#inputAccountName").val() }),
+                    url: "@Url.Action("RegistAccount", "Account")",
+                    dataType: 'json',
+                    contentType: "application/json; charset=utf-8",
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.responseText);
+                        } else {
+                            // DoSomethingElse()
+                            alert(response.responseText);
+                        }
+                    },
+                    error: function (response) {
+                        alert("error!");  //
+                    }
+
+                });*@
+
+            });
+                }());
+</script>
+

@@ -1,0 +1,185 @@
+﻿@model IEnumerable<LoginVO.VO.FunctionVO>
+@{
+    ViewBag.Title = "FunctionAddEditDelete";
+}
+
+<h2>功能新增修改刪除</h2>
+@if (Session["LoginInfo"] != null)
+{
+    var LoginInfo = ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl;
+    foreach (var item in LoginInfo)
+    {
+        if (item.Url == "Function/AddFunction")
+        {
+            <div class="row">
+                <label for="textFunctionUrl" class="col-md-1">*@Html.DisplayNameFor(model => model.Url)</label>
+                <input type="text" class="form-control col-md-3" id="textFunctionUrl" name="textRoleName" placeholder="Url">
+            </div>
+            <div class="row my-3">
+                <label for="textFunctionDescription" class="col-md-1">@Html.DisplayNameFor(model => model.Description)</label>
+                <input type="text" class="form-control col-md-3" id="textFunctionDescription" name="textRoleDescription" placeholder="敘述">
+                <button class="btn btn-primary mx-3" href="#" id="AddFunctionBtn">新增</button>
+            </div>
+             break;
+        }
+    }
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.FunctionID)</th>
+                <th>@Html.DisplayNameFor(model => model.Url)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>功能</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.FunctionID</td>
+                    <td><label id="labFunctionUrl_@item.FunctionID">@item.Url</label><input type="text" id="textFunctionUrl_@item.FunctionID" value="@item.Url" hidden></td>
+                    <td><lable id="labDescription_@item.FunctionID">@item.Description</lable><input type="text" id="textDescription_@item.FunctionID" value="@item.Description" hidden /></td>
+                    <td>
+                        @foreach (var loginInfo in LoginInfo)
+                        {
+                            if (loginInfo.Url == "Function/EditFunction")
+                            {
+                                <button class="btn btn-primary mx-2" id="btnEdit_@item.FunctionID" onclick="EditFunction(@item.FunctionID)">編輯</button>
+                                <button class="btn btn-success mx-2" id="btnSave_@item.FunctionID" onclick="SaveFunction(@item.FunctionID)" hidden>儲存</button>
+                                <button class="btn btn-secondary mx-2" id="btnCancle_@item.FunctionID" onclick="CancleFunction(@item.FunctionID)" hidden>取消</button>
+                                 break;
+                            }
+                        }
+                        @foreach (var loginInfo in LoginInfo)
+                        {
+                            if (loginInfo.Url == "Function/DeleteFunction")
+                            {
+                                <button class="btn btn-danger" onclick="DeleteFunction(@item.FunctionID)">刪除</button>
+                                 break;
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<script>
+            (function () {
+
+            $("#AddFunctionBtn").on("click", function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("AddFunction", "Function")",
+                    data: JSON.stringify({
+                        "Url": $("#textFunctionUrl").val(),
+                        "Description": $("#textFunctionDescription").val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Add success");
+                      window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON.Message;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+            });
+
+    }());
+
+    function EditFunction(id) {
+          $("#btnEdit_" + id).prop("hidden", true);
+        $("#btnSave_" + id).prop("hidden", false);
+        $("#btnCancle_" + id).prop("hidden", false);
+        $("#labFunctionUrl_" + id).prop("hidden", true);
+        $("#textFunctionUrl_" + id).prop("hidden", false);
+        $("#labDescription_" + id).prop("hidden", true);
+        $("#textDescription_" + id).prop("hidden", false);
+    }
+
+    function SaveFunction(id) {
+              $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("EditFunction", "Function")",
+                            data: JSON.stringify({
+                        "FunctionID": id,
+                        "Url": $("#textFunctionUrl_" + id).val(),
+                        "Description": $("#textDescription_" + id).val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Edit success");
+                      window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON.Message;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+        $("#labFunctionUrl_" + id).text($("#textFunctionUrl_" + id).val());
+        $("#labDescription_" + id).text($("#textDescription_" + id).val());
+        $("#btnEdit_" + id).prop("hidden", false);
+        $("#btnSave_" + id).prop("hidden", true);
+        $("#btnCancle_" + id).prop("hidden", true);
+        $("#labFunctionUrl_" + id).prop("hidden", false);
+        $("#textFunctionUrl_" + id).prop("hidden", true);
+        $("#labDescription_" + id).prop("hidden", false);
+        $("#textDescription_" + id).prop("hidden", true);
+    }
+
+    function CancleFunction(id) {
+        $("#textFunctionUrl_" + id).val($("#labFunctionUrl_" + id).text());
+        $("#textDescription_" + id).val($("#labDescription_" + id).text());
+        $("#btnEdit_" + id).prop("hidden", false);
+        $("#btnSave_" + id).prop("hidden", true);
+        $("#btnCancle_" + id).prop("hidden", true);
+        $("#labFunctionUrl_" + id).prop("hidden", false);
+        $("#textFunctionUrl_" + id).prop("hidden", true);
+        $("#labDescription_" + id).prop("hidden", false);
+        $("#textDescription_" + id).prop("hidden", true);
+    }
+
+    function DeleteFunction(id) {
+         if (confirm("你確定要刪除嗎？")) {
+                     $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("DeleteFunction", "Function")",
+                    data: JSON.stringify({
+                        "id":id
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Delete success");
+                      window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+                   //alert("點選了確定");
+               }
+               else {
+                   //alert("點選了取消");
+               }
+    }
+</script>

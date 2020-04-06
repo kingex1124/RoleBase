@@ -1,0 +1,28 @@
+﻿
+@{
+    ViewBag.Title = "FunctionManagement";
+}
+
+<h2>功能管理介面</h2>
+
+@if (Session["LoginInfo"] != null)
+{
+
+    foreach (var item in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
+    {
+        if (item.Url == "Function/FunctionAddEditDelete" )
+        {
+            @Html.ActionLink("編輯Function", "FunctionAddEditDelete", "Function", new { area = "" }, new { @class = "btn btn-primary" })
+            break;
+        }
+    }
+
+    foreach (var item in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
+    {
+        if (item.Url == "Function/RoleFunctionEdit")
+        {
+            @Html.ActionLink("編輯RoleFunction", "RoleFunctionEdit", "Function", new { area = "" }, new { @class = "mx-3 btn btn-primary" })
+             break ;
+        }
+    }
+}

@@ -1,0 +1,27 @@
+﻿@model RoleBase.CurrentStatus.SecurityLevel
+@{
+    ViewBag.Title = "RoleManagement";
+}
+
+<h2>角色管理介面</h2>
+
+@if (Session["LoginInfo"] != null)
+{
+    foreach (var item in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
+    {
+        if (item.Url == "Role/RoleAddEditDelete")
+        {
+            @Html.ActionLink("編輯Role", "RoleAddEditDelete", "Role", new { area = "" }, new { @class = "btn btn-primary" })        
+            break;
+        }
+    }
+    foreach (var item in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
+    {
+        if (item.Url == "Role/RoleUserEdit")
+        {
+            @Html.ActionLink("編輯RoleUser", "RoleUserEdit", "Role", new { area = "" }, new { @class = "mx-3 btn btn-primary" })
+            break;
+        }
+    }
+
+}

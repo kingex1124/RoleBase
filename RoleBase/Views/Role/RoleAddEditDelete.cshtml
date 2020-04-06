@@ -1,0 +1,194 @@
+﻿@model IEnumerable<LoginVO.VO.RoleVO>
+@{
+    ViewBag.Title = "RoleAddDelete";
+}
+
+<h2>角色新增修改刪除</h2>
+@if (Session["LoginInfo"] != null)
+{
+    var LoginInfo = ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl;
+    foreach (var item in LoginInfo)
+    {
+        if (item.Url == "Role/AddRole")
+        {
+            <div class="row">
+                <label for="textRoleName" class="col-md-1">*@Html.DisplayNameFor(model => model.RoleName)</label>
+                <input type="text" class="form-control col-md-3" id="textRoleName" name="textRoleName" placeholder="角色名稱">
+            </div>
+            <div class="row my-3">
+                <label for="textRoleDescription" class="col-md-1">@Html.DisplayNameFor(model => model.Description)</label>
+                <input type="text" class="form-control col-md-3" id="textRoleDescription" name="textRoleDescription" placeholder="敘述">
+                <button class="btn btn-primary mx-3" href="#" id="AddRoleBtn">新增</button>
+            </div>
+            break;
+        }
+    }
+
+
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.RoleID)</th>
+            <th>@Html.DisplayNameFor(model => model.RoleName)</th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>功能</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.RoleID</td>
+                <td><label id="labRoleName_@item.RoleID">@item.RoleName</label><input type="text" id="textRoleName_@item.RoleID" value="@item.RoleName" hidden></td>
+                <td><lable id="labDescription_@item.RoleID">@item.Description</lable><input type="text" id="textDescription_@item.RoleID" value="@item.Description" hidden /></td>
+                <td>
+                    @foreach (var loginInfo in LoginInfo)
+                    {
+                        if (loginInfo.Url == "Role/EditRole")
+                        {
+                            <button class="btn btn-primary mx-2" id="btnEdit_@item.RoleID" onclick="EditRole(@item.RoleID)">編輯</button>
+                            <button class="btn btn-success mx-2" id="btnSave_@item.RoleID" onclick="SaveRole(@item.RoleID)" hidden>儲存</button>
+                            <button class="btn btn-secondary mx-2" id="btnCancle_@item.RoleID" onclick="CancleRole(@item.RoleID)" hidden>取消</button>
+                            break;
+
+                        }
+                    }
+                    @foreach (var loginInfo in LoginInfo)
+                    {
+                        if (loginInfo.Url == "Role/DeleteRole")
+                        {
+                            <button class="btn btn-danger" onclick="DeleteRole(@item.RoleID)">刪除</button>
+                            break;
+                        }
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+<script>
+        (function () {
+
+            $("#AddRoleBtn").on("click", function () {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("AddRole", "Role")",
+                    data: JSON.stringify({
+                        "RoleName": $("#textRoleName").val(),
+                        "Description": $("#textRoleDescription").val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Add success");
+                      window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON.Message;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+            });
+
+    }());
+
+    function EditRole(id) {
+        $("#btnEdit_" + id).prop("hidden", true);
+        $("#btnSave_" + id).prop("hidden", false);
+        $("#btnCancle_" + id).prop("hidden", false);
+        $("#labRoleName_" + id).prop("hidden", true);
+        $("#textRoleName_" + id).prop("hidden", false);
+        $("#labDescription_" + id).prop("hidden", true);
+        $("#textDescription_" + id).prop("hidden", false);
+
+    }
+
+    function SaveRole(id) {
+                        $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("EditRole", "Role")",
+                            data: JSON.stringify({
+                        "RoleID": id,
+                        "RoleName": $("#textRoleName_" + id).val(),
+                        "Description": $("#textDescription_" + id).val()
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Edit success");
+                      window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON.Message;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+        $("#labRoleName_" + id).text($("#textRoleName_" + id).val());
+        $("#labDescription_" + id).text($("#textDescription_" + id).val());
+        $("#btnEdit_" + id).prop("hidden", false);
+        $("#btnSave_" + id).prop("hidden", true);
+        $("#btnCancle_" + id).prop("hidden", true);
+        $("#labRoleName_" + id).prop("hidden", false);
+        $("#textRoleName_" + id).prop("hidden", true);
+        $("#labDescription_" + id).prop("hidden", false);
+        $("#textDescription_" + id).prop("hidden", true);
+    }
+
+    function CancleRole(id) {
+        $("#textRoleName_" + id).val($("#labRoleName_" + id).text());
+        $("#textDescription_" + id).val($("#labDescription_" + id).text());
+        $("#btnEdit_" + id).prop("hidden", false);
+        $("#btnSave_" + id).prop("hidden", true);
+        $("#btnCancle_" + id).prop("hidden", true);
+        $("#labRoleName_" + id).prop("hidden", false);
+        $("#textRoleName_" + id).prop("hidden", true);
+        $("#labDescription_" + id).prop("hidden", false);
+        $("#textDescription_" + id).prop("hidden", true);
+
+    }
+
+           function DeleteRole(id)
+           {
+               if (confirm("你確定要刪除嗎？")) {
+                     $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("DeleteRole", "Role")",
+                    data: JSON.stringify({
+                        "id":id
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                }).done(function (data) {
+                    alert("Delete success");
+                      window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+                   //alert("點選了確定");
+               }
+               else {
+                   //alert("點選了取消");
+               }
+            }
+</script>
+

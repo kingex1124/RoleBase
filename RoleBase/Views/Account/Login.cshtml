@@ -1,0 +1,30 @@
+﻿@model LoginVO.VO.AccountInfoData
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+<form method="post" action="/Account/Login" class="form-horizontal">
+    <div class="row">
+        <div class="form-group col">
+            <label for="inputAccountName">*@Html.DisplayNameFor(model => model.AccountName)</label>
+            <input type="text" class="form-control" id="AccountName" name="AccountName" placeholder="AccountName">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group col">
+            <label for="inputPassword">*@Html.DisplayNameFor(model => model.Password)</label>
+            <input type="password" class="form-control" id="Password" name="Password">
+        </div>
+    </div>
+    @if (Model != null && !string.IsNullOrEmpty(Model.Message))
+    {
+        <label style="color:red;">@Model.Message</label>
+    }
+    <div class="row">
+        <div class="form-group col">
+            <button type="submit" class="btn btn-primary">Sign in</button>
+        </div>
+    </div>
+</form>
