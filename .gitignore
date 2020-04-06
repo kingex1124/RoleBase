@@ -3,3 +3,12 @@
 ################################################################################
 
 /.vs/RoleBase
+/LoginDTO/bin/Debug
+/LoginDTO/obj/Debug
+/LoginVO/bin/Debug
+/LoginVO/obj/Debug
+/packages
+/RoleBase/bin
+/RoleBase/obj/Debug
+/LoginServerBO/bin/Debug
+/LoginServerBO/obj/Debug
