@@ -1,6 +1,7 @@
 ﻿using LoginDTO.DTO;
 using LoginServerBO.Service;
 using LoginVO.VO;
+using Newtonsoft.Json;
 using RoleBase.CurrentStatus;
 using System;
 using System.Collections.Generic;
@@ -59,5 +60,35 @@ namespace RoleBase.Controllers
                 }
             }
         }
+
+        public ActionResult Logout()
+        {
+            Session.Clear();
+            Response.StatusCode = (int)HttpStatusCode.OK;
+            return Json(" ", JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult RegistAccount(Account account)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                account.Message = "請填寫必填欄位";
+            }
+            else
+            {
+                account = registService.RegistValid(account);
+                if (!string.IsNullOrWhiteSpace(account.Message))
+                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                else
+                {
+                    registService.Regist(account);
+                    Response.StatusCode = (int)HttpStatusCode.OK;
+                }
+            }
+            return Json(account, JsonRequestBehavior.AllowGet);
+        }  
     }
 }
