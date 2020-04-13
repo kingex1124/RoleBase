@@ -2,12 +2,14 @@
 using LoginServerBO.Service;
 using LoginVO.VO;
 using Newtonsoft.Json;
+using RoleBase.ActionFilters;
 using RoleBase.CurrentStatus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
+using System.Web.Http.Cors;
 using System.Web.Mvc;
 
 namespace RoleBase.Controllers
@@ -18,6 +20,12 @@ namespace RoleBase.Controllers
         LoginService loginService = new LoginService();
         SecurityService securityService = new SecurityService();
         // GET: AccountAn
+
+        /// <summary>
+        /// 登入
+        /// </summary>
+        /// <param name="accountInfoData"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Login(AccountInfoData accountInfoData)
         {
@@ -61,6 +69,10 @@ namespace RoleBase.Controllers
             }
         }
 
+        /// <summary>
+        /// 登出
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Logout()
         {
             Session.Clear();
@@ -68,10 +80,10 @@ namespace RoleBase.Controllers
             return Json(" ", JsonRequestBehavior.AllowGet);
         }
 
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
         [HttpPost]
         public ActionResult RegistAccount(Account account)
         {
-
             if (!ModelState.IsValid)
             {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -89,6 +101,21 @@ namespace RoleBase.Controllers
                 }
             }
             return Json(account, JsonRequestBehavior.AllowGet);
-        }  
+        }
+
+        /// <summary>
+        /// 測試用方法
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
+        [AllowCrossSite]
+        //[Route("api/[controller]/[action]")]
+        //[EnableCors(origins: "*",//設定允許哪些來源網址，允許存取此web API
+        // headers: "*", methods: "*")]
+        [HttpPost]
+        public ActionResult Test(Account account)
+        {
+            return Json(account, JsonRequestBehavior.AllowGet);
+        }
     }
 }
