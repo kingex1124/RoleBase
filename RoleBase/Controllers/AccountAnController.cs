@@ -26,6 +26,7 @@ namespace RoleBase.Controllers
         /// </summary>
         /// <param name="accountInfoData"></param>
         /// <returns></returns>
+        [AllowCrossSite]
         [HttpPost]
         public ActionResult Login(AccountInfoData accountInfoData)
         {
@@ -73,6 +74,8 @@ namespace RoleBase.Controllers
         /// 登出
         /// </summary>
         /// <returns></returns>
+        [AllowCrossSite]
+        [HttpPost]
         public ActionResult Logout()
         {
             Session.Clear();
@@ -80,7 +83,7 @@ namespace RoleBase.Controllers
             return Json(" ", JsonRequestBehavior.AllowGet);
         }
 
-        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [AllowCrossSite]
         [HttpPost]
         public ActionResult RegistAccount(Account account)
         {
