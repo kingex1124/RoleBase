@@ -76,5 +76,51 @@ namespace RoleBase.Controllers
            
             return result;
         }
+
+        /// <summary>
+        /// 透過角色ID取得勾選的使用者資料
+        /// 編輯角色與使用者的關係
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [HttpPost]
+        public IEnumerable<UserCheckVO> GetUserByRole(RoleVO roleVO)
+        {
+            var userCheckData = roleService.GetUserCheckByRole(roleVO.RoleID.ToString());
+            return userCheckData;
+        }
+
+        /// <summary>
+        /// 儲存RoleUser設定的變更
+        /// </summary>
+        /// <param name="userCheckVO"></param>
+        /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [HttpPost]
+        public string SaveRoleUserSetting(IEnumerable<UserCheckVO> userCheckVO)
+        {
+            string result = string.Empty;
+            //處理有關選時的行為
+            result = roleService.SaveRoleUserSetting(userCheckVO);
+            return result;
+        }
+
+        /// <summary>
+        /// 儲存RoleUser設定的變更，未選取的時候
+        /// </summary>
+        /// <param name="roleVO"></param>
+        /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [HttpPost]
+        public string NoSelectSaveRoleUserSetting(RoleVO roleVO)
+        {
+            string result = string.Empty;
+
+            //處理清空所有check時的行為
+            result = roleService.ClearRoleUserByRoleID(roleVO.RoleID.ToString());
+
+            return result;
+        }
     }
 }
