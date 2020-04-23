@@ -76,5 +76,64 @@ namespace RoleBase.Controllers
 
             return result;
         }
+
+        /// <summary>
+        /// 取得角色資料
+        /// </summary>
+        /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [HttpPost]
+        public IEnumerable<RoleVO> RoleFunctionEdit()
+        {
+            // Thread.Sleep(1000);
+            var roleData = roleService.GetRoleData();
+            return roleData;
+        }
+
+        /// <summary>
+        /// 透過角色ID取得勾選的功能資料
+        /// 編輯角色與功能的關係
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [HttpPost]
+        public IEnumerable<FunctionCheckVO> GetFunctionByRole(RoleVO roleVO)
+        {
+            var functionCheckData = functionService.GetFunctionCheckByRole(roleVO.RoleID.ToString());
+            return functionCheckData;
+        }
+
+        /// <summary>
+        /// 儲存RoleFunction設定的變更
+        /// </summary>
+        /// <param name="functionCheckVO"></param>
+        /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [HttpPost]
+        public string SaveRoleFunctionSetting(IEnumerable<FunctionCheckVO> functionCheckVO)
+        {
+            string result = string.Empty;
+            //處理有關選時的行為
+            result = functionService.SaveRoleFunctionSetting(functionCheckVO);
+            return result;
+        }
+
+        /// <summary>
+        /// 儲存RoleFunction設定的變更，未選取的時候
+        /// </summary>
+        /// <param name="roleVO"></param>
+        /// <returns></returns>
+        [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
+        [HttpPost]
+        public string NoSelectSaveRoleFunctionSetting(RoleVO roleVO)
+        {
+            string result = string.Empty;
+
+            //處理清空所有check時的行為
+            result = functionService.ClearRoleFunctionByRoleID(roleVO.RoleID.ToString());
+
+            return result;
+        }
     }
 }
