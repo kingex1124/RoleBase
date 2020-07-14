@@ -1,0 +1,383 @@
+﻿using LoginDTO.DTO;
+using LoginServerBO.Service.Interface;
+using LoginVO.VO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NSubstitute;
+using Rhino.Mocks;
+using RoleBase.Controllers;
+using RoleBase.CurrentStatus;
+using RoleBaseTests.Helper;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using System.Web.Routing;
+
+namespace RoleBase.Controllers.Tests
+{
+    [TestClass()]
+    public class AccountControllerTests
+    {
+        #region 屬性
+
+        IRegistService _registService = MockRepository.GenerateStub<IRegistService>();
+        ILoginService _loginService = MockRepository.GenerateStub<ILoginService>();
+        ISecurityService _securityService = MockRepository.GenerateStub<ISecurityService>();
+        AccountController _target;
+
+        #endregion
+
+        #region 建構子
+
+        public AccountControllerTests()
+        {
+            _target = new AccountController(_registService, _loginService, _securityService);     
+        }
+
+        #endregion
+
+        #region 測試方法
+
+        #region Regist
+
+        /// <summary>
+        /// 測試進入註冊畫面
+        /// </summary>
+        [TestMethod()]
+        public void RegistTest()
+        {
+            // act
+            var result = _target.Regist() as ViewResult;
+            // assert
+            // 驗證 Action
+            Assert.IsTrue(string.IsNullOrEmpty(result.ViewName) || result.ViewName == "Regist");
+
+            //// 驗證 Action
+            //Assert.IsTrue(string.IsNullOrEmpty(result.RouteValues["action"].ToString()) || result.RouteValues["action"].ToString() == "Index");
+
+            //// 驗證 Controller
+            //Assert.IsTrue(string.IsNullOrEmpty(result.RouteValues["controller"].ToString()) || result.RouteValues["controller"].ToString() == "Home");
+        }
+
+        #endregion
+
+        #region RegistAccount
+
+        /// <summary>
+        /// 測試正常註冊
+        /// </summary>
+        [TestMethod()]
+        public void RegistAccountTest()
+        {
+            #region arrange (註冊成功)
+
+            // httpContext物件設定
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+            httpContext.Response.StatusCode = 200;
+
+            // 傳入參數
+            Account account = new Account() 
+            {
+                UserName = "Kevan",
+                Password = "1qaz@WSX",
+                PasswordConfirm = "1qaz@WSX",
+                AccountName = "Kevan",
+                Email = "kevan@gmail.com"
+            };
+
+            // 回傳參數
+            Account reData = new Account()
+            {
+                UserName = "Kevan",
+                Password = "1qaz@WSX",
+                PasswordConfirm = "1qaz@WSX",
+                AccountName = "Kevan",
+                Email = "kevan@gmail.com"
+            };
+
+            // 驗證資料
+            _registService.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reData);
+            // 註冊資料
+            _registService.Stub(o => o.Regist(Arg<Account>.Is.Anything)).Return(reData);
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            #endregion
+
+            #region act
+
+            var resultData = _target.RegistAccount(account);
+
+            var result = (Account)(((JsonResult)resultData).Data);
+
+            #endregion
+
+            #region assert
+
+            Assert.AreEqual(result.UserName, "Kevan");
+            Assert.AreEqual(result.Password, "1qaz@WSX");
+            Assert.AreEqual(result.PasswordConfirm, "1qaz@WSX");
+            Assert.AreEqual(result.AccountName, "Kevan");
+            Assert.AreEqual(result.Email, "kevan@gmail.com");
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 測試密碼確認與密碼輸入不相同的情況
+        /// </summary>
+        [TestMethod()]
+        public void RegistAccountTest1()
+        {
+            #region arrange (欄位驗證失敗)
+
+            // httpContext物件設定
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+            httpContext.Response.StatusCode = 200;
+
+            // 傳入參數
+            Account account = new Account()
+            {
+                UserName = "Kevan",
+                Password = "1qaz@WSX",
+                PasswordConfirm = "111111",
+                AccountName = "Kevan",
+                Email = "kevan@gmail.com"
+            };
+
+            // 回傳參數
+            Account reData = new Account()
+            {
+                UserName = "Kevan",
+                Password = "1qaz@WSX",
+                PasswordConfirm = "111111",
+                AccountName = "Kevan",
+                Email = "kevan@gmail.com",
+                Message = "密碼確認與密碼輸入不相同"
+            };
+
+            // 驗證資料
+            _registService.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reData);
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            #endregion
+
+            // act
+            var resultData = _target.RegistAccount(account);
+
+            var result = (Account)(((JsonResult)resultData).Data);
+            
+            // assert
+            Assert.AreEqual(result.Message, "密碼確認與密碼輸入不相同");
+            Assert.AreEqual(_target.CurrentHttpContext.Response.StatusCode, 400);
+        }
+
+        #endregion
+
+        #region Login
+
+        /// <summary>
+        /// 測試進入登入畫面
+        /// </summary>
+        [TestMethod()]
+        public void LoginTest()
+        {
+            // act
+            var result = _target.Regist() as ViewResult;
+
+            // assert
+            Assert.IsTrue(string.IsNullOrEmpty(result.ViewName) || result.ViewName == "Login");
+        }
+
+        /// <summary>
+        /// 測試登入成功
+        /// </summary>
+        [TestMethod()]
+        public void LoginTest1()
+        {
+            // arrange (登入成功)
+            // httpContext物件設定
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+            httpContext.Response.StatusCode = 200;
+
+            // 輸入參數
+            AccountInfoData accountInfoData = new AccountInfoData()
+            {
+                AccountName = "kevan",
+                Password = "1qaz@WSX"
+            };
+
+            // 輸出參數
+            AccountInfoData reData = new AccountInfoData()
+            {
+                AccountName = "kevan",
+                Password = "1qaz@WSX"
+            };
+
+            UserDTO reUserDTO = new UserDTO()
+            {
+                UserID = 1,
+                AccountName = "kevan",
+                Password = "1qaz@WSX",
+                UserName = "kevan",
+                Email = "kevan@gmail.com.tw"
+            };
+
+            List<RoleDTO> reRoleDTOList = new List<RoleDTO>()
+            {
+                new RoleDTO(){ RoleID = 1 , RoleName = "Admin", Description = "最高權限"}
+            };
+
+            List<SecurityRoleFunctionDTO> reSRF = new List<SecurityRoleFunctionDTO>()
+            {
+                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "首頁" , Url ="/Home/Index"}
+            };
+
+            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
+
+            _loginService.Stub(o => o.GetUserDataByAccountName(Arg<AccountInfoData>.Is.Anything)).Return(reUserDTO);
+
+            _loginService.Stub(o => o.GetRoleDataByUserID(Arg<string>.Is.Anything)).Return(reRoleDTOList);
+
+            _securityService.Stub(o => o.GetSecurityRoleFunction(Arg<string>.Is.Anything)).Return(reSRF);
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            // act
+            var result = _target.Login(accountInfoData) as RedirectToRouteResult;
+            
+            // assert
+            // 驗證 Action
+            Assert.IsTrue(string.IsNullOrEmpty(result.RouteValues["action"].ToString()) || result.RouteValues["action"].ToString() == "Index");
+           
+            // 驗證 Controller
+            Assert.IsTrue(string.IsNullOrEmpty(result.RouteValues["controller"].ToString()) || result.RouteValues["controller"].ToString() == "Home");
+
+            // 取得 Session 並驗證
+            var sessionInfo = _target.CurrentHttpContext.Session["LoginInfo"] as SecurityLevel;
+
+            Assert.AreEqual(sessionInfo.SecurityRole[0].RoleID, 1);
+            Assert.AreEqual(sessionInfo.SecurityRole[0].RoleName, "Admin");
+            Assert.AreEqual(sessionInfo.SecurityRole[0].Description, "最高權限");
+
+            Assert.AreEqual(sessionInfo.SecurityUrl[0].RoleName, "Admin");
+            Assert.AreEqual(sessionInfo.SecurityUrl[0].Url, "/Home/Index");
+            Assert.AreEqual(sessionInfo.SecurityUrl[0].Description, "首頁");
+
+            Assert.AreEqual(sessionInfo.UserData.UserId , 1);
+            Assert.AreEqual(sessionInfo.UserData.AccountName, "kevan");
+
+            Assert.AreEqual(_target.CurrentHttpContext.Session["UserName"], "kevan");
+        }
+
+        /// <summary>
+        /// 測試登入帳號不存在
+        /// </summary>
+        [TestMethod()]
+        public void LoginTest2()
+        {
+            // arrange (登入失敗)
+            // httpContext物件設定
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+            httpContext.Response.StatusCode = 200;
+
+            // 輸入參數
+            AccountInfoData accountInfoData = new AccountInfoData()
+            {
+                AccountName = "Jon",
+                Password = "1qaz@WSX"
+            };
+
+            // 輸出參數
+            AccountInfoData reData = new AccountInfoData()
+            {
+                AccountName = "Jon",
+                Password = "1qaz@WSX",
+                Message = "該帳號不存在。"
+            };
+      
+            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
+     
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            // act
+            var result = _target.Login(accountInfoData) as ViewResult;
+
+            // assert
+            Assert.AreEqual((AccountInfoData)result.Model, reData);
+
+            Assert.IsTrue(string.IsNullOrEmpty(result.ViewName) || result.ViewName == "Login");
+        }
+
+        /// <summary>
+        /// 測試登入密碼失敗
+        /// </summary>
+        [TestMethod()]
+        public void LoginTest3()
+        {
+            // arrange (登入失敗)
+            // httpContext物件設定
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+            httpContext.Response.StatusCode = 200;
+
+            // 輸入參數
+            AccountInfoData accountInfoData = new AccountInfoData()
+            {
+                AccountName = "kevan",
+                Password = "111111"
+            };
+
+            // 輸出參數
+            AccountInfoData reData = new AccountInfoData()
+            {
+                AccountName = "kevan",
+                Password = "111111",
+                Message = "密碼輸入錯誤。"
+            };
+
+            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            // act
+            var result = _target.Login(accountInfoData) as ViewResult;
+
+            // assert
+            Assert.AreEqual((AccountInfoData)result.Model, reData);
+
+            Assert.IsTrue(string.IsNullOrEmpty(result.ViewName) || result.ViewName == "Login");
+        }
+
+        #endregion
+
+        #region Logout
+
+        [TestMethod()]
+        public void LogoutTest()
+        {
+            // arrange
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            // act
+            var result = _target.Logout() as RedirectToRouteResult;
+
+            // assert
+            Assert.IsTrue(string.IsNullOrEmpty(result.RouteValues["action"].ToString()) || result.RouteValues["action"].ToString() == "Login");
+        }
+
+        #endregion
+
+        #endregion
+
+    }
+}

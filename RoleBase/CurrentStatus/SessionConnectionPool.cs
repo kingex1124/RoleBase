@@ -12,7 +12,7 @@ namespace RoleBase.CurrentStatus
         {
         }
 
-        public static SecurityLevel CurrentUserInfo
+        public static SecurityLevel GetCurrentUserInfo
         {
             get
             {
@@ -23,6 +23,16 @@ namespace RoleBase.CurrentStatus
         public static void SetCurrentUserInfo(SecurityLevel currentUserData)
         {
             HttpContext.Current.Session[AccountInfoData.LoginInfo] = currentUserData;
+        }
+
+        public static void SetCurrentUserInfo(HttpContextBase currentHttpContext, SecurityLevel currentUserData)
+        {
+            currentHttpContext.Session[AccountInfoData.LoginInfo] = currentUserData;
+        }
+
+        public static void ResetCurrentUserInfo()
+        {
+            HttpContext.Current.Session.Remove(AccountInfoData.LoginInfo);
         }
     }
 }
