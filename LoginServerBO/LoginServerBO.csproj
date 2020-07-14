@@ -34,8 +34,9 @@
     <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="KevanFramework">
-      <HintPath>..\..\..\個人檔案\研發部門\KevanFramework\KevanFramework\bin\Debug\KevanFramework.dll</HintPath>
+    <Reference Include="KevanFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KevanFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
