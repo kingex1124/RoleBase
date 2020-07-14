@@ -1,4 +1,5 @@
 ﻿using LoginServerBO.Service;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using RoleBase.ActionFilters;
 using System;
@@ -12,10 +13,25 @@ namespace RoleBase.Controllers
 {
     public class FunctionController : Controller
     {
-        FunctionService functionService = new FunctionService();
-        RoleService roleService = new RoleService();
+        #region 屬性
 
-        // GET: Function
+        IFunctionService _functionService;
+        IRoleService _roleService;
+
+        #endregion
+
+        #region 建構子
+
+        public FunctionController()
+        {
+            _functionService = new FunctionService();
+            _roleService = new RoleService();
+        }
+
+        #endregion
+
+        #region Action
+
         /// <summary>
         /// Function管理介面
         /// </summary>
@@ -33,7 +49,7 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult FunctionAddEditDelete()
         {
-            var functionData = functionService.GetFunctionData();
+            var functionData = _functionService.GetFunctionData();
             return View(functionData);
         }
 
@@ -53,7 +69,7 @@ namespace RoleBase.Controllers
             }
             else
             {
-                var result = functionService.AddFunction(functionVO);
+                var result = _functionService.AddFunction(functionVO);
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -75,7 +91,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult DeleteFunction(string id)
         {
-            var result = functionService.DeleteFunction(id);
+            var result = _functionService.DeleteFunction(id);
 
             if (!string.IsNullOrEmpty(result))
             {
@@ -96,7 +112,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult EditFunction(FunctionVO functionVO)
         {
-            var result = functionService.EditFunction(functionVO);
+            var result = _functionService.EditFunction(functionVO);
 
             if (!string.IsNullOrEmpty(result))
             {
@@ -115,7 +131,7 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleFunctionEdit()
         {
-            var roleData = roleService.GetRoleData();
+            var roleData = _roleService.GetRoleData();
             return View(roleData);
         }
 
@@ -129,7 +145,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult GetFunctionByRole(string id)
         {
-            var functionCheckData = functionService.GetFunctionCheckByRole(id);
+            var functionCheckData = _functionService.GetFunctionCheckByRole(id);
             return Json(functionCheckData, JsonRequestBehavior.AllowGet);
         }
 
@@ -148,7 +164,7 @@ namespace RoleBase.Controllers
             if (roleID == null)
             {
                 //處理有關選時的行為
-                result = functionService.SaveRoleFunctionSetting(functionCheckVO);
+                result = _functionService.SaveRoleFunctionSetting(functionCheckVO);
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -161,7 +177,7 @@ namespace RoleBase.Controllers
             else
             {
                 //處理清空所有check時的行為
-                result = functionService.ClearRoleFunctionByRoleID(roleID);
+                result = _functionService.ClearRoleFunctionByRoleID(roleID);
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -173,5 +189,7 @@ namespace RoleBase.Controllers
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+
+        #endregion
     }
 }

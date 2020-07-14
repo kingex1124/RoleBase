@@ -50,6 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BO\FunctionBO.cs" />
+    <Compile Include="BO\Interface\IFunctionBO.cs" />
+    <Compile Include="BO\Interface\ILoginBO.cs" />
+    <Compile Include="BO\Interface\IRegistBO.cs" />
+    <Compile Include="BO\Interface\IRoleBO.cs" />
+    <Compile Include="BO\Interface\ISecurityBO.cs" />
     <Compile Include="BO\LoginBO.cs" />
     <Compile Include="BO\RegistBO.cs" />
     <Compile Include="BO\RoleBO.cs" />
@@ -58,6 +63,11 @@
     <Compile Include="Helper\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\FunctionService.cs" />
+    <Compile Include="Service\Interface\IFunctionService.cs" />
+    <Compile Include="Service\Interface\ILoginService.cs" />
+    <Compile Include="Service\Interface\IRegistService.cs" />
+    <Compile Include="Service\Interface\IRoleService.cs" />
+    <Compile Include="Service\Interface\ISecurityService.cs" />
     <Compile Include="Service\LoginService.cs" />
     <Compile Include="Service\RegistService.cs" />
     <Compile Include="Service\RoleService.cs" />

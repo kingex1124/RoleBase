@@ -1,5 +1,7 @@
 ﻿using LoginDTO.DTO;
 using LoginServerBO.BO;
+using LoginServerBO.BO.Interface;
+using LoginServerBO.Service.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,17 +10,30 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.Service
 {
-    public class SecurityService
+    public class SecurityService : ISecurityService
     {
-        SecurityBO securityBO;
+        #region 屬性
+
+        ISecurityBO _securityBO;
+
+        #endregion
+
+        #region 建構子
+
         public SecurityService()
         {
-            securityBO = new SecurityBO();
+            _securityBO = new SecurityBO();
         }
+
+        #endregion
+
+        #region 方法
 
         public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId)
         {
-            return securityBO.GetSecurityRoleFunction(roleId);
+            return _securityBO.GetSecurityRoleFunction(roleId);
         }
+
+        #endregion
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LoginDTO.DTO;
 using LoginServerBO.Service;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using RoleBase.CurrentStatus;
 using System;
@@ -14,9 +15,26 @@ namespace RoleBase.Controllers
 {
     public class AccountAnApiController : ApiController
     {
-        RegistService registService = new RegistService();
-        LoginService loginService = new LoginService();
-        SecurityService securityService = new SecurityService();
+        #region 屬性
+
+        IRegistService _registService;
+        ILoginService _loginService;
+        ISecurityService _securityService;
+
+        #endregion
+
+        #region 建構子
+
+        public AccountAnApiController()
+        {
+            _registService = new RegistService();
+            _loginService = new LoginService();
+            _securityService = new SecurityService();
+        }
+
+        #endregion
+
+        #region Action
 
         /// <summary>
         /// 用API解決跨域問題
@@ -33,11 +51,13 @@ namespace RoleBase.Controllers
                 account.Message = "請填寫必填欄位";
             else
             {
-                account = registService.RegistValid(account);
+                account = _registService.RegistValid(account);
                 if (string.IsNullOrWhiteSpace(account.Message))
-                    registService.Regist(account);
+                    _registService.Regist(account);
             }
             return account;
         }
+
+        #endregion
     }
 }

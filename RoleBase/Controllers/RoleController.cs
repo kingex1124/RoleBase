@@ -1,4 +1,5 @@
 ﻿using LoginServerBO.Service;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using RoleBase.ActionFilters;
 using System;
@@ -12,8 +13,22 @@ namespace RoleBase.Controllers
 {
     public class RoleController : Controller
     {
-        RoleService roleService = new RoleService();
-        // GET: Role
+        #region 屬性
+
+        IRoleService _roleService;
+
+        #endregion
+
+        #region 建構子
+
+        public RoleController()
+        {
+            _roleService = new RoleService();
+        }
+
+        #endregion
+
+        #region Action
 
         /// <summary>
         /// Role管理畫面
@@ -32,7 +47,7 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleAddEditDelete()
         {
-            var roleData = roleService.GetRoleData();
+            var roleData = _roleService.GetRoleData();
             return View(roleData);
         }
 
@@ -52,7 +67,7 @@ namespace RoleBase.Controllers
             }
             else
             {
-                var result = roleService.AddRole(roleVO);
+                var result = _roleService.AddRole(roleVO);
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -74,7 +89,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult DeleteRole(string id)
         {
-            var result = roleService.DeleteRole(id);
+            var result = _roleService.DeleteRole(id);
 
             if (!string.IsNullOrEmpty(result))
             {
@@ -95,7 +110,7 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult EditRole(RoleVO roleVO)
         {
-            var result = roleService.EditRole(roleVO);
+            var result = _roleService.EditRole(roleVO);
 
             if (!string.IsNullOrEmpty(result))
             {
@@ -114,7 +129,7 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleUserEdit()
         {
-            var roleData = roleService.GetRoleData();
+            var roleData = _roleService.GetRoleData();
             return View(roleData);
         }
 
@@ -128,7 +143,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult GetUserByRole(string id)
         {
-            var userCheckData = roleService.GetUserCheckByRole(id);
+            var userCheckData = _roleService.GetUserCheckByRole(id);
             return Json(userCheckData, JsonRequestBehavior.AllowGet);
         }
 
@@ -146,7 +161,7 @@ namespace RoleBase.Controllers
             if (roleID == null)
             {
                 //處理有關選時的行為
-                result = roleService.SaveRoleUserSetting(userCheckVO);
+                result = _roleService.SaveRoleUserSetting(userCheckVO);
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -159,7 +174,7 @@ namespace RoleBase.Controllers
             else
             {
                 //處理清空所有check時的行為
-                result = roleService.ClearRoleUserByRoleID(roleID);
+                result = _roleService.ClearRoleUserByRoleID(roleID);
 
                 if (!string.IsNullOrEmpty(result))
                 {
@@ -171,5 +186,7 @@ namespace RoleBase.Controllers
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+
+        #endregion
     }
 }

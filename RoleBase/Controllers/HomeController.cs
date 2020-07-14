@@ -8,15 +8,26 @@ namespace RoleBase.Controllers
 {
     public class HomeController : Controller
     {
-        // GET: Home
+        #region Action
+
+        /// <summary>
+        /// 首頁
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Index()
         {
             return View();
         }
 
+        /// <summary>
+        /// 無權限頁面
+        /// </summary>
+        /// <returns></returns>
         public ActionResult NoCompetence()
         {
             return View();
         }
+
+        #endregion
     }
 }

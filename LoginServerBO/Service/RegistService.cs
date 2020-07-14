@@ -1,4 +1,6 @@
 ﻿using LoginServerBO.BO;
+using LoginServerBO.BO.Interface;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -8,14 +10,24 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.Service
 {
-    public class RegistService
+    public class RegistService : IRegistService
     {
-        RegistBO registBO;
+        #region 屬性
+
+        IRegistBO _registBO;
+
+        #endregion
+
+        #region 建構子
 
         public RegistService()
         {
-            registBO = new RegistBO();
+            _registBO = new RegistBO();
         }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 驗證帳號資料
@@ -25,7 +37,7 @@ namespace LoginServerBO.Service
         public Account RegistValid(Account account)
         {
             // 驗證帳號
-            if (registBO.FindAccountName(account.AccountName).Any())
+            if (_registBO.FindAccountName(account.AccountName).Any())
             {
                 account.Message = "帳號名稱已被使用";
                 return account;
@@ -46,16 +58,17 @@ namespace LoginServerBO.Service
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-
         public Account Regist(Account account)
         {
-            if (registBO.UserInsert(account) > 0)
+            if (_registBO.UserInsert(account) > 0)
                 return account;
             else
             {
                 account.Message = "註冊失敗";
             }
             return account;
-        } 
+        }
+
+        #endregion
     }
 }

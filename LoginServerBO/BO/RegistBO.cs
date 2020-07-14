@@ -2,6 +2,7 @@
 using KevanFramework.DataAccessDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL;
 using LoginDTO.DTO;
+using LoginServerBO.BO.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,25 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.BO
 {
-    public class RegistBO
+    public class RegistBO : IRegistBO
     {
+        #region 屬性
+
         private DataAccess _dataAccess = null;
+
+        #endregion
+
+        #region 建構子
 
         public RegistBO()
         {
             DataAccessIO.Register<IDataAccess, DataAccess>();
             _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
         }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 驗證帳號是否重複
@@ -55,5 +66,7 @@ namespace LoginServerBO.BO
             string sqlStr = "Insert into [dbo].[User] (AccountName,UserName,Password,Phone,Email) Values(@p0,@p1,@p2,@p3,@p4)";
             return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
         }
+
+        #endregion
     }
 }

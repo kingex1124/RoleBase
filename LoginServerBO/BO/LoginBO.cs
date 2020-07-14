@@ -2,6 +2,7 @@
 using KevanFramework.DataAccessDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL;
 using LoginDTO.DTO;
+using LoginServerBO.BO.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -12,15 +13,25 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.BO
 {
-    public class LoginBO
+    public class LoginBO : ILoginBO
     {
+        #region 屬性
+
         private DataAccess _dataAccess = null;
+
+        #endregion
+
+        #region 建構子
 
         public LoginBO()
         {
             DataAccessIO.Register<IDataAccess, DataAccess>();
             _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
         }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 查找帳號
@@ -73,5 +84,7 @@ namespace LoginServerBO.BO
 
             return _dataAccess.QueryDataTable<RoleDTO>(sqlStr, param.ToArray());
         }
+
+        #endregion
     }
 }

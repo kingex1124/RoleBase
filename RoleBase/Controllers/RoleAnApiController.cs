@@ -1,4 +1,5 @@
 ﻿using LoginServerBO.Service;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,22 @@ namespace RoleBase.Controllers
 {
     public class RoleAnApiController : ApiController
     {
-        RoleService roleService = new RoleService();
+        #region 屬性
+
+        IRoleService _roleService;
+
+        #endregion
+
+        #region 建構子
+
+        public RoleAnApiController()
+        {
+            _roleService = new RoleService();
+        }
+
+        #endregion
+
+        #region Action
 
         /// <summary>
         /// 取得角色資料
@@ -24,7 +40,7 @@ namespace RoleBase.Controllers
         public IEnumerable<RoleVO> RoleAddEditDelete()
         {
             // Thread.Sleep(1000);
-            var roleData = roleService.GetRoleData();
+            var roleData = _roleService.GetRoleData();
             return roleData;
         }
 
@@ -41,7 +57,7 @@ namespace RoleBase.Controllers
                 roleVO.Message = "請填寫必填欄位";
             else
             {
-                var result = roleService.AddRole(roleVO);
+                var result = _roleService.AddRole(roleVO);
 
                 if (!string.IsNullOrEmpty(result))
                     roleVO.Message = result;
@@ -58,7 +74,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public string DeleteRole(RoleVO roleVO)
         {
-            var result = roleService.DeleteRole(roleVO.RoleID.ToString());
+            var result = _roleService.DeleteRole(roleVO.RoleID.ToString());
 
             return result;
         }
@@ -72,7 +88,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public string EditRole(RoleVO roleVO)
         {
-            var result = roleService.EditRole(roleVO);
+            var result = _roleService.EditRole(roleVO);
            
             return result;
         }
@@ -87,7 +103,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public IEnumerable<UserCheckVO> GetUserByRole(RoleVO roleVO)
         {
-            var userCheckData = roleService.GetUserCheckByRole(roleVO.RoleID.ToString());
+            var userCheckData = _roleService.GetUserCheckByRole(roleVO.RoleID.ToString());
             return userCheckData;
         }
 
@@ -102,7 +118,7 @@ namespace RoleBase.Controllers
         {
             string result = string.Empty;
             //處理有關選時的行為
-            result = roleService.SaveRoleUserSetting(userCheckVO);
+            result = _roleService.SaveRoleUserSetting(userCheckVO);
             return result;
         }
 
@@ -118,9 +134,11 @@ namespace RoleBase.Controllers
             string result = string.Empty;
 
             //處理清空所有check時的行為
-            result = roleService.ClearRoleUserByRoleID(roleVO.RoleID.ToString());
+            result = _roleService.ClearRoleUserByRoleID(roleVO.RoleID.ToString());
 
             return result;
         }
+
+        #endregion
     }
 }
