@@ -80,7 +80,7 @@ namespace RoleBase.Controllers
 
         public ActionResult Regist()
         {
-            return View();
+            return View("Regist");
         }
 
         [HttpPost]
