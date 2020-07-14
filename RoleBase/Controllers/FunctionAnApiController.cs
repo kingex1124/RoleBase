@@ -1,4 +1,5 @@
 ﻿using LoginServerBO.Service;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,24 @@ namespace RoleBase.Controllers
 {
     public class FunctionAnApiController : ApiController
     {
-        FunctionService functionService = new FunctionService();
-        RoleService roleService = new RoleService();
+        #region 屬性
+
+        IFunctionService _functionService;
+        IRoleService _roleService;
+
+        #endregion
+
+        #region 建構子
+
+        public FunctionAnApiController()
+        {
+            _functionService = new FunctionService();
+            _roleService = new RoleService();
+        }
+
+        #endregion
+
+        #region Action
 
         /// <summary>
         /// 取得Function資料
@@ -23,7 +40,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public IEnumerable<FunctionVO> FunctionAddEditDelete()
         {
-            var functionData = functionService.GetFunctionData();
+            var functionData = _functionService.GetFunctionData();
             return functionData;
         }
 
@@ -40,7 +57,7 @@ namespace RoleBase.Controllers
                 functionVO.Message = "請填寫必填欄位";
             else
             {
-                var result = functionService.AddFunction(functionVO);
+                var result = _functionService.AddFunction(functionVO);
 
                 if (!string.IsNullOrEmpty(result))
                     functionVO.Message = result;
@@ -57,7 +74,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public string DeleteFunction(FunctionVO functionVO)
         {
-            var result = functionService.DeleteFunction(functionVO.FunctionID.ToString());
+            var result = _functionService.DeleteFunction(functionVO.FunctionID.ToString());
 
             return result;
         }
@@ -72,7 +89,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public string EditFunction(FunctionVO functionVO)
         {
-            var result = functionService.EditFunction(functionVO);
+            var result = _functionService.EditFunction(functionVO);
 
             return result;
         }
@@ -86,7 +103,7 @@ namespace RoleBase.Controllers
         public IEnumerable<RoleVO> RoleFunctionEdit()
         {
             // Thread.Sleep(1000);
-            var roleData = roleService.GetRoleData();
+            var roleData = _roleService.GetRoleData();
             return roleData;
         }
 
@@ -100,7 +117,7 @@ namespace RoleBase.Controllers
         [HttpPost]
         public IEnumerable<FunctionCheckVO> GetFunctionByRole(RoleVO roleVO)
         {
-            var functionCheckData = functionService.GetFunctionCheckByRole(roleVO.RoleID.ToString());
+            var functionCheckData = _functionService.GetFunctionCheckByRole(roleVO.RoleID.ToString());
             return functionCheckData;
         }
 
@@ -115,7 +132,7 @@ namespace RoleBase.Controllers
         {
             string result = string.Empty;
             //處理有關選時的行為
-            result = functionService.SaveRoleFunctionSetting(functionCheckVO);
+            result = _functionService.SaveRoleFunctionSetting(functionCheckVO);
             return result;
         }
 
@@ -131,9 +148,11 @@ namespace RoleBase.Controllers
             string result = string.Empty;
 
             //處理清空所有check時的行為
-            result = functionService.ClearRoleFunctionByRoleID(roleVO.RoleID.ToString());
+            result = _functionService.ClearRoleFunctionByRoleID(roleVO.RoleID.ToString());
 
             return result;
         }
+
+        #endregion
     }
 }

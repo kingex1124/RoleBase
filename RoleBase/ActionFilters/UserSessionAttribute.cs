@@ -1,6 +1,7 @@
 ﻿using LoginDTO.DTO;
 using LoginServerBO.BO;
 using LoginServerBO.Service;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using RoleBase.CurrentStatus;
 using System;
@@ -14,13 +15,28 @@ namespace RoleBase.ActionFilters
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class UserSessionAttribute : ActionFilterAttribute
     {
+        #region 屬性
+
+        ISecurityService _securityService;
+
+        #endregion
+
+        #region 建構子
+
+        public UserSessionAttribute()
+        {
+            _securityService = new SecurityService();
+        }
+
+        #endregion
+
+        #region 方法
+
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             HttpSessionStateBase session = filterContext.HttpContext.Session;
             if (session[AccountInfoData.LoginInfo] != null || session.IsNewSession ? !session.IsNewSession : false)
             {
-                SecurityService securityService = new SecurityService();
-
                 List<SecurityRoleFunctionDTO> securityRoleFunctions = ((SecurityLevel)session[AccountInfoData.LoginInfo]).SecurityUrl;
 
                 //foreach (RoleDTO roleArr in SessionConnectionPool.CurrentUserInfo.SecurityRole)
@@ -75,5 +91,8 @@ namespace RoleBase.ActionFilters
                 };
             }
         }
+
+        #endregion
+
     }
 }

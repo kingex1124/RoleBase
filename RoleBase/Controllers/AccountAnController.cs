@@ -1,5 +1,6 @@
 ﻿using LoginDTO.DTO;
 using LoginServerBO.Service;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using Newtonsoft.Json;
 using RoleBase.ActionFilters;
@@ -16,10 +17,26 @@ namespace RoleBase.Controllers
 {
     public class AccountAnController : Controller
     {
-        RegistService registService = new RegistService();
-        LoginService loginService = new LoginService();
-        SecurityService securityService = new SecurityService();
-        // GET: AccountAn
+        #region 屬性
+
+        IRegistService _registService;
+        ILoginService _loginService;
+        ISecurityService _securityService;
+
+        #endregion
+
+        #region 建構子
+
+        public AccountAnController()
+        {
+            _registService = new RegistService();
+            _loginService = new LoginService();
+            _securityService = new SecurityService();
+        }
+
+        #endregion
+
+        #region Action
 
         /// <summary>
         /// 登入
@@ -38,7 +55,7 @@ namespace RoleBase.Controllers
             }
             else
             {
-                accountInfoData = loginService.AccountValid(accountInfoData);
+                accountInfoData = _loginService.AccountValid(accountInfoData);
                 if (!string.IsNullOrWhiteSpace(accountInfoData.Message))
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -46,7 +63,7 @@ namespace RoleBase.Controllers
                 }
                 else
                 {
-                    UserDTO user = loginService.GetUserDataByAccountName(accountInfoData);
+                    UserDTO user = _loginService.GetUserDataByAccountName(accountInfoData);
                     SecurityLevel securityLevel = new SecurityLevel();
                     AccountInfoData userInfoData = new AccountInfoData()
                     {
@@ -55,10 +72,10 @@ namespace RoleBase.Controllers
                         UserName = accountInfoData.UserName
                     };
                     securityLevel.UserData = userInfoData;
-                    securityLevel.SecurityRole = loginService.GetRoleDataByUserID(user.UserID.ToString()).ToList();
+                    securityLevel.SecurityRole = _loginService.GetRoleDataByUserID(user.UserID.ToString()).ToList();
 
                     foreach (var item in securityLevel.SecurityRole)
-                        securityLevel.SecurityUrl.AddRange(securityService.GetSecurityRoleFunction(item.RoleID.ToString()));
+                        securityLevel.SecurityUrl.AddRange(_securityService.GetSecurityRoleFunction(item.RoleID.ToString()));
 
                     SessionConnectionPool.SetCurrentUserInfo(securityLevel);
 
@@ -94,12 +111,12 @@ namespace RoleBase.Controllers
             }
             else
             {
-                account = registService.RegistValid(account);
+                account = _registService.RegistValid(account);
                 if (!string.IsNullOrWhiteSpace(account.Message))
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 else
                 {
-                    registService.Regist(account);
+                    _registService.Regist(account);
                     Response.StatusCode = (int)HttpStatusCode.OK;
                 }
             }
@@ -120,5 +137,7 @@ namespace RoleBase.Controllers
         {
             return Json(account, JsonRequestBehavior.AllowGet);
         }
+
+        #endregion
     }
 }

@@ -2,7 +2,9 @@
 using KevanFramework.DataAccessDAL.Common;
 using LoginDTO.DTO;
 using LoginServerBO.BO;
+using LoginServerBO.BO.Interface;
 using LoginServerBO.Helper;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -13,15 +15,26 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.Service
 {
-    public class RoleService
+    public class RoleService : IRoleService
     {
-        RoleBO roleBO;
-        FunctionBO functionBO;
+        #region 屬性
+
+        IRoleBO _roleBO;
+        IFunctionBO _functionBO;
+
+        #endregion
+
+        #region 建構子
+
         public RoleService()
         {
-            roleBO = new RoleBO();
-            functionBO = new FunctionBO();
+            _roleBO = new RoleBO();
+            _functionBO = new FunctionBO();
         }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 取得Role資料
@@ -29,7 +42,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public IEnumerable<RoleVO> GetRoleData()
         {
-            IEnumerable<RoleVO> result = Utility.MigrationIEnumerable<RoleDTO, RoleVO>(roleBO.GetRoleData());
+            IEnumerable<RoleVO> result = Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleBO.GetRoleData());
 
             return result;
         }
@@ -41,7 +54,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string AddRole(RoleVO roleVO)
         {
-            int result = roleBO.AddRole(roleVO);
+            int result = _roleBO.AddRole(roleVO);
 
             if (result > 0)
                 return "";
@@ -62,11 +75,11 @@ namespace LoginServerBO.Service
 
             SqlTransaction tran = conn.BeginTransaction();
               
-            int deleteRoleUserResult = roleBO.DeleteRoleUserByRoleID(id, ref conn, ref tran);
+            int deleteRoleUserResult = _roleBO.DeleteRoleUserByRoleID(id, ref conn, ref tran);
 
-            int deleteRoleFunctionResult = functionBO.DeleteRoleFunctionByRoleID(id, ref conn, ref tran);
+            int deleteRoleFunctionResult = _functionBO.DeleteRoleFunctionByRoleID(id, ref conn, ref tran);
 
-            int deleteRoleResult = roleBO.DeleteRole(id, ref conn, ref tran);
+            int deleteRoleResult = _roleBO.DeleteRole(id, ref conn, ref tran);
 
             if (deleteRoleUserResult >= 0 && deleteRoleFunctionResult >= 0 && deleteRoleResult > 0)
                 result = "";
@@ -85,7 +98,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string EditRole(RoleVO roleVO)
         {
-            int result = roleBO.EditRole(roleVO);
+            int result = _roleBO.EditRole(roleVO);
             if (result > 0)
                 return "";
             else
@@ -99,7 +112,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID)
         {
-            IEnumerable<UserCheckVO> result = Utility.MigrationIEnumerable<UserCheckDTO, UserCheckVO>(roleBO.GetUserCheckByRole(roleID));
+            IEnumerable<UserCheckVO> result = Utility.MigrationIEnumerable<UserCheckDTO, UserCheckVO>(_roleBO.GetUserCheckByRole(roleID));
             return result;
         }
 
@@ -129,7 +142,7 @@ namespace LoginServerBO.Service
                 conn.Open();
 
                 SqlTransaction tran = conn.BeginTransaction();
-                int deleteResult = roleBO.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
+                int deleteResult = _roleBO.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
 
                 if (deleteResult < 0)
                 {
@@ -140,7 +153,7 @@ namespace LoginServerBO.Service
 
                 int insertResult = 0;
                 foreach (var item in roleUserDTOs)
-                    insertResult += roleBO.InsertRoleUser(item, ref conn, ref tran);
+                    insertResult += _roleBO.InsertRoleUser(item, ref conn, ref tran);
 
                 tran.Commit();
                 if (insertResult < 0)
@@ -166,7 +179,7 @@ namespace LoginServerBO.Service
             conn.Open();
 
             SqlTransaction tran = conn.BeginTransaction();
-            int deleteResult = roleBO.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
+            int deleteResult = _roleBO.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
 
            
             if (deleteResult < 0)
@@ -179,5 +192,7 @@ namespace LoginServerBO.Service
 
             return result; 
         }
+
+        #endregion
     }
 }

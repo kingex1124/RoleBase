@@ -1,5 +1,7 @@
 ﻿using LoginDTO.DTO;
 using LoginServerBO.BO;
+using LoginServerBO.BO.Interface;
+using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -9,13 +11,24 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.Service
 {
-    public class LoginService
+    public class LoginService : ILoginService
     {
-        LoginBO loginBO;
+        #region 屬性
+
+        ILoginBO _loginBO;
+
+        #endregion
+
+        #region 建構子
+
         public LoginService()
         {
-            loginBO = new LoginBO();
+            _loginBO = new LoginBO();
         }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 驗證登入照號密碼
@@ -25,14 +38,14 @@ namespace LoginServerBO.Service
         public AccountInfoData AccountValid(AccountInfoData accountInfoData)
         {
             //驗證帳號
-            if(!loginBO.FindAccountName(accountInfoData.AccountName).Any())
+            if (!_loginBO.FindAccountName(accountInfoData.AccountName).Any())
             {
                 accountInfoData.Message = "該帳號不存在。";
                 return accountInfoData;
             }
 
             //驗證密碼
-            if(loginBO.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
+            if (_loginBO.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
             {
                 accountInfoData.Message = "密碼輸入錯誤。";
                 return accountInfoData;
@@ -48,7 +61,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData)
         {
-            return loginBO.FindAccountData(accountInfoData.AccountName);
+            return _loginBO.FindAccountData(accountInfoData.AccountName);
         }
 
         /// <summary>
@@ -58,7 +71,9 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public IEnumerable<RoleDTO> GetRoleDataByUserID(string userID)
         {
-            return loginBO.GetRoleDataByAccountName(userID);
+            return _loginBO.GetRoleDataByAccountName(userID);
         }
+
+        #endregion
     }
 }

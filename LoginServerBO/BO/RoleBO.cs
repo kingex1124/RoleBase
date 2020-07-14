@@ -2,6 +2,7 @@
 using KevanFramework.DataAccessDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL;
 using LoginDTO.DTO;
+using LoginServerBO.BO.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -13,15 +14,25 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.BO
 {
-    public class RoleBO
+    public class RoleBO : IRoleBO
     {
+        #region 屬性
+
         private DataAccess _dataAccess = null;
+
+        #endregion
+
+        #region 建構子
 
         public RoleBO()
         {
             DataAccessIO.Register<IDataAccess, DataAccess>();
             _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
         }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 取得Role資料
@@ -159,5 +170,7 @@ case when A.[RoleID] IS NULL then CAST(0 AS BIT) Else CAST(1 AS BIT) end AS 'Che
                 throw;
             }
         }
+
+        #endregion
     }
 }

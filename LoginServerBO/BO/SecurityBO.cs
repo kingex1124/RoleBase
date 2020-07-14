@@ -2,6 +2,7 @@
 using KevanFramework.DataAccessDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL;
 using LoginDTO.DTO;
+using LoginServerBO.BO.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,25 @@ using System.Threading.Tasks;
 
 namespace LoginServerBO.BO
 {
-    public class SecurityBO
+    public class SecurityBO : ISecurityBO
     {
+        #region 屬性
+
         private DataAccess _dataAccess = null;
+
+        #endregion
+
+        #region 建構子
 
         public SecurityBO()
         {
             DataAccessIO.Register<IDataAccess, DataAccess>();
             _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
         }
+
+        #endregion
+
+        #region 方法
 
         /// <summary>
         /// 取得該角色ID所具備的權限功能
@@ -39,5 +50,7 @@ namespace LoginServerBO.BO
 
             return _dataAccess.QueryDataTable<SecurityRoleFunctionDTO>(sqlStr, param.ToArray());
         }
+
+        #endregion
     }
 }
