@@ -111,6 +111,10 @@ namespace RoleBase.Controllers.Tests
 
             #region assert
 
+            // 測試回應狀態
+            Assert.AreEqual(_target.CurrentHttpContext.Response.StatusCode, 200);
+
+            // 測試註冊結果
             Assert.AreEqual(result.UserName, "Kevan");
             Assert.AreEqual(result.Password, "1qaz@WSX");
             Assert.AreEqual(result.PasswordConfirm, "1qaz@WSX");

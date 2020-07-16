@@ -2,6 +2,7 @@
 using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using RoleBase.ActionFilters;
+using RoleBase.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,20 @@ namespace RoleBase.Controllers
 
         IRoleService _roleService;
 
+        private HttpContextBase _currentHttpContext;
+
+        public HttpContextBase CurrentHttpContext
+        {
+            get
+            {
+                if (_currentHttpContext != null)
+                    return _currentHttpContext;
+
+                return HttpContextFactory.GetHttpContext();
+            }
+            set { _currentHttpContext = value; }
+        }
+
         #endregion
 
         #region 建構子
@@ -24,6 +39,11 @@ namespace RoleBase.Controllers
         public RoleController()
         {
             _roleService = new RoleService();
+        }
+
+        public RoleController(IRoleService roleService)
+        {
+            _roleService = roleService;
         }
 
         #endregion
@@ -37,7 +57,7 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleManagement()
         {
-            return View();
+            return View("RoleManagement");
         }
 
         /// <summary>
@@ -62,7 +82,7 @@ namespace RoleBase.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 roleVO.Message = "請填寫必填欄位";
             }
             else
@@ -71,11 +91,11 @@ namespace RoleBase.Controllers
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     roleVO.Message = result;
                 }
                 else
-                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             return Json(roleVO, JsonRequestBehavior.AllowGet);
         }
@@ -93,11 +113,11 @@ namespace RoleBase.Controllers
 
             if (!string.IsNullOrEmpty(result))
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
-                Response.StatusCode = (int)HttpStatusCode.OK;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -114,11 +134,11 @@ namespace RoleBase.Controllers
 
             if (!string.IsNullOrEmpty(result))
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
-                Response.StatusCode = (int)HttpStatusCode.OK;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -160,16 +180,16 @@ namespace RoleBase.Controllers
 
             if (roleID == null)
             {
-                //處理有關選時的行為
+                //處理有關聯時的行為
                 result = _roleService.SaveRoleUserSetting(userCheckVO);
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 else
-                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             else
             {
@@ -178,11 +198,11 @@ namespace RoleBase.Controllers
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 else
-                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
