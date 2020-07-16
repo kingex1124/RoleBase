@@ -3,6 +3,7 @@ using LoginServerBO.Service;
 using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using RoleBase.CurrentStatus;
+using RoleBase.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +17,44 @@ namespace RoleBase.Controllers
     {
         #region 屬性
 
-        IRegistService _registService;
-        ILoginService _loginService; 
-        ISecurityService _securityService;
+        public IRegistService _registService;
+        public ILoginService _loginService;
+        public ISecurityService _securityService;
+
+        private HttpContextBase _currentHttpContext;
+
+        public HttpContextBase CurrentHttpContext
+        {
+            get
+            {
+                if (_currentHttpContext != null)
+                    return _currentHttpContext;
+
+                return HttpContextFactory.GetHttpContext();
+            }
+            set { _currentHttpContext = value; }
+        }
+
+        private SecurityLevel _currentUserInfo;
+
+        public SecurityLevel CurrentSecurityLevel
+        {
+            get
+            {
+                if (_currentUserInfo != null)
+                    return _currentUserInfo;
+
+                return SessionConnectionPool.GetCurrentUserInfo;
+            }
+            set 
+            {
+                if (HttpContext != null)
+                    SessionConnectionPool.SetCurrentUserInfo(value);
+                else
+                    SessionConnectionPool.SetCurrentUserInfo(CurrentHttpContext, value);
+                _currentUserInfo = value; 
+            }
+        }
 
         #endregion
 
@@ -31,13 +67,20 @@ namespace RoleBase.Controllers
             _securityService = new SecurityService();
         }
 
+        public AccountController(IRegistService registService, ILoginService loginService, ISecurityService securityService)
+        {
+            _registService = registService;
+            _loginService = loginService;
+            _securityService = securityService;
+        }
+
         #endregion
 
         #region Action
 
         public ActionResult Regist()
         {
-            return View();
+            return View("Regist");
         }
 
         [HttpPost]
@@ -46,18 +89,18 @@ namespace RoleBase.Controllers
 
             if (!ModelState.IsValid)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 account.Message = "請填寫必填欄位";
             }
             else
             {
                 account = _registService.RegistValid(account);
                 if (!string.IsNullOrWhiteSpace(account.Message))
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 else
                 {
                     _registService.Regist(account);
-                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
                 }
             }
             return Json(account, JsonRequestBehavior.AllowGet);
@@ -65,7 +108,7 @@ namespace RoleBase.Controllers
 
         public ActionResult Login()
         {
-            return View();
+            return View("Login");
         }
 
         [HttpPost]
@@ -73,7 +116,7 @@ namespace RoleBase.Controllers
         {
             if (!ModelState.IsValid)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 accountInfoData.Message = "請填寫必填欄位";
                 return View(accountInfoData);
             }
@@ -82,7 +125,7 @@ namespace RoleBase.Controllers
                 accountInfoData = _loginService.AccountValid(accountInfoData);
                 if (!string.IsNullOrWhiteSpace(accountInfoData.Message))
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return View(accountInfoData);
                 }
                 else
@@ -92,18 +135,30 @@ namespace RoleBase.Controllers
                     AccountInfoData userInfoData = new AccountInfoData()
                     {
                         UserId = user.UserID,
-                        AccountName = accountInfoData.AccountName,
-                        UserName = accountInfoData.UserName
+                        AccountName = accountInfoData.AccountName
                     };
+
                     securityLevel.UserData = userInfoData;
                     securityLevel.SecurityRole = _loginService.GetRoleDataByUserID(user.UserID.ToString()).ToList();
 
                     foreach (var item in securityLevel.SecurityRole)
                         securityLevel.SecurityUrl.AddRange(_securityService.GetSecurityRoleFunction(item.RoleID.ToString()));
 
-                    SessionConnectionPool.SetCurrentUserInfo(securityLevel);
 
-                    Session["UserName"] = user.UserName;
+                    CurrentSecurityLevel = securityLevel;
+                    CurrentHttpContext.Session["UserName"] = user.UserName;
+
+                    // UnitTest用
+                    //if (HttpContext == null)
+                    //{
+                    //    CurrentHttpContext.Session[AccountInfoData.LoginInfo] = securityLevel;
+                    //    CurrentHttpContext.Session["UserName"] = user.UserName;
+                    //}
+                    //else
+                    //{
+                    //    SessionConnectionPool.SetCurrentUserInfo(securityLevel);
+                    //    Session["UserName"] = user.UserName;
+                    //}
 
                     return RedirectToAction("Index", "Home");
                 }
@@ -112,7 +167,8 @@ namespace RoleBase.Controllers
 
         public ActionResult Logout()
         {
-            Session.Clear();
+            CurrentHttpContext.Session.Clear();
+
             return RedirectToAction("Login", "Account");
         }
 
