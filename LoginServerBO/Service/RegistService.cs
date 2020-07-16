@@ -25,6 +25,11 @@ namespace LoginServerBO.Service
             _registBO = new RegistBO();
         }
 
+        public RegistService(IRegistBO registBO)
+        {
+            _registBO = registBO;
+        }
+
         #endregion
 
         #region 方法
