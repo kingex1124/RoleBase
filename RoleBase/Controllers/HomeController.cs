@@ -16,7 +16,7 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         public ActionResult Index()
         {
-            return View();
+            return View("Index");
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         public ActionResult NoCompetence()
         {
-            return View();
+            return View("NoCompetence");
         }
 
         #endregion
