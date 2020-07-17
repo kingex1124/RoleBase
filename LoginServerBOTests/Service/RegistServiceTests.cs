@@ -49,10 +49,7 @@ namespace LoginServerBO.Service.Tests
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
             // 回傳的參數
-            List<UserDTO> reUserDTOList = new List<UserDTO>()
-            {
-              
-            };
+            List<UserDTO> reUserDTOList = new List<UserDTO>(){};
 
             string reMessage = account.Message;
 
