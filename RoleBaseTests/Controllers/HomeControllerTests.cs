@@ -29,6 +29,8 @@ namespace RoleBase.Controllers.Tests
 
         #region 測試方法
 
+        #region Index
+
         /// <summary>
         /// 首頁畫面
         /// </summary>
@@ -43,6 +45,10 @@ namespace RoleBase.Controllers.Tests
             Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "Index");
         }
 
+        #endregion
+
+        #region NoCompetence
+
         /// <summary>
         /// 無權限畫面
         /// </summary>
@@ -56,6 +62,8 @@ namespace RoleBase.Controllers.Tests
             // 驗證 Action
             Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "NoCompetence");
         }
+
+        #endregion
 
         #endregion
     }

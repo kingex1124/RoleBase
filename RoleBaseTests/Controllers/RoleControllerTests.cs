@@ -35,6 +35,8 @@ namespace RoleBase.Controllers.Tests
 
         #endregion
 
+        #region 測試方法
+
         #region RoleManagement
 
         /// <summary>
@@ -65,7 +67,9 @@ namespace RoleBase.Controllers.Tests
 
             List<RoleVO> reRoleVO = new List<RoleVO>()
             {
-                new RoleVO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"}
+                new RoleVO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
+                new RoleVO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
+                new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
             _roleService.Stub(o => o.GetRoleData()).Return(reRoleVO);
@@ -81,7 +85,12 @@ namespace RoleBase.Controllers.Tests
             #region assert
 
             // 驗證資料
-            Assert.AreEqual((List<RoleVO>)result.Model, reRoleVO);
+            for (int i = 0; i < ((List<RoleVO>)result.Model).Count; i++)
+            {
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVO[i].RoleID);
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVO[i].RoleName);
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVO[i].Description);
+            }
 
             #endregion
         }
@@ -368,7 +377,9 @@ namespace RoleBase.Controllers.Tests
 
             List<RoleVO> reRoleVO = new List<RoleVO>()
             {
-                new RoleVO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"}
+                new RoleVO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
+                new RoleVO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
+                new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
             _roleService.Stub(o => o.GetRoleData()).Return(reRoleVO);
@@ -384,7 +395,13 @@ namespace RoleBase.Controllers.Tests
             #region assert
 
             // 驗證資料
-            Assert.AreEqual((List<RoleVO>)result.Model, reRoleVO);
+            for (int i = 0; i < ((List<RoleVO>)result.Model).Count; i++)
+            {
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVO[i].RoleID);
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVO[i].RoleName);
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVO[i].Description);
+            }
+           
 
             #endregion
         }
@@ -406,7 +423,9 @@ namespace RoleBase.Controllers.Tests
 
             List<UserCheckVO> reUserCheckVO = new List<UserCheckVO>()
             {
-                new UserCheckVO(){ RoleID = 1 , UserID = 1 , Check = true , UserName = "kevan" , AccountName = "kevan"}
+                new UserCheckVO(){ RoleID = 1 , UserID = 1 , Check = true , UserName = "kevan" , AccountName = "kevan"},
+                new UserCheckVO(){ RoleID = 1 , UserID = 2 , Check = true , UserName = "A" , AccountName = "A"},
+                new UserCheckVO(){ RoleID = 1 , UserID = 3 , Check = false , UserName = "B" , AccountName = "B"}
             };
 
             _roleService.Stub(o => o.GetUserCheckByRole(Arg<string>.Is.Anything)).Return(reUserCheckVO);
@@ -422,8 +441,14 @@ namespace RoleBase.Controllers.Tests
             #endregion
 
             #region assert
-
-            Assert.AreEqual(result, reUserCheckVO);
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(result[i].RoleID, reUserCheckVO[i].RoleID);
+                Assert.AreEqual(result[i].UserID, reUserCheckVO[i].UserID);
+                Assert.AreEqual(result[i].Check, reUserCheckVO[i].Check);
+                Assert.AreEqual(result[i].UserName, reUserCheckVO[i].UserName);
+                Assert.AreEqual(result[i].AccountName, reUserCheckVO[i].AccountName);
+            }
 
             #endregion
         }
@@ -614,6 +639,8 @@ namespace RoleBase.Controllers.Tests
 
             #endregion
         }
+
+        #endregion
 
         #endregion
     }
