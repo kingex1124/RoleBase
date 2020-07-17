@@ -237,14 +237,43 @@ namespace RoleBase.Controllers.Tests
             // 透過ID所取得腳色資料包
             List<RoleDTO> reRoleDTOList = new List<RoleDTO>()
             {
-                new RoleDTO(){ RoleID = 1 , RoleName = "Admin", Description = "最高權限"}
+                new RoleDTO(){ RoleID = 1 , RoleName = "Admin", Description = "最高權限"},
+                new RoleDTO(){ RoleID = 2 , RoleName = "A", Description = "A1"},
+                new RoleDTO(){ RoleID = 3 , RoleName = "B", Description = "B1"}
             };
 
             // 透過ID取得該使用者所有的權限資料包
-            List<SecurityRoleFunctionDTO> reSRF = new List<SecurityRoleFunctionDTO>()
+            List<SecurityRoleFunctionDTO> reSRFRole1 = new List<SecurityRoleFunctionDTO>()
             {
-                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "首頁" , Url ="/Home/Index"}
+                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
             };
+
+            List<SecurityRoleFunctionDTO> reSRFRole2 = new List<SecurityRoleFunctionDTO>()
+            {
+                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
+            };
+
+            List<SecurityRoleFunctionDTO> reSRFRole3 = new List<SecurityRoleFunctionDTO>()
+            {
+                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
+            };
+
+            List<SecurityRoleFunctionDTO> reSRF = new List<SecurityRoleFunctionDTO>();
+            reSRF.AddRange(reSRFRole1);
+            reSRF.AddRange(reSRFRole2);
+            reSRF.AddRange(reSRFRole3);
 
             // 驗證使用者帳號密碼
             _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
@@ -256,7 +285,9 @@ namespace RoleBase.Controllers.Tests
             _loginService.Stub(o => o.GetRoleDataByUserID(Arg<string>.Is.Anything)).Return(reRoleDTOList);
 
             // 取得功能權限
-            _securityService.Stub(o => o.GetSecurityRoleFunction(Arg<string>.Is.Anything)).Return(reSRF);
+            _securityService.Stub(o => o.GetSecurityRoleFunction("1")).Return(reSRFRole1);
+            _securityService.Stub(o => o.GetSecurityRoleFunction("2")).Return(reSRFRole2);
+            _securityService.Stub(o => o.GetSecurityRoleFunction("3")).Return(reSRFRole3);
 
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
@@ -281,14 +312,20 @@ namespace RoleBase.Controllers.Tests
             var sessionInfo = _target.CurrentHttpContext.Session["LoginInfo"] as SecurityLevel;
 
             // 驗證權限資料
-            Assert.AreEqual(sessionInfo.SecurityRole[0].RoleID, 1);
-            Assert.AreEqual(sessionInfo.SecurityRole[0].RoleName, "Admin");
-            Assert.AreEqual(sessionInfo.SecurityRole[0].Description, "最高權限");
+            for (int i = 0; i < sessionInfo.SecurityRole.Count; i++)
+            {
+                Assert.AreEqual(sessionInfo.SecurityRole[i].RoleID, reRoleDTOList[i].RoleID);
+                Assert.AreEqual(sessionInfo.SecurityRole[i].RoleName, reRoleDTOList[i].RoleName);
+                Assert.AreEqual(sessionInfo.SecurityRole[i].Description, reRoleDTOList[i].Description);
+            }
 
-            Assert.AreEqual(sessionInfo.SecurityUrl[0].RoleName, "Admin");
-            Assert.AreEqual(sessionInfo.SecurityUrl[0].Url, "/Home/Index");
-            Assert.AreEqual(sessionInfo.SecurityUrl[0].Description, "首頁");
-
+            for (int i = 0; i < sessionInfo.SecurityUrl.Count; i++)
+            {
+                Assert.AreEqual(sessionInfo.SecurityUrl[i].RoleName, reSRF[i].RoleName);
+                Assert.AreEqual(sessionInfo.SecurityUrl[i].Url, reSRF[i].Url);
+                Assert.AreEqual(sessionInfo.SecurityUrl[i].Description, reSRF[i].Description);
+            }
+           
             Assert.AreEqual(sessionInfo.UserData.UserId , 1);
             Assert.AreEqual(sessionInfo.UserData.AccountName, "kevan");
 
@@ -341,7 +378,9 @@ namespace RoleBase.Controllers.Tests
             #region assert
 
             // 驗證資料
-            Assert.AreEqual((AccountInfoData)result.Model, reData);
+            Assert.AreEqual(((AccountInfoData)result.Model).AccountName, reData.AccountName);
+            Assert.AreEqual(((AccountInfoData)result.Model).Password, reData.Password);
+            Assert.AreEqual(((AccountInfoData)result.Model).Message, reData.Message);
 
             #endregion
         }
@@ -389,7 +428,9 @@ namespace RoleBase.Controllers.Tests
             #region assert
 
             // 驗證資料
-            Assert.AreEqual((AccountInfoData)result.Model, reData);
+            Assert.AreEqual(((AccountInfoData)result.Model).AccountName, reData.AccountName);
+            Assert.AreEqual(((AccountInfoData)result.Model).Password, reData.Password);
+            Assert.AreEqual(((AccountInfoData)result.Model).Message, reData.Message);
 
             #endregion
         }
