@@ -1,4 +1,5 @@
 ﻿using LoginDTO.DTO;
+using LoginVO.VO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,11 @@ namespace LoginServerBO.BO.Interface
 {
     public interface ILoginBO
     {
-        IEnumerable<UserDTO> FindAccountName(string accountName);
-        UserDTO FindAccountData(string accountName);
-        IEnumerable<RoleDTO> GetRoleDataByAccountName(string userID);
+        AccountInfoData AccountValid(AccountInfoData accountInfoData);
+
+        UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData);
+
+        IEnumerable<RoleDTO> GetRoleDataByUserID(string userID);
 
     }
 }

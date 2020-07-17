@@ -3,6 +3,8 @@ using KevanFramework.DataAccessDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL;
 using LoginDTO.DTO;
 using LoginServerBO.BO.Interface;
+using LoginServerBO.Repository;
+using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,9 @@ namespace LoginServerBO.BO
     {
         #region 屬性
 
-        private DataAccess _dataAccess = null;
+        IUserRepository _userRep;
+
+        IRoleRepository _roleRep;
 
         #endregion
 
@@ -25,8 +29,14 @@ namespace LoginServerBO.BO
 
         public LoginBO()
         {
-            DataAccessIO.Register<IDataAccess, DataAccess>();
-            _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
+            _userRep = new UserRepository();
+            _roleRep = new RoleRepository();
+        }
+
+        public LoginBO(IUserRepository userRep, IRoleRepository roleRep)
+        {
+            _userRep = userRep;
+            _roleRep = roleRep;
         }
 
         #endregion
@@ -34,55 +44,47 @@ namespace LoginServerBO.BO
         #region 方法
 
         /// <summary>
-        /// 查找帳號
+        /// 驗證登入帳號密碼
         /// </summary>
-        /// <param name="accountName"></param>
+        /// <param name="accountInfoData"></param>
         /// <returns></returns>
-        public IEnumerable<UserDTO> FindAccountName(string accountName)
+        public AccountInfoData AccountValid(AccountInfoData accountInfoData)
         {
-            List<string> param = new List<string>();
+            //驗證帳號
+            if (!_userRep.FindAccountName(accountInfoData.AccountName).Any())
+            {
+                accountInfoData.Message = "該帳號不存在。";
+                return accountInfoData;
+            }
 
-            string sqlStr = "Select * From [User] Where AccountName = @p0";
+            //驗證密碼
+            if (_userRep.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
+            {
+                accountInfoData.Message = "密碼輸入錯誤。";
+                return accountInfoData;
+            }
 
-            param.Add(accountName);
-
-            return _dataAccess.QueryDataTable<UserDTO>(sqlStr, param.ToArray());
+            return accountInfoData;
         }
 
         /// <summary>
-        /// 取得該帳號資料
+        /// 透過帳號名稱取得帳號資料
         /// </summary>
-        /// <param name="accountName"></param>
+        /// <param name="accountInfoData"></param>
         /// <returns></returns>
-        public UserDTO FindAccountData(string accountName)
+        public UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData)
         {
-            List<string> param = new List<string>();
-
-            string sqlStr = "Select * From [User] Where AccountName = @p0";
-
-            param.Add(accountName);
-
-            return _dataAccess.QueryDataTable<UserDTO>(sqlStr, param.ToArray()).FirstOrDefault();
+            return _userRep.FindAccountData(accountInfoData.AccountName);
         }
 
         /// <summary>
-        /// 透過帳號查找角色
+        /// 透過UserID取得角色資料
         /// </summary>
-        /// <param name="accountName"></param>
+        /// <param name="userID"></param>
         /// <returns></returns>
-        public IEnumerable<RoleDTO> GetRoleDataByAccountName(string userID)
+        public IEnumerable<RoleDTO> GetRoleDataByUserID(string userID)
         {
-            List<string> param = new List<string>();
-
-            string sqlStr = @"Select R.RoleID,R.RoleName,R.Description 
-                                From[User] U
-                                join[RoleUser] RU on  U.UserID = RU.UserID
-                                join[Role] R on RU.RoleID = R.RoleID
-                                where U.UserID = @p0";
-
-            param.Add(userID);
-
-            return _dataAccess.QueryDataTable<RoleDTO>(sqlStr, param.ToArray());
+            return _roleRep.GetRoleDataByAccountName(userID);
         }
 
         #endregion
