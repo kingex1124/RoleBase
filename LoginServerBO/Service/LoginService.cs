@@ -26,12 +26,17 @@ namespace LoginServerBO.Service
             _loginBO = new LoginBO();
         }
 
+        public LoginService(ILoginBO loginBO)
+        {
+            _loginBO = loginBO;
+        }
+
         #endregion
 
         #region 方法
 
         /// <summary>
-        /// 驗證登入照號密碼
+        /// 驗證登入帳號密碼
         /// </summary>
         /// <param name="accountInfoData"></param>
         /// <returns></returns>
