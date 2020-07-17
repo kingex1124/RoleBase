@@ -1,32 +1,35 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LoginServerBO.Service;
+using LoginServerBO.BO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LoginServerBO.BO.Interface;
+using LoginServerBO.Repository.Interface;
 using Rhino.Mocks;
 using LoginVO.VO;
 using LoginDTO.DTO;
 
-namespace LoginServerBO.Service.Tests
+namespace LoginServerBO.BO.Tests
 {
     [TestClass()]
-    public class LoginServiceTests
+    public class LoginBOTests
     {
         #region 屬性
 
-        ILoginBO _loginBO = MockRepository.GenerateStub<ILoginBO>();
-        LoginService _target;
+        IUserRepository _userRep = MockRepository.GenerateStub<IUserRepository>();
+
+        IRoleRepository _roleRep = MockRepository.GenerateStub<IRoleRepository>();
+
+        LoginBO _target;
 
         #endregion
 
         #region 建構子
 
-        public LoginServiceTests()
+        public LoginBOTests()
         {
-            _target = new LoginService(_loginBO);
+            _target = new LoginBO(_userRep, _roleRep);
         }
 
         #endregion
@@ -42,16 +45,23 @@ namespace LoginServerBO.Service.Tests
         [TestMethod()]
         public void AccountValidTest()
         {
-            #region arrange 
+            #region arrange (驗證成功)
 
             // 輸入的帳號
             AccountInfoData accountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan" };
 
-            AccountInfoData reAccountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan" };
+            List<UserDTO> reUserDTOList = new List<UserDTO>()
+            {
+                new UserDTO(){ UserID = 1, AccountName = "kevan" , Password = "1qaz@WSX" , UserName = "kevan" , Email = "kevan@gmail.com"}
+            };
+
+            UserDTO reUserDTO = new UserDTO() { UserID = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan", Email = "kevan@gmail.com" };
 
             string reMessage = accountID.Message;
 
-            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reAccountID);
+            _userRep.Stub(o => o.FindAccountName(Arg<string>.Is.Anything)).Return(reUserDTOList);
+
+            _userRep.Stub(o => o.FindAccountData(Arg<string>.Is.Anything)).Return(reUserDTO);
 
             #endregion
 
@@ -80,9 +90,11 @@ namespace LoginServerBO.Service.Tests
             // 輸入的帳號
             AccountInfoData accountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan" };
 
-            AccountInfoData reAccountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan" , Message = "該帳號不存在。" };
+            List<UserDTO> reUserDTOList = new List<UserDTO>() { };
 
-            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reAccountID);
+            string reMessage = "該帳號不存在。";
+
+            _userRep.Stub(o => o.FindAccountName(Arg<string>.Is.Anything)).Return(reUserDTOList);
 
             #endregion
 
@@ -94,7 +106,7 @@ namespace LoginServerBO.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccountID.Message);
+            Assert.AreEqual(result.Message, reMessage);
 
             #endregion
         }
@@ -111,9 +123,18 @@ namespace LoginServerBO.Service.Tests
             // 輸入的帳號
             AccountInfoData accountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "XXXXXX", UserName = "kevan" };
 
-            AccountInfoData reAccountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan", Message = "密碼輸入錯誤。" };
+            List<UserDTO> reUserDTOList = new List<UserDTO>()
+            {
+                new UserDTO(){ UserID = 1, AccountName = "kevan" , Password = "1qaz@WSX" , UserName = "kevan" , Email = "kevan@gmail.com"}
+            };
 
-            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reAccountID);
+            UserDTO reUserDTO = new UserDTO() { UserID = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan", Email = "kevan@gmail.com" };
+
+            string reMessage = "密碼輸入錯誤。";
+
+            _userRep.Stub(o => o.FindAccountName(Arg<string>.Is.Anything)).Return(reUserDTOList);
+
+            _userRep.Stub(o => o.FindAccountData(Arg<string>.Is.Anything)).Return(reUserDTO);
 
             #endregion
 
@@ -125,7 +146,7 @@ namespace LoginServerBO.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccountID.Message);
+            Assert.AreEqual(result.Message, reMessage);
 
             #endregion
         }
@@ -146,7 +167,7 @@ namespace LoginServerBO.Service.Tests
 
             UserDTO reUserDTO = new UserDTO() { UserID = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan", Email = "kevan@gmail.com" };
 
-            _loginBO.Stub(o => o.GetUserDataByAccountName(Arg<AccountInfoData>.Is.Anything)).Return(reUserDTO);
+            _userRep.Stub(o => o.FindAccountData(Arg<string>.Is.Anything)).Return(reUserDTO);
 
             #endregion
 
@@ -189,7 +210,7 @@ namespace LoginServerBO.Service.Tests
                 new RoleDTO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
-            _loginBO.Stub(o => o.GetRoleDataByUserID(Arg<string>.Is.Anything)).Return(reRoleDTOList);
+            _roleRep.Stub(o => o.GetRoleDataByAccountName(Arg<string>.Is.Anything)).Return(reRoleDTOList);
 
             #endregion
 

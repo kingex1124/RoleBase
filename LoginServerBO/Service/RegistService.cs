@@ -40,22 +40,8 @@ namespace LoginServerBO.Service
         /// <param name="account"></param>
         /// <returns></returns>
         public Account RegistValid(Account account)
-        {
-            // 驗證帳號
-            if (_registBO.FindAccountName(account.AccountName).Any())
-            {
-                account.Message = "帳號名稱已被使用";
-                return account;
-            }
-
-            //驗證密碼與密碼確認
-            if (account.Password != account.PasswordConfirm)
-            {
-                account.Message = "密碼確認與密碼輸入不相同";
-                return account;
-            }
-
-            return account;
+        {  
+            return _registBO.RegistValid(account);
         }
 
         /// <summary>
@@ -65,13 +51,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public Account Regist(Account account)
         {
-            if (_registBO.UserInsert(account) > 0)
-                return account;
-            else
-            {
-                account.Message = "註冊失敗";
-            }
-            return account;
+            return _registBO.Regist(account);
         }
 
         #endregion

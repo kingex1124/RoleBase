@@ -42,21 +42,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public AccountInfoData AccountValid(AccountInfoData accountInfoData)
         {
-            //驗證帳號
-            if (!_loginBO.FindAccountName(accountInfoData.AccountName).Any())
-            {
-                accountInfoData.Message = "該帳號不存在。";
-                return accountInfoData;
-            }
-
-            //驗證密碼
-            if (_loginBO.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
-            {
-                accountInfoData.Message = "密碼輸入錯誤。";
-                return accountInfoData;
-            }
-
-            return accountInfoData;
+            return _loginBO.AccountValid(accountInfoData);
         }
 
         /// <summary>
@@ -66,7 +52,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData)
         {
-            return _loginBO.FindAccountData(accountInfoData.AccountName);
+            return _loginBO.GetUserDataByAccountName(accountInfoData);
         }
 
         /// <summary>
@@ -76,7 +62,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public IEnumerable<RoleDTO> GetRoleDataByUserID(string userID)
         {
-            return _loginBO.GetRoleDataByAccountName(userID);
+            return _loginBO.GetRoleDataByUserID(userID);
         }
 
         #endregion

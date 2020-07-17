@@ -1,33 +1,32 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LoginServerBO.Service;
+using LoginServerBO.BO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LoginServerBO.BO.Interface;
+using LoginServerBO.Repository.Interface;
 using Rhino.Mocks;
 using LoginVO.VO;
 using LoginDTO.DTO;
-using System.IO;
 
-namespace LoginServerBO.Service.Tests
+namespace LoginServerBO.BO.Tests
 {
     [TestClass()]
-    public class RegistServiceTests
+    public class RegistBOTests
     {
         #region 屬性
 
-        IRegistBO _registBO = MockRepository.GenerateStub<IRegistBO>();
-        RegistService _target;
+        IUserRepository _userRep = MockRepository.GenerateStub<IUserRepository>();
+        RegistBO _target;
 
         #endregion
 
         #region 建構子
 
-        public RegistServiceTests()
+        public RegistBOTests()
         {
-            _target = new RegistService(_registBO);
+            _target = new RegistBO(_userRep);
         }
 
         #endregion
@@ -49,11 +48,11 @@ namespace LoginServerBO.Service.Tests
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
             // 回傳的參數
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
+            List<UserDTO> reUserDTOList = new List<UserDTO>() { };
 
             string reMessage = account.Message;
 
-            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reAccount);
+            _userRep.Stub(o => o.FindAccountName(Arg<string>.Is.Anything)).Return(reUserDTOList);
 
             #endregion
 
@@ -65,7 +64,7 @@ namespace LoginServerBO.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reMessage);
 
             #endregion
         }
@@ -83,9 +82,14 @@ namespace LoginServerBO.Service.Tests
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
             // 回傳的參數
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" , Message = "帳號名稱已被使用" };
+            List<UserDTO> reUserDTOList = new List<UserDTO>()
+            {
+                new UserDTO() { UserID = 1, AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", Email = "kevan@gmail.com" }
+            };
 
-            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reAccount);
+            string reMessage = "帳號名稱已被使用";
+
+            _userRep.Stub(o => o.FindAccountName(Arg<string>.Is.Anything)).Return(reUserDTOList);
 
             #endregion
 
@@ -97,7 +101,7 @@ namespace LoginServerBO.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reMessage);
 
             #endregion
         }
@@ -115,9 +119,14 @@ namespace LoginServerBO.Service.Tests
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "xxxxxx", Email = "kevan@gmail.com" };
 
             // 回傳的參數
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com", Message = "密碼確認與密碼輸入不相同" };
+            List<UserDTO> reUserDTOList = new List<UserDTO>()
+            {
 
-            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reAccount);
+            };
+
+            string reMessage = "密碼確認與密碼輸入不相同";
+
+            _userRep.Stub(o => o.FindAccountName(Arg<string>.Is.Anything)).Return(reUserDTOList);
 
             #endregion
 
@@ -129,7 +138,7 @@ namespace LoginServerBO.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reMessage);
 
             #endregion
         }
@@ -150,9 +159,11 @@ namespace LoginServerBO.Service.Tests
             // 傳入的參數
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
-          
-            _registBO.Stub(o => o.Regist(Arg<Account>.Is.Anything)).Return(reAccount);
+            int reNumber = 1;
+
+            string reMessage = account.Message;
+
+            _userRep.Stub(o => o.UserInsert(Arg<Account>.Is.Anything)).Return(reNumber);
 
             #endregion
 
@@ -164,7 +175,7 @@ namespace LoginServerBO.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reMessage);
 
             #endregion
         }
@@ -181,9 +192,11 @@ namespace LoginServerBO.Service.Tests
             // 傳入的參數
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" , Message = "註冊失敗" };
+            int reNumber = -1;
 
-            _registBO.Stub(o => o.Regist(Arg<Account>.Is.Anything)).Return(reAccount);
+            string reMessage = "註冊失敗";
+
+            _userRep.Stub(o => o.UserInsert(Arg<Account>.Is.Anything)).Return(reNumber);
 
             #endregion
 
@@ -195,7 +208,7 @@ namespace LoginServerBO.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reMessage);
 
             #endregion
         }
@@ -203,6 +216,5 @@ namespace LoginServerBO.Service.Tests
         #endregion
 
         #endregion
-
     }
 }

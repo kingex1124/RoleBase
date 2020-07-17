@@ -10,7 +10,8 @@ namespace LoginServerBO.BO.Interface
 {
     public interface IRegistBO
     {
-        IEnumerable<UserDTO> FindAccountName(string accountName);
-        int UserInsert(Account account);
+        Account RegistValid(Account account);
+
+        Account Regist(Account account);
     }
 }

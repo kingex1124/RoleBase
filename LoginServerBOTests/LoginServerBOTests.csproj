@@ -59,6 +59,9 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="BO\LoginBOTests.cs" />
+    <Compile Include="BO\RegistBOTests.cs" />
+    <Compile Include="BO\SecurityBOTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\LoginServiceTests.cs" />
     <Compile Include="Service\RegistServiceTests.cs" />
