@@ -25,6 +25,11 @@ namespace LoginServerBO.Service
             _securityBO = new SecurityBO();
         }
 
+        public SecurityService(ISecurityBO securityBO)
+        {
+            _securityBO = securityBO;
+        }
+
         #endregion
 
         #region 方法
