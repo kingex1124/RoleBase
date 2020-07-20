@@ -59,7 +59,9 @@
     <Compile Include="BO\RegistBO.cs" />
     <Compile Include="BO\RoleBO.cs" />
     <Compile Include="BO\SecurityBO.cs" />
+    <Compile Include="Helper\ISqlConnectionHelper.cs" />
     <Compile Include="Helper\ObjectMappingAttribute.cs" />
+    <Compile Include="Helper\SqlConnectionHelper.cs" />
     <Compile Include="Helper\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\FunctionRepository.cs" />
