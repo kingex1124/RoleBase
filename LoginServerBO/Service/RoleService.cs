@@ -1,9 +1,5 @@
-﻿using AutoMapper;
-using KevanFramework.DataAccessDAL.Common;
-using LoginDTO.DTO;
-using LoginServerBO.BO;
+﻿using LoginServerBO.BO;
 using LoginServerBO.BO.Interface;
-using LoginServerBO.Helper;
 using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using System;
@@ -20,7 +16,6 @@ namespace LoginServerBO.Service
         #region 屬性
 
         IRoleBO _roleBO;
-        IFunctionBO _functionBO;
 
         #endregion
 
@@ -29,7 +24,6 @@ namespace LoginServerBO.Service
         public RoleService()
         {
             _roleBO = new RoleBO();
-            _functionBO = new FunctionBO();
         }
 
         #endregion
@@ -41,10 +35,8 @@ namespace LoginServerBO.Service
         /// </summary>
         /// <returns></returns>
         public IEnumerable<RoleVO> GetRoleData()
-        {
-            IEnumerable<RoleVO> result = Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleBO.GetRoleData());
-
-            return result;
+        {   
+            return _roleBO.GetRoleData();
         }
 
         /// <summary>
@@ -54,12 +46,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string AddRole(RoleVO roleVO)
         {
-            int result = _roleBO.AddRole(roleVO);
-
-            if (result > 0)
-                return "";
-            else
-                return "新增失敗。";
+            return _roleBO.AddRole(roleVO);
         }
 
         /// <summary>
@@ -69,26 +56,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string DeleteRole(string id)
         {
-            string result = string.Empty;
-            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-            conn.Open();
-
-            SqlTransaction tran = conn.BeginTransaction();
-              
-            int deleteRoleUserResult = _roleBO.DeleteRoleUserByRoleID(id, ref conn, ref tran);
-
-            int deleteRoleFunctionResult = _functionBO.DeleteRoleFunctionByRoleID(id, ref conn, ref tran);
-
-            int deleteRoleResult = _roleBO.DeleteRole(id, ref conn, ref tran);
-
-            if (deleteRoleUserResult >= 0 && deleteRoleFunctionResult >= 0 && deleteRoleResult > 0)
-                result = "";
-            else
-                result = "刪除失敗。";
-
-            tran.Commit();
-
-            return result;
+            return _roleBO.DeleteRole(id);
         }
 
         /// <summary>
@@ -98,11 +66,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string EditRole(RoleVO roleVO)
         {
-            int result = _roleBO.EditRole(roleVO);
-            if (result > 0)
-                return "";
-            else
-                return "編輯失敗。";
+            return _roleBO.EditRole(roleVO);
         }
 
         /// <summary>
@@ -112,8 +76,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID)
         {
-            IEnumerable<UserCheckVO> result = Utility.MigrationIEnumerable<UserCheckDTO, UserCheckVO>(_roleBO.GetUserCheckByRole(roleID));
-            return result;
+            return _roleBO.GetUserCheckByRole(roleID);
         }
 
         /// <summary>
@@ -124,46 +87,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string SaveRoleUserSetting(IEnumerable<UserCheckVO> userCheckVO)
         {
-            string result = string.Empty;
-            string roleID;
-            if (userCheckVO != null && userCheckVO.Any())
-            {
-                roleID = userCheckVO.First().RoleID.ToString();
-                List<RoleUserDTO> roleUserDTOs = new List<RoleUserDTO>();
-                foreach (var item in userCheckVO)
-                {
-                    RoleUserDTO roleUserDTO = new RoleUserDTO();
-                    roleUserDTO.RoleID = item.RoleID;
-                    roleUserDTO.UserID = item.UserID;
-                    roleUserDTOs.Add(roleUserDTO);
-                }
-              
-                SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-                conn.Open();
-
-                SqlTransaction tran = conn.BeginTransaction();
-                int deleteResult = _roleBO.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
-
-                if (deleteResult < 0)
-                {
-                    tran.Rollback();
-                    result = "刪除失敗。";
-                    return result;
-                }
-
-                int insertResult = 0;
-                foreach (var item in roleUserDTOs)
-                    insertResult += _roleBO.InsertRoleUser(item, ref conn, ref tran);
-
-                tran.Commit();
-                if (insertResult < 0)
-                {
-                    tran.Rollback();
-                    result = "設定失敗。";
-                }
-            }
-
-            return result;
+            return _roleBO.SaveRoleUserSetting(userCheckVO);
         }
 
         /// <summary>
@@ -174,23 +98,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string ClearRoleUserByRoleID(string roleID)
         {
-            string result = string.Empty;
-            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-            conn.Open();
-
-            SqlTransaction tran = conn.BeginTransaction();
-            int deleteResult = _roleBO.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
-
-           
-            if (deleteResult < 0)
-            {
-                tran.Rollback();
-                result = "刪除失敗。";
-            }
-
-            tran.Commit();
-
-            return result; 
+            return _roleBO.ClearRoleUserByRoleID(roleID);
         }
 
         #endregion

@@ -1,13 +1,9 @@
-﻿using KevanFramework.DataAccessDAL.Common;
-using LoginDTO.DTO;
-using LoginServerBO.BO;
+﻿using LoginServerBO.BO;
 using LoginServerBO.BO.Interface;
-using LoginServerBO.Helper;
 using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,9 +35,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public IEnumerable<FunctionVO> GetFunctionData()
         {
-            IEnumerable<FunctionVO> result = Utility.MigrationIEnumerable<FunctionDTO, FunctionVO>(_functionBO.GetFunctionData());
-
-            return result;
+            return _functionBO.GetFunctionData();
         }
 
         /// <summary>
@@ -51,12 +45,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string AddFunction(FunctionVO functionVO)
         {
-            int result = _functionBO.AddFunction(functionVO);
-
-            if (result > 0)
-                return "";
-            else
-                return "新增失敗。";
+            return _functionBO.AddFunction(functionVO);
         }
 
         /// <summary>
@@ -66,25 +55,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string DeleteFunction(string id)
         {
-            string result = string.Empty;
-
-            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-            conn.Open();
-
-            SqlTransaction tran = conn.BeginTransaction();
-
-            int deleteRoleFunctionResult = _functionBO.DeleteRoleFunctionByFunctionID(id, ref conn, ref tran);
-
-            int deleteFunctionResult = _functionBO.DeleteFunction(id, ref conn, ref tran);
-
-            if (deleteRoleFunctionResult >= 0 && deleteFunctionResult > 0)
-                result = "";
-            else
-                result = "刪除失敗。";
-
-            tran.Commit();
-
-            return result;
+            return _functionBO.DeleteFunction(id);
         }
 
         /// <summary>
@@ -94,11 +65,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string EditFunction(FunctionVO functionVO)
         {
-            int result = _functionBO.EditFunction(functionVO);
-            if (result > 0)
-                return "";
-            else
-                return "編輯失敗";
+            return _functionBO.EditFunction(functionVO);
         }
 
         /// <summary>
@@ -108,8 +75,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID)
         {
-            IEnumerable<FunctionCheckVO> result = Utility.MigrationIEnumerable<FunctionCheckDTO, FunctionCheckVO>(_functionBO.GetFunctionCheckByRole(roleID));
-            return result;
+            return _functionBO.GetFunctionCheckByRole(roleID);
         }
 
         /// <summary>
@@ -120,48 +86,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string SaveRoleFunctionSetting(IEnumerable<FunctionCheckVO> functionCheckVO)
         {
-            string result = string.Empty;
-            string roleID;
-
-            if (functionCheckVO != null && functionCheckVO.Any())
-            {
-                roleID = functionCheckVO.First().RoleID.ToString();
-                List<RoleFunctionDTO> roleFunctionDTOs = new List<RoleFunctionDTO>();
-                foreach (var item in functionCheckVO)
-                {
-                    RoleFunctionDTO roleFunctionDTO = new RoleFunctionDTO();
-                    roleFunctionDTO.RoleID = item.RoleID;
-                    roleFunctionDTO.FunctionID = item.FunctionID;
-                    roleFunctionDTOs.Add(roleFunctionDTO);
-                }
-
-                SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-                conn.Open();
-
-                SqlTransaction tran = conn.BeginTransaction();
-
-                int deleteResult = _functionBO.DeleteRoleFunctionByRoleID(roleID, ref conn, ref tran);
-
-                if (deleteResult < 0)
-                {
-                    tran.Rollback();
-                    result = "刪除失敗。";
-                    return result;
-                }
-
-                int insertResult = 0;
-                foreach (var item in roleFunctionDTOs)
-                    _functionBO.InsertRoleFunction(item, ref conn, ref tran);
-
-                tran.Commit();
-
-                if (insertResult < 0)
-                {
-                    tran.Rollback();
-                    result = "設定失敗。";
-                }
-            }
-            return result;
+            return _functionBO.SaveRoleFunctionSetting(functionCheckVO);
         }
 
         /// <summary>
@@ -172,21 +97,7 @@ namespace LoginServerBO.Service
         /// <returns></returns>
         public string ClearRoleFunctionByRoleID(string roleID)
         {
-            string result = string.Empty;
-            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-            conn.Open();
-
-            SqlTransaction tran = conn.BeginTransaction();
-            int deleteResult = _functionBO.DeleteRoleFunctionByRoleID(roleID, ref conn, ref tran);
-
-            if (deleteResult < 0)
-            {
-                tran.Rollback();
-                result = "刪除失敗。";
-            }
-            tran.Commit();
-
-            return result;
+            return _functionBO.ClearRoleFunctionByRoleID(roleID);
         }
 
         #endregion

@@ -1,8 +1,6 @@
-﻿using LoginDTO.DTO;
-using LoginVO.VO;
+﻿using LoginVO.VO;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,12 +9,13 @@ namespace LoginServerBO.BO.Interface
 {
     public interface IRoleBO
     {
-        IEnumerable<RoleDTO> GetRoleData();
-        int AddRole(RoleVO roleVO);
-        int DeleteRole(string id, ref SqlConnection conn, ref SqlTransaction tran);
-        int EditRole(RoleVO roleVO);
-        IEnumerable<UserCheckDTO> GetUserCheckByRole(string id);
-        int DeleteRoleUserByRoleID(string roleID, ref SqlConnection conn, ref SqlTransaction tran);
-        int InsertRoleUser(RoleUserDTO roleUserDTO, ref SqlConnection conn, ref SqlTransaction tran);
+        IEnumerable<RoleVO> GetRoleData();
+        string AddRole(RoleVO roleVO);
+        string DeleteRole(string id);
+        string EditRole(RoleVO roleVO);
+        IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID);
+        string SaveRoleUserSetting(IEnumerable<UserCheckVO> userCheckVO);
+        string ClearRoleUserByRoleID(string roleID);
+
     }
 }
