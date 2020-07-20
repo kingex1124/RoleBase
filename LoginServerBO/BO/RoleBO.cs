@@ -1,8 +1,10 @@
-﻿using KevanFramework.DataAccessDAL.Common;
-using KevanFramework.DataAccessDAL.Interface;
-using KevanFramework.DataAccessDAL.SQLDAL;
+﻿using AutoMapper;
+using KevanFramework.DataAccessDAL.Common;
 using LoginDTO.DTO;
 using LoginServerBO.BO.Interface;
+using LoginServerBO.Helper;
+using LoginServerBO.Repository;
+using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,9 @@ namespace LoginServerBO.BO
     {
         #region 屬性
 
-        private DataAccess _dataAccess = null;
+        IRoleRepository _roleRepo;
+        IRoleUserRepository _roleUserRepo;
+        IRoleFunctionRepository _roleFunctionRepo;
 
         #endregion
 
@@ -26,8 +30,9 @@ namespace LoginServerBO.BO
 
         public RoleBO()
         {
-            DataAccessIO.Register<IDataAccess, DataAccess>();
-            _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
+            _roleRepo = new RoleRepository();
+            _roleUserRepo = new RoleUserRepository();
+            _roleFunctionRepo = new RoleFunctionRepository();
         }
 
         #endregion
@@ -38,11 +43,11 @@ namespace LoginServerBO.BO
         /// 取得Role資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<RoleDTO> GetRoleData()
+        public IEnumerable<RoleVO> GetRoleData()
         {
-            string sqlStr = "Select * From [Role] Order by RoleID ";
+            IEnumerable<RoleVO> result = Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleRepo.GetRoleData());
 
-            return _dataAccess.QueryDataTable<RoleDTO>(sqlStr);
+            return result;
         }
 
         /// <summary>
@@ -50,15 +55,14 @@ namespace LoginServerBO.BO
         /// </summary>
         /// <param name="roleVO"></param>
         /// <returns></returns>
-        public int AddRole(RoleVO roleVO)
+        public string AddRole(RoleVO roleVO)
         {
-            List<string> param = new List<string>();
-            string sqlStr = @"Insert Into [Role] (RoleName,Description) 
-                              Values(@p0,@p1) ";
-            param.Add(roleVO.RoleName);
-            param.Add(roleVO.Description);
+            int result = _roleRepo.AddRole(roleVO);
 
-            return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
+            if (result > 0)
+                return "";
+            else
+                return "新增失敗。";
         }
 
         /// <summary>
@@ -66,14 +70,28 @@ namespace LoginServerBO.BO
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public int DeleteRole(string id, ref SqlConnection conn, ref SqlTransaction tran)
+        public string DeleteRole(string id)
         {
-            List<string> param = new List<string>();
-            string sqlStr = @"Delete [Role]  Where RoleID = @p0 ";
+            string result = string.Empty;
+            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
+            conn.Open();
 
-            param.Add(id);
-        
-            return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
+            SqlTransaction tran = conn.BeginTransaction();
+
+            int deleteRoleUserResult = _roleUserRepo.DeleteRoleUserByRoleID(id, ref conn, ref tran);
+
+            int deleteRoleFunctionResult = _roleFunctionRepo.DeleteRoleFunctionByRoleID(id, ref conn, ref tran);
+
+            int deleteRoleResult = _roleRepo.DeleteRole(id, ref conn, ref tran);
+
+            if (deleteRoleUserResult >= 0 && deleteRoleFunctionResult >= 0 && deleteRoleResult > 0)
+                result = "";
+            else
+                result = "刪除失敗。";
+
+            tran.Commit();
+
+            return result;
         }
 
         /// <summary>
@@ -81,94 +99,100 @@ namespace LoginServerBO.BO
         /// </summary>
         /// <param name="roleVO"></param>
         /// <returns></returns>
-
-        public int EditRole(RoleVO roleVO)
+        public string EditRole(RoleVO roleVO)
         {
-            List<string> param = new List<string>();
-            string sqlStr = @"Update [Role]  
-                            Set RoleName = @p0 , Description = @p1
-                            Where RoleID = @p2 ";
-
-            param.Add(roleVO.RoleName);
-            param.Add(roleVO.Description);
-            param.Add(roleVO.RoleID.ToString());
-
-            return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
+            int result = _roleRepo.EditRole(roleVO);
+            if (result > 0)
+                return "";
+            else
+                return "編輯失敗。";
         }
 
         /// <summary>
         /// 取得角色設定使用者的資料
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="roleID"></param>
         /// <returns></returns>
-        public IEnumerable<UserCheckDTO> GetUserCheckByRole(string id)
+        public IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID)
         {
-            List<string> param = new List<string>();
-
-            string sqlStr = @"SELECT 
-case when A.[RoleID] IS NULL then CAST(0 AS BIT) Else CAST(1 AS BIT) end AS 'Check' ,
-      B.[UserID],B.AccountName,B.UserName
-  FROM 
-  (Select * From [RoleUser] where RoleID=@p0) A 
-  Right join [User] B on A.UserID = B.UserID 
-  Order By B.[UserID] ";
-
-            param.Add(id);
-
-            return _dataAccess.QueryDataTable<UserCheckDTO>(sqlStr, param.ToArray());
+            IEnumerable<UserCheckVO> result = Utility.MigrationIEnumerable<UserCheckDTO, UserCheckVO>(_roleUserRepo.GetUserCheckByRole(roleID));
+            return result;
         }
 
         /// <summary>
-        /// 透過角色ID清空RoleUer的資料
+        /// 角色編輯使用者
+        /// 儲存勾選使用者時的變更
+        /// </summary>
+        /// <param name="userCheckVO"></param>
+        /// <returns></returns>
+        public string SaveRoleUserSetting(IEnumerable<UserCheckVO> userCheckVO)
+        {
+            string result = string.Empty;
+            string roleID;
+            if (userCheckVO != null && userCheckVO.Any())
+            {
+                roleID = userCheckVO.First().RoleID.ToString();
+                List<RoleUserDTO> roleUserDTOs = new List<RoleUserDTO>();
+                foreach (var item in userCheckVO)
+                {
+                    RoleUserDTO roleUserDTO = new RoleUserDTO();
+                    roleUserDTO.RoleID = item.RoleID;
+                    roleUserDTO.UserID = item.UserID;
+                    roleUserDTOs.Add(roleUserDTO);
+                }
+
+                SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
+                conn.Open();
+
+                SqlTransaction tran = conn.BeginTransaction();
+                int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
+
+                if (deleteResult < 0)
+                {
+                    tran.Rollback();
+                    result = "刪除失敗。";
+                    return result;
+                }
+
+                int insertResult = 0;
+                foreach (var item in roleUserDTOs)
+                    insertResult += _roleUserRepo.InsertRoleUser(item, ref conn, ref tran);
+
+                tran.Commit();
+                if (insertResult < 0)
+                {
+                    tran.Rollback();
+                    result = "設定失敗。";
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 角色編輯使用者
+        /// 儲存清空使用者時的變更
         /// </summary>
         /// <param name="roleID"></param>
-        /// <param name="conn"></param>
-        /// <param name="tran"></param>
         /// <returns></returns>
-        public int DeleteRoleUserByRoleID(string roleID ,ref SqlConnection conn,ref SqlTransaction tran)
+        public string ClearRoleUserByRoleID(string roleID)
         {
-            try
-            {
-                List<string> param = new List<string>();
+            string result = string.Empty;
+            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
+            conn.Open();
 
-                string sqlStr = @"Delete [RoleUser] where RoleID = @p0 ";
+            SqlTransaction tran = conn.BeginTransaction();
+            int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
 
-                param.Add(roleID);
-
-                return _dataAccess.ExcuteSQL(sqlStr, ref conn, ref tran, param.ToArray());
-            }
-            catch (Exception ex)
+            if (deleteResult < 0)
             {
                 tran.Rollback();
-                throw;
+                result = "刪除失敗。";
             }
-        }
 
-        /// <summary>
-        /// 透過角色ID新增RoleUser的資料
-        /// </summary>
-        /// <param name="roleUserDTO"></param>
-        /// <param name="conn"></param>
-        /// <param name="tran"></param>
-        /// <returns></returns>
-        public int InsertRoleUser(RoleUserDTO roleUserDTO, ref SqlConnection conn, ref SqlTransaction tran)
-        {
-            try
-            {
-                List<string> param1 = new List<string>();
+            tran.Commit();
 
-                string sqlStr1 = @"Insert Into [dbo].[RoleUser] (RoleID,UserID) Values(@p0,@p1)";
-
-                param1.Add(roleUserDTO.RoleID.ToString());
-                param1.Add(roleUserDTO.UserID.ToString());
-
-                return _dataAccess.ExcuteSQL(sqlStr1, ref conn, ref tran, param1.ToArray());
-            }
-            catch (Exception ex)
-            {
-                tran.Rollback();
-                throw;
-            }
+            return result;
         }
 
         #endregion

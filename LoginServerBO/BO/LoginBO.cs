@@ -1,14 +1,10 @@
-﻿using KevanFramework.DataAccessDAL.Common;
-using KevanFramework.DataAccessDAL.Interface;
-using KevanFramework.DataAccessDAL.SQLDAL;
-using LoginDTO.DTO;
+﻿using LoginDTO.DTO;
 using LoginServerBO.BO.Interface;
 using LoginServerBO.Repository;
 using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

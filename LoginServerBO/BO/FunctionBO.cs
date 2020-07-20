@@ -1,8 +1,9 @@
 ﻿using KevanFramework.DataAccessDAL.Common;
-using KevanFramework.DataAccessDAL.Interface;
-using KevanFramework.DataAccessDAL.SQLDAL;
 using LoginDTO.DTO;
 using LoginServerBO.BO.Interface;
+using LoginServerBO.Helper;
+using LoginServerBO.Repository;
+using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace LoginServerBO.BO
     {
         #region 屬性
 
-        private DataAccess _dataAccess = null;
+        IFunctionRepository _functionRepo;
+        IRoleFunctionRepository _roleFunctionRepo;
 
         #endregion
 
@@ -25,23 +27,23 @@ namespace LoginServerBO.BO
 
         public FunctionBO()
         {
-            DataAccessIO.Register<IDataAccess, DataAccess>();
-            _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
+            _functionRepo = new FunctionRepository();
+            _roleFunctionRepo = new RoleFunctionRepository();
         }
 
         #endregion
 
-        #region 方法
+        #region 方法  
 
         /// <summary>
         /// 取得Function資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<FunctionDTO> GetFunctionData()
+        public IEnumerable<FunctionVO> GetFunctionData()
         {
-            string sqlStr = "Select * From [Function] Order by FunctionID ";
+            IEnumerable<FunctionVO> result = Utility.MigrationIEnumerable<FunctionDTO, FunctionVO>(_functionRepo.GetFunctionData());
 
-            return _dataAccess.QueryDataTable<FunctionDTO>(sqlStr);
+            return result;
         }
 
         /// <summary>
@@ -49,56 +51,42 @@ namespace LoginServerBO.BO
         /// </summary>
         /// <param name="functionVO"></param>
         /// <returns></returns>
-        public int AddFunction(FunctionVO functionVO)
+        public string AddFunction(FunctionVO functionVO)
         {
-            List<string> param = new List<string>();
-            string sqlStr = @"Insert Into [Function] (Url,Description) 
-                              Values(@p0,@p1) ";
-            param.Add(functionVO.Url);
-            param.Add(functionVO.Description);
+            int result = _functionRepo.AddFunction(functionVO);
 
-            return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
+            if (result > 0)
+                return "";
+            else
+                return "新增失敗。";
         }
 
         /// <summary>
-        /// 刪除角色
+        /// 刪除功能
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public int DeleteFunction(string id, ref SqlConnection conn, ref SqlTransaction tran)
+        public string DeleteFunction(string id)
         {
-            List<string> param = new List<string>();
-            string sqlStr = @"Delete [Function]  Where FunctionID = @p0 ";
+            string result = string.Empty;
 
-            param.Add(id);
+            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
+            conn.Open();
 
-            return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
-        }
+            SqlTransaction tran = conn.BeginTransaction();
 
-        /// <summary>
-        /// 透過FunctionID刪除RoleFunction資料
-        /// </summary>
-        /// <param name="roleID"></param>
-        /// <param name="conn"></param>
-        /// <param name="tran"></param>
-        /// <returns></returns>
-        public int DeleteRoleFunctionByFunctionID(string functionID, ref SqlConnection conn, ref SqlTransaction tran)
-        {
-            try
-            {
-                List<string> param = new List<string>();
+            int deleteRoleFunctionResult = _roleFunctionRepo.DeleteRoleFunctionByFunctionID(id, ref conn, ref tran);
 
-                string sqlStr = @"Delete [RoleFunction] where functionID = @p0 ";
+            int deleteFunctionResult = _functionRepo.DeleteFunction(id, ref conn, ref tran);
 
-                param.Add(functionID);
+            if (deleteRoleFunctionResult >= 0 && deleteFunctionResult > 0)
+                result = "";
+            else
+                result = "刪除失敗。";
 
-                return _dataAccess.ExcuteSQL(sqlStr, ref conn, ref tran, param.ToArray());
-            }
-            catch (Exception ex)
-            {
-                tran.Rollback();
-                throw;
-            }
+            tran.Commit();
+
+            return result;
         }
 
         /// <summary>
@@ -106,93 +94,101 @@ namespace LoginServerBO.BO
         /// </summary>
         /// <param name="functionVO"></param>
         /// <returns></returns>
-        public int EditFunction(FunctionVO functionVO)
+        public string EditFunction(FunctionVO functionVO)
         {
-            List<string> param = new List<string>();
-            string sqlStr = @"Update [Function]  
-                            Set Url = @p0 , Description = @p1
-                            Where FunctionID = @p2 ";
-
-            param.Add(functionVO.Url);
-            param.Add(functionVO.Description);
-            param.Add(functionVO.FunctionID.ToString());
-
-            return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
+            int result = _functionRepo.EditFunction(functionVO);
+            if (result > 0)
+                return "";
+            else
+                return "編輯失敗";
         }
 
         /// <summary>
         /// 取得角色設定功能的資料
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="roleID"></param>
         /// <returns></returns>
-        public IEnumerable<FunctionCheckDTO> GetFunctionCheckByRole(string id)
+        public IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID)
         {
-            List<string> param = new List<string>();
-
-            string sqlStr = @"SELECT 
-case when A.[RoleID] IS NULL then CAST(0 AS BIT) Else CAST(1 AS BIT) end AS 'Check' ,
-      B.[FunctionID],B.Url,B.Description
-  FROM 
-  (Select * From [RoleFunction] where RoleID=@p0) A 
-  Right join [Function] B on A.FunctionID = B.FunctionID 
-  Order By B.[FunctionID] ";
-
-            param.Add(id);
-
-            return _dataAccess.QueryDataTable<FunctionCheckDTO>(sqlStr, param.ToArray());
+            IEnumerable<FunctionCheckVO> result = Utility.MigrationIEnumerable<FunctionCheckDTO, FunctionCheckVO>(_roleFunctionRepo.GetFunctionCheckByRole(roleID));
+            return result;
         }
 
         /// <summary>
-        /// 透過角色ID清空RoleFunciton的資料
+        /// 角色編輯功能
+        /// 儲存勾選功能時的變更
+        /// </summary>
+        /// <param name="functionCheckVO"></param>
+        /// <returns></returns>
+        public string SaveRoleFunctionSetting(IEnumerable<FunctionCheckVO> functionCheckVO)
+        {
+            string result = string.Empty;
+            string roleID;
+
+            if (functionCheckVO != null && functionCheckVO.Any())
+            {
+                roleID = functionCheckVO.First().RoleID.ToString();
+                List<RoleFunctionDTO> roleFunctionDTOs = new List<RoleFunctionDTO>();
+                foreach (var item in functionCheckVO)
+                {
+                    RoleFunctionDTO roleFunctionDTO = new RoleFunctionDTO();
+                    roleFunctionDTO.RoleID = item.RoleID;
+                    roleFunctionDTO.FunctionID = item.FunctionID;
+                    roleFunctionDTOs.Add(roleFunctionDTO);
+                }
+
+                SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
+                conn.Open();
+
+                SqlTransaction tran = conn.BeginTransaction();
+
+                int deleteResult = _roleFunctionRepo.DeleteRoleFunctionByRoleID(roleID, ref conn, ref tran);
+
+                if (deleteResult < 0)
+                {
+                    tran.Rollback();
+                    result = "刪除失敗。";
+                    return result;
+                }
+
+                int insertResult = 0;
+                foreach (var item in roleFunctionDTOs)
+                    _roleFunctionRepo.InsertRoleFunction(item, ref conn, ref tran);
+
+                tran.Commit();
+
+                if (insertResult < 0)
+                {
+                    tran.Rollback();
+                    result = "設定失敗。";
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 角色編輯功能
+        /// 儲存清空功能的變更
         /// </summary>
         /// <param name="roleID"></param>
-        /// <param name="conn"></param>
-        /// <param name="tran"></param>
         /// <returns></returns>
-        public int DeleteRoleFunctionByRoleID(string roleID , ref SqlConnection conn, ref SqlTransaction tran)
+        public string ClearRoleFunctionByRoleID(string roleID)
         {
-            try
-            {
-                List<string> param = new List<string>();
+            string result = string.Empty;
+            SqlConnection conn = new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
+            conn.Open();
 
-                string sqlStr = @"Delete [RoleFunction] where RoleID = @p0 ";
+            SqlTransaction tran = conn.BeginTransaction();
+            int deleteResult = _roleFunctionRepo.DeleteRoleFunctionByRoleID(roleID, ref conn, ref tran);
 
-                param.Add(roleID);
-
-                return _dataAccess.ExcuteSQL(sqlStr, ref conn, ref tran, param.ToArray());
-            }
-            catch (Exception ex)
+            if (deleteResult < 0)
             {
                 tran.Rollback();
-                throw;
+                result = "刪除失敗。";
             }
-        }
+            tran.Commit();
 
-        /// <summary>
-        /// 透過角色ID新增RoleFunction資料
-        /// </summary>
-        /// <param name="roleFunctionDTO"></param>
-        /// <param name="conn"></param>
-        /// <param name="tran"></param>
-        /// <returns></returns>
-        public int InsertRoleFunction(RoleFunctionDTO roleFunctionDTO, ref SqlConnection conn, ref SqlTransaction tran)
-        {
-            try
-            {
-                List<string> param1 = new List<string>();
-
-                string sqlStr1 = @"Insert Into [dbo].[RoleFunction] (RoleID,FunctionID) Values(@p0,@p1)";
-
-                param1.Add(roleFunctionDTO.RoleID.ToString());
-                param1.Add(roleFunctionDTO.FunctionID.ToString());
-
-                return _dataAccess.ExcuteSQL(sqlStr1, ref conn, ref tran, param1.ToArray());
-            }
-            catch (Exception ex)
-            {
-                tran.Rollback();
-                throw;
-            }
+            return result;
         }
 
         #endregion
