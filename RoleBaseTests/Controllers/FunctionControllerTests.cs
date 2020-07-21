@@ -1,10 +1,8 @@
 ﻿using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using NSubstitute;
 using Rhino.Mocks;
 using RoleBase.Controllers;
-using RoleBase.CurrentStatus;
 using RoleBaseTests.Helper;
 using System;
 using System.Collections.Generic;
@@ -16,80 +14,84 @@ using System.Web.Mvc;
 namespace RoleBase.Controllers.Tests
 {
     [TestClass()]
-    public class RoleControllerTests
+    public class FunctionControllerTests
     {
         #region 屬性
 
+        IFunctionService _functionService = MockRepository.GenerateStub<IFunctionService>();
         IRoleService _roleService = MockRepository.GenerateStub<IRoleService>();
-
-        RoleController _target;
+        FunctionController _target;
 
         #endregion
 
         #region 建構子
 
-        public RoleControllerTests()
+        public FunctionControllerTests()
         {
-            _target = new RoleController(_roleService);
+            _target = new FunctionController(_functionService, _roleService);
         }
 
         #endregion
 
         #region 測試方法
 
-        #region RoleManagement
+        #region FunctionManagement
 
         /// <summary>
-        /// 進入腳色管理畫面
+        /// Function管理介面
         /// </summary>
         [TestMethod()]
-        public void RoleManagementTest()
+        public void FunctionManagementTest()
         {
-            // act
-            var result = _target.RoleManagement() as ViewResult;
-
-            // assert
-            // 驗證 Action
-            Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "RoleManagement");
-        }
-
-        #endregion
-
-        #region RoleAddEditDelete
-
-        /// <summary>
-        /// Role新增、修改、刪除畫面
-        /// </summary>
-        [TestMethod()]
-        public void RoleAddEditDeleteTest()
-        {
-            #region arrange
-
-            List<RoleVO> reRoleVO = new List<RoleVO>()
-            {
-                new RoleVO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
-                new RoleVO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
-                new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
-            };
-
-            _roleService.Stub(o => o.GetRoleData()).Return(reRoleVO);
-
-            #endregion
-
             #region act
-            
-            var result = _target.RoleAddEditDelete() as ViewResult;
+
+            var result = _target.FunctionManagement() as ViewResult;
 
             #endregion
 
             #region assert
 
-            // 驗證資料
-            for (int i = 0; i < ((List<RoleVO>)result.Model).Count; i++)
+            Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "FunctionManagement");
+
+            #endregion
+        }
+
+        #endregion
+
+        #region FunctionAddEditDelete
+
+        /// <summary>
+        /// Function新增、修改、刪除畫面
+        /// </summary>
+        [TestMethod()]
+        public void FunctionAddEditDeleteTest()
+        {
+            #region arrange
+
+            List<FunctionVO> reFunctionList = new List<FunctionVO>()
             {
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVO[i].RoleID);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVO[i].RoleName);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVO[i].Description);
+                new FunctionVO(){ FunctionID = 1 , Url="Role/RoleManagement" , Description = "瀏覽角色管理畫面" },
+                new FunctionVO(){ FunctionID = 2 , Url="Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" },
+                new FunctionVO(){ FunctionID = 3 , Url="Role/EditRole" , Description = "編輯角色" }
+            };
+
+            _functionService.Stub(o => o.GetFunctionData()).Return(reFunctionList);
+
+            #endregion
+
+            #region act
+
+            var resultData = _target.FunctionAddEditDelete() as ViewResult;
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < ((List<FunctionVO>)resultData.Model).Count; i++)
+            {
+                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].FunctionID, reFunctionList[i].FunctionID);
+                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Url, reFunctionList[i].Url);
+                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Description, reFunctionList[i].Description);
             }
 
             #endregion
@@ -97,28 +99,26 @@ namespace RoleBase.Controllers.Tests
 
         #endregion
 
-        #region AddRole
+        #region AddFunction
 
         /// <summary>
-        /// 新增Role 
-        /// 成功新增
+        /// 新增Function
+        /// 測試新增成功
         /// </summary>
         [TestMethod()]
-        public void AddRoleTest()
+        public void AddFunctionTest()
         {
-            #region arrange (成功新增)
+            #region arrange (新增成功)
 
             // httpContext物件設定
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
 
-            // 傳入新增的腳色
-            RoleVO roleVO = new RoleVO() { RoleName = "Admin", Description = "最高權限" };
+            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
 
-            // 回傳新增後的腳色
-            string reMessage = string.Empty;
+            string reMessage = "";
 
-            _roleService.Stub(o => o.AddRole(Arg<RoleVO>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.AddFunction(Arg<FunctionVO>.Is.Anything)).Return(reMessage);
 
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
@@ -127,30 +127,31 @@ namespace RoleBase.Controllers.Tests
 
             #region act
 
-            var resultData = _target.AddRole(roleVO);
+            var resultData = _target.AddFunction(functionVO);
 
-            var result = (RoleVO)(((JsonResult)resultData).Data);
+            var result = (FunctionVO)(((JsonResult)resultData).Data);
 
             #endregion
 
             #region assert
-            
+
             // 測試回應狀態
             Assert.AreEqual(_target.CurrentHttpContext.Response.StatusCode, 200);
 
             // 測試回傳結果
-            Assert.AreEqual(result.RoleName, "Admin");
-            Assert.AreEqual(result.Description, "最高權限");
+            Assert.AreEqual(result.Url, functionVO.Url);
+            Assert.AreEqual(result.Description, functionVO.Description);
             Assert.IsTrue(string.IsNullOrEmpty(result.Message));
 
             #endregion
         }
 
         /// <summary>
-        /// 測試新增腳色失敗
+        /// 新增Function
+        /// 測試新增失敗
         /// </summary>
         [TestMethod()]
-        public void AddRoleTest1()
+        public void AddFunctionTest1()
         {
             #region arrange (新增失敗)
 
@@ -158,13 +159,11 @@ namespace RoleBase.Controllers.Tests
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
 
-            // 傳入新增的腳色
-            RoleVO roleVO = new RoleVO() { RoleName = "Admin", Description = "最高權限" };
+            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
 
-            // 回傳新增後的腳色
             string reMessage = "新增失敗。";
 
-            _roleService.Stub(o => o.AddRole(Arg<RoleVO>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.AddFunction(Arg<FunctionVO>.Is.Anything)).Return(reMessage);
 
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
@@ -173,9 +172,9 @@ namespace RoleBase.Controllers.Tests
 
             #region act
 
-            var resultData = _target.AddRole(roleVO);
+            var resultData = _target.AddFunction(functionVO);
 
-            var result = (RoleVO)(((JsonResult)resultData).Data);
+            var result = (FunctionVO)(((JsonResult)resultData).Data);
 
             #endregion
 
@@ -185,43 +184,44 @@ namespace RoleBase.Controllers.Tests
             Assert.AreEqual(_target.CurrentHttpContext.Response.StatusCode, 400);
 
             // 測試回傳結果
-            Assert.AreEqual(result.RoleName, "Admin");
-            Assert.AreEqual(result.Description, "最高權限");
-            Assert.AreEqual(result.Message, "新增失敗。");
-
+            Assert.AreEqual(result.Url, functionVO.Url);
+            Assert.AreEqual(result.Description, functionVO.Description);
+            Assert.AreEqual(result.Message, reMessage);
+          
             #endregion
         }
 
         #endregion
 
-        #region DeleteRole
+        #region DeleteFunction
 
         /// <summary>
-        /// 測試刪除腳色資料
+        /// 刪除Function
+        /// 測試刪除成功
         /// </summary>
         [TestMethod()]
-        public void DeleteRoleTest()
+        public void DeleteFunctionTest()
         {
-            #region arrange (成功刪除腳色)
+            #region arrange (刪除成功)
 
             // httpContext物件設定
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
 
-            // 設定httpContext
-            _target.CurrentHttpContext = httpContext;
-
             string id = "1";
 
-            string reMessage = string.Empty;
+            string reMessage = "";
 
-            _roleService.Stub(o => o.DeleteRole(Arg<string>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.DeleteFunction(Arg<string>.Is.Anything)).Return(reMessage);
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
 
             #endregion
 
             #region act
 
-            var resultData = _target.DeleteRole(id);
+            var resultData = _target.DeleteFunction(id);
 
             var result = (string)(((JsonResult)resultData).Data);
 
@@ -238,31 +238,32 @@ namespace RoleBase.Controllers.Tests
         }
 
         /// <summary>
-        /// 測試刪除腳色失敗
+        /// 刪除Function
+        /// 測試刪除失敗
         /// </summary>
         [TestMethod()]
-        public void DeleteRoleTest1()
+        public void DeleteFunctionTest1()
         {
-            #region arrange (刪除腳色失敗)
+            #region arrange (刪除失敗)
 
             // httpContext物件設定
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
 
-            // 設定httpContext
-            _target.CurrentHttpContext = httpContext;
-
             string id = "1";
 
             string reMessage = "刪除失敗。";
 
-            _roleService.Stub(o => o.DeleteRole(Arg<string>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.DeleteFunction(Arg<string>.Is.Anything)).Return(reMessage);
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
 
             #endregion
 
             #region act
 
-            var resultData = _target.DeleteRole(id);
+            var resultData = _target.DeleteFunction(id);
 
             var result = (string)(((JsonResult)resultData).Data);
 
@@ -280,13 +281,14 @@ namespace RoleBase.Controllers.Tests
 
         #endregion
 
-        #region EditRole
+        #region EditFunction
 
         /// <summary>
-        /// 成功編輯腳色
+        /// 編輯Function
+        /// 測試編輯成功
         /// </summary>
         [TestMethod()]
-        public void EditRoleTest()
+        public void EditFunctionTest()
         {
             #region arrange (編輯成功)
 
@@ -297,17 +299,17 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            RoleVO roleVO = new RoleVO() { RoleID = 1, RoleName = "Admin", Description = "最高權限" };
+            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
 
             string reMessage = string.Empty;
 
-            _roleService.Stub(o => o.EditRole(Arg<RoleVO>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.EditFunction(Arg<FunctionVO>.Is.Anything)).Return(reMessage);
 
             #endregion
 
             #region act
 
-            var resultData = _target.EditRole(roleVO);
+            var resultData = _target.EditFunction(functionVO);
 
             var result = (string)((JsonResult)resultData).Data;
 
@@ -324,31 +326,32 @@ namespace RoleBase.Controllers.Tests
         }
 
         /// <summary>
+        /// 編輯Function
         /// 測試編輯失敗
         /// </summary>
         [TestMethod()]
-        public void EditRoleTest1()
+        public void EditFunctionTest1()
         {
-            #region arrange (編輯失敗)
+            #region arrange (編輯成功)
 
-            // httpContext物件設定
+            // httpContext物件失敗
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
 
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            RoleVO roleVO = new RoleVO() { RoleID = 1, RoleName = "Admin", Description = "最高權限" };
+            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
 
-            string reMessage = "編輯失敗。";
+            string reMessage = "編輯失敗";
 
-            _roleService.Stub(o => o.EditRole(Arg<RoleVO>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.EditFunction(Arg<FunctionVO>.Is.Anything)).Return(reMessage);
 
             #endregion
 
             #region act
 
-            var resultData = _target.EditRole(roleVO);
+            var resultData = _target.EditFunction(functionVO);
 
             var result = (string)((JsonResult)resultData).Data;
 
@@ -366,30 +369,30 @@ namespace RoleBase.Controllers.Tests
 
         #endregion
 
-        #region RoleUserEdit
+        #region RoleFunctionEdit
 
         /// <summary>
-        /// 轉到編輯角色使用者關聯的畫面
+        /// 轉到編輯角色功能關聯的畫面
         /// </summary>
         [TestMethod()]
-        public void RoleUserEditTest()
+        public void RoleFunctionEditTest()
         {
             #region arrange
 
-            List<RoleVO> reRoleVO = new List<RoleVO>()
+            List<RoleVO> reRoleVOList = new List<RoleVO>()
             {
                 new RoleVO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
                 new RoleVO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
                 new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
-            _roleService.Stub(o => o.GetRoleData()).Return(reRoleVO);
+            _roleService.Stub(o => o.GetRoleData()).Return(reRoleVOList);
 
             #endregion
 
             #region act
 
-            var result = _target.RoleUserEdit() as ViewResult;
+            var result = _target.RoleFunctionEdit() as ViewResult;
 
             #endregion
 
@@ -398,57 +401,57 @@ namespace RoleBase.Controllers.Tests
             // 驗證資料
             for (int i = 0; i < ((List<RoleVO>)result.Model).Count; i++)
             {
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVO[i].RoleID);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVO[i].RoleName);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVO[i].Description);
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVOList[i].RoleID);
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVOList[i].RoleName);
+                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVOList[i].Description);
             }
-           
 
             #endregion
         }
 
         #endregion
 
-        #region GetUserByRole
+        #region GetFunctionByRole
 
         /// <summary>
-        /// 透過角色ID取得勾選的使用者資料
-        /// 編輯角色與使用者的關係
+        /// 透過角色ID取得勾選的功能資料
+        /// 編輯角色與功能的關係
         /// </summary>
         [TestMethod()]
-        public void GetUserByRoleTest()
+        public void GetFunctionByRoleTest()
         {
             #region arrange
 
-            string roleID = "1";
+            string id = "1";
 
-            List<UserCheckVO> reUserCheckVO = new List<UserCheckVO>()
+            List<FunctionCheckVO> reFunctionCheckVO = new List<FunctionCheckVO>()
             {
-                new UserCheckVO(){ RoleID = 1 , UserID = 1 , Check = true , UserName = "kevan" , AccountName = "kevan"},
-                new UserCheckVO(){ RoleID = 1 , UserID = 2 , Check = true , UserName = "A" , AccountName = "A"},
-                new UserCheckVO(){ RoleID = 1 , UserID = 3 , Check = false , UserName = "B" , AccountName = "B"}
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 1 , Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" , Check = true },
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" , Check = true },
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 3 , Url = "Role/EditRole" , Description = "編輯角色" , Check = false }
             };
 
-            _roleService.Stub(o => o.GetUserCheckByRole(Arg<string>.Is.Anything)).Return(reUserCheckVO);
+            _functionService.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything)).Return(reFunctionCheckVO);
 
             #endregion
 
             #region act
 
-            var resultData = _target.GetUserByRole(roleID);
+            var resultData = _target.GetFunctionByRole(id);
 
-            var result = (List<UserCheckVO>)((JsonResult)resultData).Data;
+            var result = (List<FunctionCheckVO>)((JsonResult)resultData).Data;
 
             #endregion
 
             #region assert
+
             for (int i = 0; i < result.Count; i++)
             {
-                Assert.AreEqual(result[i].RoleID, reUserCheckVO[i].RoleID);
-                Assert.AreEqual(result[i].UserID, reUserCheckVO[i].UserID);
-                Assert.AreEqual(result[i].Check, reUserCheckVO[i].Check);
-                Assert.AreEqual(result[i].UserName, reUserCheckVO[i].UserName);
-                Assert.AreEqual(result[i].AccountName, reUserCheckVO[i].AccountName);
+                Assert.AreEqual(result[i].RoleID, reFunctionCheckVO[i].RoleID);
+                Assert.AreEqual(result[i].FunctionID, reFunctionCheckVO[i].FunctionID);
+                Assert.AreEqual(result[i].Url, reFunctionCheckVO[i].Url);
+                Assert.AreEqual(result[i].Description, reFunctionCheckVO[i].Description);
+                Assert.AreEqual(result[i].Check, reFunctionCheckVO[i].Check);
             }
 
             #endregion
@@ -456,15 +459,15 @@ namespace RoleBase.Controllers.Tests
 
         #endregion
 
-        #region SaveRoleUserSetting
+        #region SaveRoleFunctionSetting
 
         /// <summary>
-        /// 測試正常儲存RoleUser設定的變更
+        /// 儲存RoleFunction設定的變更
         /// </summary>
         [TestMethod()]
-        public void SaveRoleUserSettingTest()
+        public void SaveRoleFunctionSettingTest()
         {
-            #region arrange (處理有關聯時的行為 成功)
+            #region arrange (處理有關選時的行為 成功)
 
             // httpContext物件設定
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
@@ -473,22 +476,24 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            List<UserCheckVO> userCheckVO = new List<UserCheckVO>()
+            List<FunctionCheckVO> functionCheckVO = new List<FunctionCheckVO>() 
             {
-                new UserCheckVO(){ RoleID = 1 , UserID = 1 , Check = true , AccountName = "kevan" , UserName = "kevan"}
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 1 , Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" , Check = true },
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" , Check = true },
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 3 , Url = "Role/EditRole" , Description = "編輯角色" , Check = false }
             };
 
             string roleID = null;
 
             string reMessage = string.Empty;
 
-            _roleService.Stub(o => o.SaveRoleUserSetting(Arg<List<UserCheckVO>>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.SaveRoleFunctionSetting(Arg<List<FunctionCheckVO>>.Is.Anything)).Return(reMessage);
 
             #endregion
 
             #region act
 
-            var resultData = _target.SaveRoleUserSetting(userCheckVO, roleID);
+            var resultData = _target.SaveRoleFunctionSetting(functionCheckVO, roleID);
 
             var result = (string)((JsonResult)resultData).Data;
 
@@ -504,13 +509,12 @@ namespace RoleBase.Controllers.Tests
         }
 
         /// <summary>
-        /// 測試儲存時
-        /// 處理有關聯時的行為 失敗
+        /// 儲存RoleFunction設定的變更
         /// </summary>
         [TestMethod()]
-        public void SaveRoleUserSettingTest1()
+        public void SaveRoleFunctionSettingTest1()
         {
-            #region arrange (處理有關聯時的行為 失敗)
+            #region arrange (處理有關選時的行為 失敗)
 
             // httpContext物件設定
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
@@ -519,22 +523,24 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            List<UserCheckVO> userCheckVO = new List<UserCheckVO>()
+            List<FunctionCheckVO> functionCheckVO = new List<FunctionCheckVO>()
             {
-                new UserCheckVO(){ RoleID = 1 , UserID = 1 , Check = true , AccountName = "kevan" , UserName = "kevan"}
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 1 , Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" , Check = true },
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" , Check = true },
+                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 3 , Url = "Role/EditRole" , Description = "編輯角色" , Check = false }
             };
 
             string roleID = null;
 
             string reMessage = "刪除失敗。";
 
-            _roleService.Stub(o => o.SaveRoleUserSetting(Arg<List<UserCheckVO>>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.SaveRoleFunctionSetting(Arg<List<FunctionCheckVO>>.Is.Anything)).Return(reMessage);
 
             #endregion
 
             #region act
 
-            var resultData = _target.SaveRoleUserSetting(userCheckVO, roleID);
+            var resultData = _target.SaveRoleFunctionSetting(functionCheckVO, roleID);
 
             var result = (string)((JsonResult)resultData).Data;
 
@@ -550,11 +556,10 @@ namespace RoleBase.Controllers.Tests
         }
 
         /// <summary>
-        /// 測試儲存時
-        /// 處理清空所有check時的行為 成功
+        /// 儲存RoleFunction設定的變更
         /// </summary>
         [TestMethod()]
-        public void SaveRoleUserSettingTest2()
+        public void SaveRoleFunctionSettingTest2()
         {
             #region arrange (處理清空所有check時的行為 成功)
 
@@ -565,22 +570,19 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            List<UserCheckVO> userCheckVO = new List<UserCheckVO>()
-            {
-                new UserCheckVO(){ RoleID = 1 , UserID = 1 , Check = true , AccountName = "kevan" , UserName = "kevan"}
-            };
+            List<FunctionCheckVO> functionCheckVO = new List<FunctionCheckVO>() { };
 
             string roleID = "1";
 
             string reMessage = string.Empty;
 
-            _roleService.Stub(o => o.ClearRoleUserByRoleID(Arg<string>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.ClearRoleFunctionByRoleID(Arg<string>.Is.Anything)).Return(reMessage);
 
             #endregion
 
             #region act
 
-            var resultData = _target.SaveRoleUserSetting(userCheckVO, roleID);
+            var resultData = _target.SaveRoleFunctionSetting(functionCheckVO, roleID);
 
             var result = (string)((JsonResult)resultData).Data;
 
@@ -596,11 +598,10 @@ namespace RoleBase.Controllers.Tests
         }
 
         /// <summary>
-        /// 測試儲存時
-        /// 處理清空所有check時的行為 失敗
+        /// 儲存RoleFunction設定的變更
         /// </summary>
         [TestMethod()]
-        public void SaveRoleUserSettingTest3()
+        public void SaveRoleFunctionSettingTest3()
         {
             #region arrange (處理清空所有check時的行為 失敗)
 
@@ -611,22 +612,19 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            List<UserCheckVO> userCheckVO = new List<UserCheckVO>()
-            {
-                new UserCheckVO(){ RoleID = 1 , UserID = 1 , Check = true , AccountName = "kevan" , UserName = "kevan"}
-            };
+            List<FunctionCheckVO> functionCheckVO = new List<FunctionCheckVO>() { };
 
             string roleID = "1";
 
             string reMessage = "刪除失敗。";
 
-            _roleService.Stub(o => o.ClearRoleUserByRoleID(Arg<string>.Is.Anything)).Return(reMessage);
+            _functionService.Stub(o => o.ClearRoleFunctionByRoleID(Arg<string>.Is.Anything)).Return(reMessage);
 
             #endregion
 
             #region act
 
-            var resultData = _target.SaveRoleUserSetting(userCheckVO, roleID);
+            var resultData = _target.SaveRoleFunctionSetting(functionCheckVO, roleID);
 
             var result = (string)((JsonResult)resultData).Data;
 
@@ -644,5 +642,6 @@ namespace RoleBase.Controllers.Tests
         #endregion
 
         #endregion
+
     }
 }

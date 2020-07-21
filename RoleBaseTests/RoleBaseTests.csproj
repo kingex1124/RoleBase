@@ -96,6 +96,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Controllers\AccountControllerTests.cs" />
+    <Compile Include="Controllers\FunctionControllerTests.cs" />
     <Compile Include="Controllers\HomeControllerTests.cs" />
     <Compile Include="Controllers\RoleControllerTests.cs" />
     <Compile Include="Helper\FakeHttpContextManager.cs" />

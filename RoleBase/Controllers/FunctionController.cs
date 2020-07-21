@@ -2,6 +2,7 @@
 using LoginServerBO.Service.Interface;
 using LoginVO.VO;
 using RoleBase.ActionFilters;
+using RoleBase.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,20 @@ namespace RoleBase.Controllers
         IFunctionService _functionService;
         IRoleService _roleService;
 
+        private HttpContextBase _currentHttpContext;
+
+        public HttpContextBase CurrentHttpContext
+        {
+            get
+            {
+                if (_currentHttpContext != null)
+                    return _currentHttpContext;
+
+                return HttpContextFactory.GetHttpContext();
+            }
+            set { _currentHttpContext = value; }
+        }
+
         #endregion
 
         #region 建構子
@@ -26,6 +41,12 @@ namespace RoleBase.Controllers
         {
             _functionService = new FunctionService();
             _roleService = new RoleService();
+        }
+
+        public FunctionController(IFunctionService functionService, IRoleService roleService)
+        {
+            _functionService = functionService;
+            _roleService = roleService;
         }
 
         #endregion
@@ -39,7 +60,7 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult FunctionManagement()
         {
-            return View();
+            return View("FunctionManagement");
         }
 
         /// <summary>
@@ -73,11 +94,11 @@ namespace RoleBase.Controllers
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     functionVO.Message = result;
                 }
                 else
-                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             return Json(functionVO, JsonRequestBehavior.AllowGet);
         }
@@ -95,11 +116,11 @@ namespace RoleBase.Controllers
 
             if (!string.IsNullOrEmpty(result))
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
-                Response.StatusCode = (int)HttpStatusCode.OK;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -116,11 +137,11 @@ namespace RoleBase.Controllers
 
             if (!string.IsNullOrEmpty(result))
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
-                Response.StatusCode = (int)HttpStatusCode.OK;
+                CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
@@ -168,11 +189,11 @@ namespace RoleBase.Controllers
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 else
-                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             else
             {
@@ -181,11 +202,11 @@ namespace RoleBase.Controllers
 
                 if (!string.IsNullOrEmpty(result))
                 {
-                    Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 else
-                    Response.StatusCode = (int)HttpStatusCode.OK;
+                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
