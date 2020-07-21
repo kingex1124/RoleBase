@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using KevanFramework.DataAccessDAL.Common;
+using KevanFramework.DataAccessDAL.Interface;
+using KevanFramework.DataAccessDAL.SQLDAL;
+using KevanFramework.DataAccessDAL.SQLDAL.Model;
 using LoginDTO.DTO;
 using LoginServerBO.BO.Interface;
 using LoginServerBO.Helper;
@@ -13,6 +16,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace LoginServerBO.BO
 {
@@ -23,7 +27,7 @@ namespace LoginServerBO.BO
         IRoleRepository _roleRepo;
         IRoleUserRepository _roleUserRepo;
         IRoleFunctionRepository _roleFunctionRepo;
-        ISqlConnectionHelper _sqlConnectionHelper;
+        ISQLTransactionHelper _sqlConnectionHelper;
 
         #endregion
 
@@ -34,10 +38,10 @@ namespace LoginServerBO.BO
             _roleRepo = new RoleRepository();
             _roleUserRepo = new RoleUserRepository();
             _roleFunctionRepo = new RoleFunctionRepository();
-            _sqlConnectionHelper = new SqlConnectionHelper();
+            _sqlConnectionHelper = new SQLTransactionHelper(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
         }
 
-        public RoleBO(IRoleRepository roleRepo, IRoleUserRepository roleUserRepo, IRoleFunctionRepository roleFunctionRepo , ISqlConnectionHelper sqlConnectionHelper)
+        public RoleBO(IRoleRepository roleRepo, IRoleUserRepository roleUserRepo, IRoleFunctionRepository roleFunctionRepo , ISQLTransactionHelper sqlConnectionHelper)
         {
             _roleRepo = roleRepo;
             _roleUserRepo = roleUserRepo;
@@ -83,25 +87,22 @@ namespace LoginServerBO.BO
         public string DeleteRole(string id)
         {
             string result = string.Empty;
-            SqlConnection conn = _sqlConnectionHelper.GetSQLConnection();// new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-            // conn.Open();
 
-            SqlTransaction tran = _sqlConnectionHelper.GetSqlTransaction(conn); //conn.BeginTransaction();
+            SqlConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
 
-            int deleteRoleUserResult = _roleUserRepo.DeleteRoleUserByRoleID(id, ref conn, ref tran);
+            int deleteRoleUserResult = _roleUserRepo.DeleteRoleUserByRoleID(id, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
-            int deleteRoleFunctionResult = _roleFunctionRepo.DeleteRoleFunctionByRoleID(id, ref conn, ref tran);
+            int deleteRoleFunctionResult = _roleFunctionRepo.DeleteRoleFunctionByRoleID(id, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
-            int deleteRoleResult = _roleRepo.DeleteRole(id, ref conn, ref tran);
+            int deleteRoleResult = _roleRepo.DeleteRole(id,ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
             if (deleteRoleUserResult >= 0 && deleteRoleFunctionResult >= 0 && deleteRoleResult > 0)
                 result = "";
             else
                 result = "刪除失敗。";
 
-            _sqlConnectionHelper.CommitTrans(tran);
-            //tran.Commit();
-
+            _sqlConnectionHelper.Commit(); // tran.Commit();
+           
             return result;
         }
 
@@ -152,28 +153,26 @@ namespace LoginServerBO.BO
                     roleUserDTOs.Add(roleUserDTO);
                 }
 
-                SqlConnection conn = _sqlConnectionHelper.GetSQLConnection();// new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-                //conn.Open();
+                SqlConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
 
-                SqlTransaction tran = _sqlConnectionHelper.GetSqlTransaction(conn); // conn.BeginTransaction();
-                int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
+                int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
                 if (deleteResult < 0)
                 {
-                    _sqlConnectionHelper.Rollback(tran);// tran.Rollback();
+                    _sqlConnectionHelper.Rollback();// tran.Rollback();
                     result = "刪除失敗。";
                     return result;
                 }
 
                 int insertResult = 0;
                 foreach (var item in roleUserDTOs)
-                    insertResult += _roleUserRepo.InsertRoleUser(item, ref conn, ref tran);
+                    insertResult += _roleUserRepo.InsertRoleUser(item, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
-                _sqlConnectionHelper.CommitTrans(tran); //tran.Commit();
+                _sqlConnectionHelper.Commit();
 
                 if (insertResult < 0)
                 {
-                    _sqlConnectionHelper.Rollback(tran);// tran.Rollback();
+                    _sqlConnectionHelper.Rollback();// tran.Rollback();
                     result = "設定失敗。";
                 }
             }
@@ -190,19 +189,18 @@ namespace LoginServerBO.BO
         public string ClearRoleUserByRoleID(string roleID)
         {
             string result = string.Empty;
-            SqlConnection conn = _sqlConnectionHelper.GetSQLConnection(); //new SqlConnection(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-            //conn.Open();
 
-            SqlTransaction tran = _sqlConnectionHelper.GetSqlTransaction(conn); //conn.BeginTransaction();
-            int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref conn, ref tran);
+            SqlConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
+
+            int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
             if (deleteResult < 0)
             {
-                _sqlConnectionHelper.Rollback(tran);  //tran.Rollback();
+                _sqlConnectionHelper.Rollback();  //tran.Rollback();
                 result = "刪除失敗。";
             }
 
-            _sqlConnectionHelper.CommitTrans(tran); //tran.Commit();
+            _sqlConnectionHelper.Commit(); //tran.Commit();
 
             return result;
         }
