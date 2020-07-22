@@ -83,6 +83,7 @@
     <Compile Include="Helper\UtilityTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\RoleRepositoryTests.cs" />
+    <Compile Include="Repository\RoleUserRepositoryTests.cs" />
     <Compile Include="Repository\UserRepositoryTests.cs" />
     <Compile Include="Service\FunctionServiceTests.cs" />
     <Compile Include="Service\LoginServiceTests.cs" />
