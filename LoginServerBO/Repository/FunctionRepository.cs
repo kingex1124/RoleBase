@@ -17,7 +17,7 @@ namespace LoginServerBO.Repository
     {
         #region 屬性
 
-        private DataAccess _dataAccess = null;
+        private IDataAccess _dataAccess = null;
 
         #endregion
 
@@ -27,6 +27,11 @@ namespace LoginServerBO.Repository
         {
             DataAccessIO.Register<IDataAccess, DataAccess>();
             _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
+        }
+
+        public FunctionRepository(IDataAccess dataAccess)
+        {
+            _dataAccess = dataAccess;
         }
 
         #endregion
@@ -72,7 +77,7 @@ namespace LoginServerBO.Repository
 
             param.Add(id);
 
-            return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
+            return _dataAccess.ExcuteSQL(sqlStr, ref conn, ref tran, param.ToArray());
         }
 
         /// <summary>
