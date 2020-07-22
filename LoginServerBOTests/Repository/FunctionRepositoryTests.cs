@@ -5,12 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using KevanFramework.DataAccessDAL.Interface;
 using Rhino.Mocks;
 using LoginDTO.DTO;
 using LoginVO.VO;
 using System.Data.SqlClient;
 using Rhino.Mocks.Constraints;
+using KevanFramework.DataAccessDAL.SQLDAL.Interface;
 
 namespace LoginServerBO.Repository.Tests
 {

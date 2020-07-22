@@ -9,10 +9,10 @@ using Rhino.Mocks;
 using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using LoginDTO.DTO;
-using KevanFramework.DataAccessDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL.Model;
 using System.Data.SqlClient;
 using Rhino.Mocks.Constraints;
+using KevanFramework.DataAccessDAL.SQLDAL.Interface;
 
 namespace LoginServerBO.BO.Tests
 {
@@ -174,7 +174,7 @@ namespace LoginServerBO.BO.Tests
 
             int reDeleteFunctionResult = 1;
 
-            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SqlConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
+            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SQLConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
                                                                        
             _roleFunctionRepo.Stub(o => o.DeleteRoleFunctionByFunctionID(Arg<string>.Is.Anything, ref Arg<SqlConnection>.Ref(Is.Anything(), null).Dummy, ref Arg<SqlTransaction>.Ref(Is.Anything(), null).Dummy)).Return(reDeleteRoleFunctionResult);
 
@@ -212,7 +212,7 @@ namespace LoginServerBO.BO.Tests
 
             int reDeleteFunctionResult = 1;
 
-            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SqlConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
+            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SQLConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
 
             _roleFunctionRepo.Stub(o => o.DeleteRoleFunctionByFunctionID(Arg<string>.Is.Anything, ref Arg<SqlConnection>.Ref(Is.Anything(), null).Dummy, ref Arg<SqlTransaction>.Ref(Is.Anything(), null).Dummy)).Return(reDeleteRoleFunctionResult);
 
@@ -379,7 +379,7 @@ namespace LoginServerBO.BO.Tests
 
             string reMessage = string.Empty;
 
-            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SqlConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
+            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SQLConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
 
             _roleFunctionRepo.Stub(o=>o.DeleteRoleFunctionByRoleID(Arg<string>.Is.Anything, ref Arg<SqlConnection>.Ref(Is.Anything(), null).Dummy, ref Arg<SqlTransaction>.Ref(Is.Anything(), null).Dummy)).Return(reDeleteResult);
 
@@ -423,7 +423,7 @@ namespace LoginServerBO.BO.Tests
 
             string reMessage = "刪除失敗。";
 
-            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SqlConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
+            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SQLConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
 
             _roleFunctionRepo.Stub(o => o.DeleteRoleFunctionByRoleID(Arg<string>.Is.Anything, ref Arg<SqlConnection>.Ref(Is.Anything(), null).Dummy, ref Arg<SqlTransaction>.Ref(Is.Anything(), null).Dummy)).Return(reDeleteResult);
 
@@ -464,7 +464,7 @@ namespace LoginServerBO.BO.Tests
 
             string reMessage = string.Empty;
 
-            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SqlConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
+            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SQLConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
 
             _roleFunctionRepo.Stub(o=>o.DeleteRoleFunctionByRoleID(Arg<string>.Is.Anything, ref Arg<SqlConnection>.Ref(Is.Anything(), null).Dummy, ref Arg<SqlTransaction>.Ref(Is.Anything(), null).Dummy)).Return(reDeleteResult);
 
@@ -499,7 +499,7 @@ namespace LoginServerBO.BO.Tests
 
             string reMessage = "刪除失敗。";
 
-            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SqlConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
+            _sqlConnectionHelper.Stub(o => o.BeginTransaction()).Return(new SQLConnTran() { SqlConn = new SqlConnection(), SqlTrans = null });
 
             _roleFunctionRepo.Stub(o => o.DeleteRoleFunctionByRoleID(Arg<string>.Is.Anything, ref Arg<SqlConnection>.Ref(Is.Anything(), null).Dummy, ref Arg<SqlTransaction>.Ref(Is.Anything(), null).Dummy)).Return(reDeleteResult);
 
