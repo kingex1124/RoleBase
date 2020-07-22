@@ -16,7 +16,7 @@ namespace LoginServerBO.Repository
     {
         #region 屬性
 
-        private DataAccess _dataAccess = null;
+        private IDataAccess _dataAccess = null;
 
         #endregion
 
@@ -26,6 +26,11 @@ namespace LoginServerBO.Repository
         {
             DataAccessIO.Register<IDataAccess, DataAccess>();
             _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
+        }
+
+        public RoleUserRepository(IDataAccess dataAccess)
+        {
+            _dataAccess = dataAccess;
         }
 
         #endregion
