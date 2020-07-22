@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using KevanFramework.DataAccessDAL.Common;
-using KevanFramework.DataAccessDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL;
+using KevanFramework.DataAccessDAL.SQLDAL.Interface;
 using KevanFramework.DataAccessDAL.SQLDAL.Model;
 using LoginDTO.DTO;
 using LoginServerBO.BO.Interface;
@@ -88,7 +88,7 @@ namespace LoginServerBO.BO
         {
             string result = string.Empty;
 
-            SqlConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
+            SQLConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
 
             int deleteRoleUserResult = _roleUserRepo.DeleteRoleUserByRoleID(id, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
@@ -153,7 +153,7 @@ namespace LoginServerBO.BO
                     roleUserDTOs.Add(roleUserDTO);
                 }
 
-                SqlConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
+                SQLConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
 
                 int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
@@ -190,7 +190,7 @@ namespace LoginServerBO.BO
         {
             string result = string.Empty;
 
-            SqlConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
+            SQLConnTran sqlConnTran = _sqlConnectionHelper.BeginTransaction();
 
             int deleteResult = _roleUserRepo.DeleteRoleUserByRoleID(roleID, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
