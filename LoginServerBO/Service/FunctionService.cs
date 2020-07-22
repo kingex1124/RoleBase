@@ -25,6 +25,10 @@ namespace LoginServerBO.Service
             _functionBO = new FunctionBO();
         }
 
+        public FunctionService(IFunctionBO functionBO)
+        {
+            _functionBO = functionBO;
+        }
         #endregion
 
         #region 方法
