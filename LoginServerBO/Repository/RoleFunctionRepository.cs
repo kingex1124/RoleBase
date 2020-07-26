@@ -24,8 +24,8 @@ namespace LoginServerBO.Repository
 
         public RoleFunctionRepository()
         {
-            DataAccessIO.Register<IDataAccess, DataAccess>();
-            _dataAccess = (DataAccess)DataAccessIO.Resolve<IDataAccess>("AccountConn");
+            UnityContainer.Register<IDataAccess, DataAccess>();
+            _dataAccess = UnityContainer.Resolve<IDataAccess>("AccountConn");
         }
 
         public RoleFunctionRepository(IDataAccess dataAccess)
