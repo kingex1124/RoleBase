@@ -48,8 +48,9 @@ namespace RoleBase.ActionFilters
                             Check = false;
                     }
                 }
+
                 if (Check)
-                    OnActionExecuting(filterContext);
+                    return;
                 else if (!filterContext.HttpContext.Request.IsAjaxRequest())
                 {
                     UrlHelper url = new UrlHelper(filterContext.RequestContext);
