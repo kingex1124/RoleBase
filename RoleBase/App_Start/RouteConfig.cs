@@ -28,6 +28,7 @@ namespace RoleBase
             Container.Register<IRegistService, RegistService>();
             Container.Register<ILoginService, LoginService>();
             Container.Register<ISecurityService, SecurityService>();
+            Container.Register<IFunctionService, FunctionService>();
 
         }
     }
