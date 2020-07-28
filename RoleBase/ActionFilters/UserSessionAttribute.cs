@@ -15,17 +15,10 @@ namespace RoleBase.ActionFilters
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
     public class UserSessionAttribute : ActionFilterAttribute
     {
-        #region 屬性
-
-        ISecurityService _securityService;
-
-        #endregion
-
         #region 建構子
 
         public UserSessionAttribute()
-        {
-            _securityService = new SecurityService();
+        {       
         }
 
         #endregion
@@ -38,12 +31,6 @@ namespace RoleBase.ActionFilters
             if (session[AccountInfoData.LoginInfo] != null || session.IsNewSession ? !session.IsNewSession : false)
             {
                 List<SecurityRoleFunctionDTO> securityRoleFunctions = ((SecurityLevel)session[AccountInfoData.LoginInfo]).SecurityUrl;
-
-                //foreach (RoleDTO roleArr in SessionConnectionPool.CurrentUserInfo.SecurityRole)
-                //{
-                //    var securityRF = securityService.GetSecurityRoleFunction(roleArr.RoleID.ToString());
-                //        securityRoleFunctions.AddRange(securityRF);
-                //}
 
                 bool Check = true;
                 if (securityRoleFunctions.Count == 0)
