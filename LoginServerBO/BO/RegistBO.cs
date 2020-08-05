@@ -1,4 +1,5 @@
-﻿using LoginServerBO.BO.Interface;
+﻿using LoginDTO.EFModel;
+using LoginServerBO.BO.Interface;
 using LoginServerBO.Repository;
 using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
@@ -65,6 +66,10 @@ namespace LoginServerBO.BO
         /// <returns></returns>
         public Account Regist(Account account)
         {
+            //測試code
+            //var rep = new UserEfRepository(new RoleBaseEntities());
+            //rep.UserInsert(account);
+
             if (_userRep.UserInsert(account) > 0)
                 return account;
             else

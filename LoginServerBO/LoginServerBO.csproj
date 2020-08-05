@@ -37,6 +37,12 @@
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework.BulkInsert, Version=6.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.BulkInsert-ef6-ext.6.0.3.1\lib\net45\EntityFramework.BulkInsert.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.MappingAPI, Version=6.1.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.MappingAPI.6.1.0.10\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
@@ -70,15 +76,21 @@
     <Compile Include="Helper\ObjectMappingAttribute.cs" />
     <Compile Include="Helper\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\EfRepositoryBase.cs" />
     <Compile Include="Repository\FunctionRepository.cs" />
+    <Compile Include="Repository\Interface\IDeleteState.cs" />
     <Compile Include="Repository\Interface\IFunctionRepository.cs" />
+    <Compile Include="Repository\Interface\IRepository.cs" />
     <Compile Include="Repository\Interface\IRoleFunctionRepository.cs" />
     <Compile Include="Repository\Interface\IRoleRepository.cs" />
     <Compile Include="Repository\Interface\IRoleUserRepository.cs" />
+    <Compile Include="Repository\Interface\IUserEfRepository.cs" />
     <Compile Include="Repository\Interface\IUserRepository.cs" />
+    <Compile Include="Repository\RoleBaseEfRepository.cs" />
     <Compile Include="Repository\RoleFunctionRepository.cs" />
     <Compile Include="Repository\RoleRepository.cs" />
     <Compile Include="Repository\RoleUserRepository.cs" />
+    <Compile Include="Repository\UserEfRepository.cs" />
     <Compile Include="Repository\UserRepository.cs" />
     <Compile Include="Service\FunctionService.cs" />
     <Compile Include="Service\Interface\IFunctionService.cs" />
