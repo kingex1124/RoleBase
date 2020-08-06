@@ -34,6 +34,7 @@ namespace LoginServerBO.BO
 
         IRoleEfRepository _roleEfRepo;
         IRoleUserEfRepository _roleUserEfRepo;
+        IRoleFunctionEfRepository _roleFunctionEfRepo;
 
         #endregion
 
@@ -48,6 +49,7 @@ namespace LoginServerBO.BO
 
             _roleEfRepo = new RoleEfRepository(new RoleBaseEntities());
             _roleUserEfRepo = new RoleUserEfRepository(new RoleBaseEntities());
+            _roleFunctionEfRepo = new RoleFunctionEfRepository(new RoleBaseEntities());
         }
 
         public RoleBO(IRoleRepository roleRepo, IRoleUserRepository roleUserRepo, IRoleFunctionRepository roleFunctionRepo , ISQLTransactionHelper sqlConnectionHelper)
@@ -58,10 +60,11 @@ namespace LoginServerBO.BO
             _sqlConnectionHelper = sqlConnectionHelper;
         }
 
-        public RoleBO(IRoleEfRepository roleEfRep, IRoleUserEfRepository roleUserEfRep)
+        public RoleBO(IRoleEfRepository roleEfRep, IRoleUserEfRepository roleUserEfRep , IRoleFunctionEfRepository roleFunctionEfRepo)
         {
             _roleEfRepo = roleEfRep;
             _roleUserEfRepo = roleUserEfRep;
+            _roleFunctionEfRepo = roleFunctionEfRepo;
         }
 
         #endregion
@@ -79,7 +82,7 @@ namespace LoginServerBO.BO
             return result;
 
             // EF
-            //return Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleEfRep.GetRoleData()); 
+            //return Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleEfRepo.GetRoleData()); 
         }
 
         /// <summary>
@@ -97,7 +100,7 @@ namespace LoginServerBO.BO
                 return "新增失敗。";
 
             // EF
-            //int result = _roleEfRep.AddRole(roleVO);
+            //int result = _roleEfRepo.AddRole(roleVO);
 
             //if (result > 0)
             //    return "";
@@ -134,10 +137,21 @@ namespace LoginServerBO.BO
             // EF
             //string result = string.Empty;
 
-            //if (_roleEfRep.DeleteRole(id) >= 0)
-            //    result = "";
-            //else
-            //    result = "刪除失敗。";
+            //using (TransactionScope ts = new TransactionScope())
+            //{
+            //    int deleteRoleUserResult = _roleUserEfRepo.DeleteRoleUserByRoleID(id);
+
+            //    int deleteRoleFunctionResult = _roleFunctionEfRepo.DeleteRoleFunctionByRoleID(id);
+
+            //    int deleteRoleResult = _roleEfRepo.DeleteRole(id);
+
+            //    if (deleteRoleUserResult >= 0 && deleteRoleFunctionResult >= 0 && deleteRoleResult > 0)
+            //        result = "";
+            //    else
+            //        result = "刪除失敗。";
+
+            //    ts.Complete();
+            //}
 
             //return result;
         }
@@ -156,7 +170,7 @@ namespace LoginServerBO.BO
                 return "編輯失敗。";
 
             // Ef
-            //int result = _roleEfRep.EditRole(roleVO);
+            //int result = _roleEfRepo.EditRole(roleVO);
             //if (result > 0)
             //    return "";
             //else
@@ -174,7 +188,7 @@ namespace LoginServerBO.BO
             return result;
 
             // Ef
-            //return Utility.MigrationIEnumerable<UserCheckDTO, UserCheckVO>(_roleUserEfRep.GetUserCheckByRole(roleID).ToList());
+            //return Utility.MigrationIEnumerable<UserCheckDTO, UserCheckVO>(_roleUserEfRepo.GetUserCheckByRole(roleID).ToList());
         }
 
         /// <summary>

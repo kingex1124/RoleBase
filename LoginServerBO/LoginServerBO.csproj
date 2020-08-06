@@ -75,13 +75,17 @@
     <Compile Include="BO\SecurityBO.cs" />
     <Compile Include="EfRepository\EfRepository.cs" />
     <Compile Include="EfRepository\EfRepositoryBase.cs" />
+    <Compile Include="EfRepository\FunctionEfRepository.cs" />
     <Compile Include="EfRepository\Interface\IDeleteState.cs" />
+    <Compile Include="EfRepository\Interface\IFunctionEfRepository.cs" />
     <Compile Include="EfRepository\Interface\IRepository.cs" />
     <Compile Include="EfRepository\Interface\IRoleEfRepository.cs" />
+    <Compile Include="EfRepository\Interface\IRoleFunctionEfRepository.cs" />
     <Compile Include="EfRepository\Interface\IRoleUserEfRepository.cs" />
     <Compile Include="EfRepository\Interface\IUserEfRepository.cs" />
     <Compile Include="EfRepository\RoleBaseEfContext.cs" />
     <Compile Include="EfRepository\RoleEfRepository.cs" />
+    <Compile Include="EfRepository\RoleFunctionEfRepository.cs" />
     <Compile Include="EfRepository\RoleUserEfRepository.cs" />
     <Compile Include="EfRepository\UserEfRepository.cs" />
     <Compile Include="Helper\ObjectMappingAttribute.cs" />

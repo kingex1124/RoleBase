@@ -1,5 +1,8 @@
 ﻿using LoginDTO.DTO;
+using LoginDTO.EFModel;
 using LoginServerBO.BO.Interface;
+using LoginServerBO.EfRepository;
+using LoginServerBO.EfRepository.Interface;
 using LoginServerBO.Repository;
 using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
@@ -16,8 +19,10 @@ namespace LoginServerBO.BO
         #region 屬性
 
         IUserRepository _userRepo;
-
         IRoleRepository _roleRepo;
+
+        IUserEfRepository _userEfRepo;
+        IRoleEfRepository _roleEfRepo;
 
         #endregion
 
@@ -27,12 +32,21 @@ namespace LoginServerBO.BO
         {
             _userRepo = new UserRepository();
             _roleRepo = new RoleRepository();
+
+            _userEfRepo = new UserEfRepository(new RoleBaseEntities());
+            _roleEfRepo = new RoleEfRepository(new RoleBaseEntities());
         }
 
         public LoginBO(IUserRepository userRep, IRoleRepository roleRep)
         {
             _userRepo = userRep;
             _roleRepo = roleRep;
+        }
+
+        public LoginBO(IUserEfRepository userEfRepo, IRoleEfRepository roleEfRepo)
+        {
+            _userEfRepo = userEfRepo;
+            _roleEfRepo = roleEfRepo;
         }
 
         #endregion
@@ -61,6 +75,23 @@ namespace LoginServerBO.BO
             }
 
             return accountInfoData;
+
+            // Ef
+            //驗證帳號
+            //if (!_userEfRepo.FindAccountName(accountInfoData.AccountName).Any())
+            //{
+            //    accountInfoData.Message = "該帳號不存在。";
+            //    return accountInfoData;
+            //}
+
+            ////驗證密碼
+            //if (_userEfRepo.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
+            //{
+            //    accountInfoData.Message = "密碼輸入錯誤。";
+            //    return accountInfoData;
+            //}
+
+            //return accountInfoData;
         }
 
         /// <summary>
@@ -71,6 +102,9 @@ namespace LoginServerBO.BO
         public UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData)
         {
             return _userRepo.FindAccountData(accountInfoData.AccountName);
+
+            // Ef
+            // return _userEfRepo.FindAccountData(accountInfoData.AccountName);
         }
 
         /// <summary>
@@ -81,6 +115,9 @@ namespace LoginServerBO.BO
         public IEnumerable<RoleDTO> GetRoleDataByUserID(string userID)
         {
             return _roleRepo.GetRoleDataByAccountName(userID);
+
+            // Ef
+            // return _roleEfRepo.GetRoleDataByAccountName(userID);
         }
 
         #endregion
