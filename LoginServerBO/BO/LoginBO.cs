@@ -15,9 +15,9 @@ namespace LoginServerBO.BO
     {
         #region 屬性
 
-        IUserRepository _userRep;
+        IUserRepository _userRepo;
 
-        IRoleRepository _roleRep;
+        IRoleRepository _roleRepo;
 
         #endregion
 
@@ -25,14 +25,14 @@ namespace LoginServerBO.BO
 
         public LoginBO()
         {
-            _userRep = new UserRepository();
-            _roleRep = new RoleRepository();
+            _userRepo = new UserRepository();
+            _roleRepo = new RoleRepository();
         }
 
         public LoginBO(IUserRepository userRep, IRoleRepository roleRep)
         {
-            _userRep = userRep;
-            _roleRep = roleRep;
+            _userRepo = userRep;
+            _roleRepo = roleRep;
         }
 
         #endregion
@@ -47,14 +47,14 @@ namespace LoginServerBO.BO
         public AccountInfoData AccountValid(AccountInfoData accountInfoData)
         {
             //驗證帳號
-            if (!_userRep.FindAccountName(accountInfoData.AccountName).Any())
+            if (!_userRepo.FindAccountName(accountInfoData.AccountName).Any())
             {
                 accountInfoData.Message = "該帳號不存在。";
                 return accountInfoData;
             }
 
             //驗證密碼
-            if (_userRep.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
+            if (_userRepo.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
             {
                 accountInfoData.Message = "密碼輸入錯誤。";
                 return accountInfoData;
@@ -70,7 +70,7 @@ namespace LoginServerBO.BO
         /// <returns></returns>
         public UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData)
         {
-            return _userRep.FindAccountData(accountInfoData.AccountName);
+            return _userRepo.FindAccountData(accountInfoData.AccountName);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace LoginServerBO.BO
         /// <returns></returns>
         public IEnumerable<RoleDTO> GetRoleDataByUserID(string userID)
         {
-            return _roleRep.GetRoleDataByAccountName(userID);
+            return _roleRepo.GetRoleDataByAccountName(userID);
         }
 
         #endregion

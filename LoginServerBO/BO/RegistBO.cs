@@ -17,9 +17,9 @@ namespace LoginServerBO.BO
     {
         #region 屬性
 
-        private IUserRepository _userRep;
+        private IUserRepository _userRepo;
 
-        private IUserEfRepository _userEfRep;
+        private IUserEfRepository _userEfRepo;
 
         #endregion
 
@@ -27,18 +27,18 @@ namespace LoginServerBO.BO
 
         public RegistBO()
         {       
-            _userRep = new UserRepository();
-            _userEfRep = new UserEfRepository(new RoleBaseEntities()); 
+            _userRepo = new UserRepository();
+            _userEfRepo = new UserEfRepository(new RoleBaseEntities()); 
         }
 
         public RegistBO(IUserRepository userRep)
         {
-            _userRep = userRep;
+            _userRepo = userRep;
         }
 
         public RegistBO(IUserEfRepository userEfRep)
         {
-            _userEfRep = userEfRep;
+            _userEfRepo = userEfRep;
         }
 
         #endregion
@@ -53,7 +53,7 @@ namespace LoginServerBO.BO
         public Account RegistValid(Account account)
         {
             // 驗證帳號
-            if (_userRep.FindAccountName(account.AccountName).Any())
+            if (_userRepo.FindAccountName(account.AccountName).Any())
             {
                 account.Message = "帳號名稱已被使用";
                 return account;
@@ -93,7 +93,7 @@ namespace LoginServerBO.BO
         /// <returns></returns>
         public Account Regist(Account account)
         {
-            if (_userRep.UserInsert(account) > 0)
+            if (_userRepo.UserInsert(account) > 0)
                 return account;
             else
             {
