@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LoginServerBO.Repository.Interface
+namespace LoginServerBO.EfRepository.Interface
 {
     public interface IDeleteState
     {

@@ -1,5 +1,5 @@
 ﻿using EntityFramework.BulkInsert.Extensions;
-using LoginServerBO.Repository.Interface;
+using LoginServerBO.EfRepository.Interface;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -9,12 +9,13 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LoginServerBO.Repository
+namespace LoginServerBO.EfRepository
 {
     public class EfRepositoryBase<TEntity, TDbContext> : IRepository<TEntity> where TEntity : class where TDbContext : DbContext
     {
         protected TDbContext _db;
         protected DbSet<TEntity> Set;
+        private int _updateCount = 0;
 
         public EfRepositoryBase(TDbContext db)
         {
@@ -25,20 +26,24 @@ namespace LoginServerBO.Repository
         public void Insert(TEntity entity)
         {
             Set.Add(entity);
+            _updateCount++;
         }
 
         public void Update(TEntity entity)
         {
             _db.Entry(entity).State = EntityState.Modified;
+            _updateCount++;
         }
         public void Delete(TEntity entity)
         {
             Set.Remove(entity);
+            _updateCount++;
         }
 
         public void InsertRange(IEnumerable<TEntity> entities)
         {
             Set.AddRange(entities);
+            _updateCount += entities.Count();
         }
 
         public IQueryable<TEntity> SearchFor(Expression<Func<TEntity, bool>> predicate)
@@ -85,11 +90,10 @@ namespace LoginServerBO.Repository
             try
             {
                 _db.SaveChanges();
-                return 1;
+                return _updateCount;
             }
             catch (Exception ex)
             {
-
                 return -1;
             }
         }
@@ -141,10 +145,5 @@ namespace LoginServerBO.Repository
         {
             _db.Configuration.AutoDetectChangesEnabled = value;
         }
-    }
-
-    public class EfRepository<TEntity, TDbContext> : EfRepositoryBase<TEntity, TDbContext>, IRepository<TEntity> where TEntity : class where TDbContext : DbContext
-    {
-        public EfRepository(TDbContext db) : base(db) { }
     }
 }

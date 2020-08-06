@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LoginServerBO.Repository.Interface
+namespace LoginServerBO.EfRepository.Interface
 {
 	public interface IRepository<T>
 	{

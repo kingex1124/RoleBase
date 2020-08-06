@@ -1,6 +1,7 @@
 ﻿using LoginDTO.DTO;
 using LoginDTO.EFModel;
-using LoginServerBO.Repository.Interface;
+using LoginServerBO.EfRepository.Interface;
+using LoginServerBO.Repository;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LoginServerBO.Repository
+namespace LoginServerBO.EfRepository
 {
-    public class UserEfRepository : RoleBaseEfRepository<User>, IUserEfRepository
+    public class UserEfRepository : RoleBaseEfContext<User>, IUserEfRepository
     {
         private readonly RoleBaseEntities _db;
 
@@ -68,8 +69,7 @@ namespace LoginServerBO.Repository
         /// <returns></returns>
         public int UserInsert(Account account)
         {
-            var rep = new EfRepositoryBase<User, RoleBaseEntities>(_db);
-            rep.Insert(new User()
+            Insert(new User()
             {
                 AccountName = account.AccountName,
                 Password = account.Password,
@@ -78,7 +78,7 @@ namespace LoginServerBO.Repository
                 Email = account.Email
             });
 
-            return rep.SaveChanges();
+            return SaveChanges();
         }
     }
 }
