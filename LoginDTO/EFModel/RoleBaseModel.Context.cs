@@ -27,8 +27,8 @@ namespace LoginDTO.EFModel
     
         public virtual DbSet<Function> Function { get; set; }
         public virtual DbSet<Role> Role { get; set; }
-        public virtual DbSet<User> User { get; set; }
         public virtual DbSet<RoleFunction> RoleFunction { get; set; }
         public virtual DbSet<RoleUser> RoleUser { get; set; }
+        public virtual DbSet<User> User { get; set; }
     }
 }

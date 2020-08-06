@@ -5,11 +5,11 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="6c4d36d59f754477b752104a94314b58" Name="Diagram1">
-        <EntityTypeShape EntityType="RoleBaseModel.Function" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RoleBaseModel.Role" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RoleBaseModel.User" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RoleBaseModel.RoleFunction" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RoleBaseModel.RoleUser" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="RoleBaseModel.Function" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RoleBaseModel.Role" Width="1.5" PointX="2.75" PointY="0.75" />
+        <EntityTypeShape EntityType="RoleBaseModel.RoleFunction" Width="1.5" PointX="0.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RoleBaseModel.RoleUser" Width="1.5" PointX="2.75" PointY="3.75" />
+        <EntityTypeShape EntityType="RoleBaseModel.User" Width="1.5" PointX="4.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
