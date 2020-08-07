@@ -1,6 +1,7 @@
-﻿using LoginServerBO.BO.Interface;
-using LoginServerBO.Repository;
-using LoginServerBO.Repository.Interface;
+﻿using LoginDTO.EFModel;
+using LoginServerBO.BO.Interface;
+using LoginServerBO.EfRepository;
+using LoginServerBO.EfRepository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
@@ -8,26 +9,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LoginServerBO.BO
+namespace LoginServerBO.EfBO
 {
-    public class RegistBO : IRegistBO
+    public class RegistEfBO : IRegistBO
     {
         #region 屬性
 
-        private IUserRepository _userRepo;
+        private IUserEfRepository _userEfRepo;
 
         #endregion
 
         #region 建構子
 
-        public RegistBO()
-        {       
-            _userRepo = new UserRepository();          
+        public RegistEfBO()
+        {     
+            _userEfRepo = new UserEfRepository(new RoleBaseEntities());
         }
 
-        public RegistBO(IUserRepository userRep)
+        public RegistEfBO(IUserEfRepository userEfRep)
         {
-            _userRepo = userRep;
+            _userEfRepo = userEfRep;
         }
 
         #endregion
@@ -42,7 +43,7 @@ namespace LoginServerBO.BO
         public Account RegistValid(Account account)
         {
             // 驗證帳號
-            if (_userRepo.FindAccountName(account.AccountName).Any())
+            if (_userEfRepo.FindAccountName(account.AccountName).Any())
             {
                 account.Message = "帳號名稱已被使用";
                 return account;
@@ -55,7 +56,7 @@ namespace LoginServerBO.BO
                 return account;
             }
 
-            return account;         
+            return account;
         }
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace LoginServerBO.BO
         /// <returns></returns>
         public Account Regist(Account account)
         {
-            if (_userRepo.UserInsert(account) > 0)
+            if (_userEfRepo.UserInsert(account) > 0)
                 return account;
             else
             {
@@ -73,6 +74,7 @@ namespace LoginServerBO.BO
             }
             return account;
         }
+
 
         #endregion
     }

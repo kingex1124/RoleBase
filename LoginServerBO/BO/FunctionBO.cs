@@ -2,17 +2,13 @@
 using KevanFramework.DataAccessDAL.SQLDAL;
 using KevanFramework.DataAccessDAL.SQLDAL.Interface;
 using LoginDTO.DTO;
-using LoginDTO.EFModel;
 using LoginServerBO.BO.Interface;
-using LoginServerBO.EfRepository;
-using LoginServerBO.EfRepository.Interface;
 using LoginServerBO.Helper;
 using LoginServerBO.Repository;
 using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,9 +24,6 @@ namespace LoginServerBO.BO
         IRoleFunctionRepository _roleFunctionRepo;
         ISQLTransactionHelper _sqlConnectionHelper;
 
-        IFunctionEfRepository _functionEfRepo;
-        IRoleFunctionEfRepository _roleFunctionEfRepo;
-
         #endregion
 
         #region 建構子
@@ -40,9 +33,6 @@ namespace LoginServerBO.BO
             _functionRepo = new FunctionRepository();
             _roleFunctionRepo = new RoleFunctionRepository();
             _sqlConnectionHelper = new SQLTransactionHelper(new DBConnectionString(KevanFramework.DataAccessDAL.Common.Enum.ConnectionType.ConnectionKeyName, "AccountConn").ConnectionString);
-
-            _functionEfRepo = new FunctionEfRepository(new RoleBaseEntities());
-            _roleFunctionEfRepo = new RoleFunctionEfRepository(new RoleBaseEntities());
         }
 
         public FunctionBO(IFunctionRepository functionRepo, IRoleFunctionRepository roleFunctionRepo, ISQLTransactionHelper sqlConnectionHelper)
@@ -50,12 +40,6 @@ namespace LoginServerBO.BO
             _functionRepo = functionRepo;
             _roleFunctionRepo = roleFunctionRepo;
             _sqlConnectionHelper = sqlConnectionHelper;
-        }
-
-        public FunctionBO(IFunctionEfRepository functionEfRepo, IRoleFunctionEfRepository roleFunctionEfRepo)
-        {
-            _functionEfRepo = functionEfRepo;
-            _roleFunctionEfRepo = roleFunctionEfRepo;
         }
 
         #endregion
@@ -71,9 +55,6 @@ namespace LoginServerBO.BO
             IEnumerable<FunctionVO> result = Utility.MigrationIEnumerable<FunctionDTO, FunctionVO>(_functionRepo.GetFunctionData());
 
             return result;
-
-            // EF
-            // return Utility.MigrationIEnumerable<FunctionDTO, FunctionVO>(_functionEfRepo.GetFunctionData()); 
         }
 
         /// <summary>
@@ -89,14 +70,6 @@ namespace LoginServerBO.BO
                 return "";
             else
                 return "新增失敗。";
-
-            // Ef
-            //int result = _functionEfRepo.AddFunction(functionVO);
-
-            //if (result > 0)
-            //    return "";
-            //else
-            //    return "新增失敗。";
         }
 
         /// <summary>
@@ -122,26 +95,6 @@ namespace LoginServerBO.BO
             _sqlConnectionHelper.Commit();
 
             return result;
-
-            // Ef
-            //string result = string.Empty;
-
-            //using (TransactionScope ts = new TransactionScope())
-            //{
-
-            //    int deleteRoleFunctionResult = _roleFunctionEfRepo.DeleteRoleFunctionByFunctionID(id);
-
-            //    int deleteFunctionResult = _functionEfRepo.DeleteFunction(id);
-
-            //    if (deleteRoleFunctionResult >= 0 && deleteFunctionResult > 0)
-            //        result = "";
-            //    else
-            //        result = "刪除失敗。";
-
-            //    ts.Complete();
-            //}
-
-            //return result;
         }
 
         /// <summary>
@@ -156,13 +109,6 @@ namespace LoginServerBO.BO
                 return "";
             else
                 return "編輯失敗";
-
-            // Ef
-            //int result = _functionEfRepo.EditFunction(functionVO);
-            //if (result > 0)
-            //    return "";
-            //else
-            //    return "編輯失敗";
         }
 
         /// <summary>
@@ -174,9 +120,6 @@ namespace LoginServerBO.BO
         {
             IEnumerable<FunctionCheckVO> result = Utility.MigrationIEnumerable<FunctionCheckDTO, FunctionCheckVO>(_roleFunctionRepo.GetFunctionCheckByRole(roleID));
             return result;
-
-            // Ef
-            // return Utility.MigrationIEnumerable<FunctionCheckDTO, FunctionCheckVO>(_roleFunctionEfRepo.GetFunctionCheckByRole(roleID));
         }
 
         /// <summary>
@@ -226,48 +169,6 @@ namespace LoginServerBO.BO
                 }
             }
             return result;
-
-            // Ef
-            //string result = string.Empty;
-            //string roleID;
-
-            //if (functionCheckVO != null && functionCheckVO.Any())
-            //{
-            //    roleID = functionCheckVO.First().RoleID.ToString();
-            //    List<RoleFunctionDTO> roleFunctionDTOs = new List<RoleFunctionDTO>();
-            //    foreach (var item in functionCheckVO)
-            //    {
-            //        RoleFunctionDTO roleFunctionDTO = new RoleFunctionDTO();
-            //        roleFunctionDTO.RoleID = item.RoleID;
-            //        roleFunctionDTO.FunctionID = item.FunctionID;
-            //        roleFunctionDTOs.Add(roleFunctionDTO);
-            //    }
-
-            //    using (TransactionScope ts = new TransactionScope())
-            //    {
-            //        int deleteResult = _roleFunctionEfRepo.DeleteRoleFunctionByRoleID(roleID);
-
-            //        if (deleteResult < 0)
-            //        {
-            //            _sqlConnectionHelper.Rollback();
-            //            result = "刪除失敗。";
-            //            return result;
-            //        }
-
-            //        int insertResult = 0;
-            //        foreach (var item in roleFunctionDTOs)
-            //            insertResult += _roleFunctionEfRepo.InsertRoleFunction(item);
-
-            //        ts.Complete();
-
-            //        if (insertResult < 0)
-            //        {
-            //            _sqlConnectionHelper.Rollback();
-            //            result = "設定失敗。";
-            //        }
-            //    }
-            //}
-            //return result;
         }
 
         /// <summary>
@@ -291,25 +192,7 @@ namespace LoginServerBO.BO
             }
             _sqlConnectionHelper.Commit();
 
-            return result;
-
-            // Ef
-            //string result = string.Empty;
-
-            //using (TransactionScope ts = new TransactionScope())
-            //{
-            //    int deleteResult = _roleFunctionEfRepo.DeleteRoleFunctionByRoleID(roleID);
-
-            //    if (deleteResult < 0)
-            //    {
-            //        _sqlConnectionHelper.Rollback();
-            //        result = "刪除失敗。";
-            //    }
-
-            //    ts.Complete();
-            //}
-
-            //return result;
+            return result;         
         }
 
         #endregion

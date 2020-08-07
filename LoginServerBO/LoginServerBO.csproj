@@ -73,6 +73,11 @@
     <Compile Include="BO\RegistBO.cs" />
     <Compile Include="BO\RoleBO.cs" />
     <Compile Include="BO\SecurityBO.cs" />
+    <Compile Include="EfBO\FunctionEfBO.cs" />
+    <Compile Include="EfBO\LoginEfBO.cs" />
+    <Compile Include="EfBO\RegistEfBO.cs" />
+    <Compile Include="EfBO\RoleEfBO.cs" />
+    <Compile Include="EfBO\SecurityEfBO.cs" />
     <Compile Include="EfRepository\EfRepository.cs" />
     <Compile Include="EfRepository\EfRepositoryBase.cs" />
     <Compile Include="EfRepository\FunctionEfRepository.cs" />
