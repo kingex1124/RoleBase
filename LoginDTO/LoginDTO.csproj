@@ -31,9 +31,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,8 +58,65 @@
     <Compile Include="DTO\RoleUserDTO.cs" />
     <Compile Include="DTO\UserCheckDTO.cs" />
     <Compile Include="DTO\UserDTO.cs" />
+    <Compile Include="EFModel\Function.cs">
+      <DependentUpon>RoleBaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFModel\Role.cs">
+      <DependentUpon>RoleBaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFModel\RoleBaseModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RoleBaseModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFModel\RoleBaseModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RoleBaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFModel\RoleBaseModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>RoleBaseModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="EFModel\RoleFunction.cs">
+      <DependentUpon>RoleBaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFModel\RoleUser.cs">
+      <DependentUpon>RoleBaseModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EFModel\User.cs">
+      <DependentUpon>RoleBaseModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EntityDeploy Include="EFModel\RoleBaseModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>RoleBaseModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="EFModel\RoleBaseModel.edmx.diagram">
+      <DependentUpon>RoleBaseModel.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EFModel\RoleBaseModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>RoleBaseModel.Context.cs</LastGenOutput>
+      <DependentUpon>RoleBaseModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="EFModel\RoleBaseModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>RoleBaseModel.edmx</DependentUpon>
+      <LastGenOutput>RoleBaseModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

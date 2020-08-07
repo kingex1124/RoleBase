@@ -11,8 +11,6 @@ using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -94,7 +92,7 @@ namespace LoginServerBO.BO
 
             int deleteRoleFunctionResult = _roleFunctionRepo.DeleteRoleFunctionByRoleID(id, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
-            int deleteRoleResult = _roleRepo.DeleteRole(id,ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
+            int deleteRoleResult = _roleRepo.DeleteRole(id, ref sqlConnTran.SqlConn, ref sqlConnTran.SqlTrans);
 
             if (deleteRoleUserResult >= 0 && deleteRoleFunctionResult >= 0 && deleteRoleResult > 0)
                 result = "";
@@ -102,7 +100,7 @@ namespace LoginServerBO.BO
                 result = "刪除失敗。";
 
             _sqlConnectionHelper.Commit(); // tran.Commit();
-           
+
             return result;
         }
 

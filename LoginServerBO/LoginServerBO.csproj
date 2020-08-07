@@ -34,11 +34,24 @@
     <Reference Include="AutoMapper, Version=9.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.9.0.0\lib\net461\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.BulkInsert, Version=6.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.BulkInsert-ef6-ext.6.0.3.1\lib\net45\EntityFramework.BulkInsert.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.MappingAPI, Version=6.1.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.MappingAPI.6.1.0.10\lib\net45\EntityFramework.MappingAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="KevanFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\KevanFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Transactions" />
@@ -60,6 +73,26 @@
     <Compile Include="BO\RegistBO.cs" />
     <Compile Include="BO\RoleBO.cs" />
     <Compile Include="BO\SecurityBO.cs" />
+    <Compile Include="EfBO\FunctionEfBO.cs" />
+    <Compile Include="EfBO\LoginEfBO.cs" />
+    <Compile Include="EfBO\RegistEfBO.cs" />
+    <Compile Include="EfBO\RoleEfBO.cs" />
+    <Compile Include="EfBO\SecurityEfBO.cs" />
+    <Compile Include="EfRepository\EfRepository.cs" />
+    <Compile Include="EfRepository\EfRepositoryBase.cs" />
+    <Compile Include="EfRepository\FunctionEfRepository.cs" />
+    <Compile Include="EfRepository\Interface\IDeleteState.cs" />
+    <Compile Include="EfRepository\Interface\IFunctionEfRepository.cs" />
+    <Compile Include="EfRepository\Interface\IRepository.cs" />
+    <Compile Include="EfRepository\Interface\IRoleEfRepository.cs" />
+    <Compile Include="EfRepository\Interface\IRoleFunctionEfRepository.cs" />
+    <Compile Include="EfRepository\Interface\IRoleUserEfRepository.cs" />
+    <Compile Include="EfRepository\Interface\IUserEfRepository.cs" />
+    <Compile Include="EfRepository\RoleBaseEfContext.cs" />
+    <Compile Include="EfRepository\RoleEfRepository.cs" />
+    <Compile Include="EfRepository\RoleFunctionEfRepository.cs" />
+    <Compile Include="EfRepository\RoleUserEfRepository.cs" />
+    <Compile Include="EfRepository\UserEfRepository.cs" />
     <Compile Include="Helper\ObjectMappingAttribute.cs" />
     <Compile Include="Helper\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -95,6 +128,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

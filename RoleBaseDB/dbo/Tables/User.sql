@@ -4,6 +4,9 @@
     [Password]    NVARCHAR (MAX) NOT NULL,
     [Phone]       NVARCHAR (MAX) NULL,
     [Email]       NVARCHAR (MAX) NULL,
-    [AccountName] NVARCHAR (MAX) NOT NULL
+    [AccountName] NVARCHAR (MAX) NOT NULL,
+    CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED ([UserID] ASC)
 );
+
+
 

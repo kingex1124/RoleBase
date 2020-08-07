@@ -9,10 +9,10 @@ using LoginServerBO.Repository.Interface;
 using LoginVO.VO;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace LoginServerBO.BO
 {
@@ -192,7 +192,7 @@ namespace LoginServerBO.BO
             }
             _sqlConnectionHelper.Commit();
 
-            return result;
+            return result;         
         }
 
         #endregion
