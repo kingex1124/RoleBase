@@ -111,9 +111,9 @@
       <Project>{FDC21893-0AA0-4997-9C0F-DB1D7B13E1CB}</Project>
       <Name>LoginDTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LoginServerBO\LoginServerBO.csproj">
-      <Project>{CBCFD9AA-7748-425A-B5AB-926897FC2D81}</Project>
-      <Name>LoginServerBO</Name>
+    <ProjectReference Include="..\LoginServiceObj\LoginServiceObj.csproj">
+      <Project>{2AEE1485-AC3D-471F-AD81-3AE1555AC8F5}</Project>
+      <Name>LoginServiceObj</Name>
     </ProjectReference>
     <ProjectReference Include="..\LoginVO\LoginVO.csproj">
       <Project>{01D943A2-D8E3-47BC-BDE7-31BEF267A08E}</Project>

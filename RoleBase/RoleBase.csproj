@@ -300,9 +300,9 @@
       <Project>{fdc21893-0aa0-4997-9c0f-db1d7b13e1cb}</Project>
       <Name>LoginDTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LoginServerBO\LoginServerBO.csproj">
-      <Project>{cbcfd9aa-7748-425a-b5ab-926897fc2d81}</Project>
-      <Name>LoginServerBO</Name>
+    <ProjectReference Include="..\LoginServiceObj\LoginServiceObj.csproj">
+      <Project>{2aee1485-ac3d-471f-ad81-3ae1555ac8f5}</Project>
+      <Name>LoginServiceObj</Name>
     </ProjectReference>
     <ProjectReference Include="..\LoginVO\LoginVO.csproj">
       <Project>{01d943a2-d8e3-47bc-bde7-31bef267a08e}</Project>
