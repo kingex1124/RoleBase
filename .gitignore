@@ -20,3 +20,15 @@
 /RoleBaseDB/RoleBaseDB.dbmdl
 /LoginServerBOTests/bin/Debug
 /LoginServerBOTests/obj/Debug
+/LoginBusObj/bin/Debug
+/LoginBusObj/obj/Debug
+/LoginBusObjTests/bin/Debug
+/LoginBusObjTests/obj/Debug
+/LoginDAL/bin/Debug
+/LoginDAL/obj/Debug
+/LoginDALTests/bin/Debug
+/LoginDALTests/obj/Debug
+/LoginServiceObj/bin/Debug
+/LoginServiceObj/obj/Debug
+/LoginServiceObjTests/bin/Debug
+/LoginServiceObjTests/obj/Debug

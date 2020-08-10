@@ -1,5 +1,5 @@
 ﻿using LoginDTO.DTO;
-using LoginServerBO.Service.Interface;
+using LoginServiceObj.Service.Interface;
 using LoginVO.VO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
