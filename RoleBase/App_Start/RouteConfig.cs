@@ -1,5 +1,4 @@
-﻿using LoginServiceObj.Service;
-using LoginServiceObj.Service.Interface;
+﻿using Login.Service;
 using RoleBase.Helper;
 using System;
 using System.Collections.Generic;

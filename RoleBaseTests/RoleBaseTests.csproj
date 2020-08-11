@@ -107,17 +107,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoginDTO\LoginDTO.csproj">
-      <Project>{FDC21893-0AA0-4997-9C0F-DB1D7B13E1CB}</Project>
-      <Name>LoginDTO</Name>
+    <ProjectReference Include="..\Login.DTO\Login.DTO.csproj">
+      <Project>{37fcf020-955a-4c32-814a-4af00bb982c3}</Project>
+      <Name>Login.DTO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LoginServiceObj\LoginServiceObj.csproj">
-      <Project>{2AEE1485-AC3D-471F-AD81-3AE1555AC8F5}</Project>
-      <Name>LoginServiceObj</Name>
+    <ProjectReference Include="..\Login.Service\Login.Service.csproj">
+      <Project>{eb6e278f-c2df-42d8-beb2-934e872e0419}</Project>
+      <Name>Login.Service</Name>
     </ProjectReference>
-    <ProjectReference Include="..\LoginVO\LoginVO.csproj">
-      <Project>{01D943A2-D8E3-47BC-BDE7-31BEF267A08E}</Project>
-      <Name>LoginVO</Name>
+    <ProjectReference Include="..\Login.VO\Login.VO.csproj">
+      <Project>{99f57cf6-1f24-4900-bdf7-640fd01dd465}</Project>
+      <Name>Login.VO</Name>
     </ProjectReference>
     <ProjectReference Include="..\RoleBase\RoleBase.csproj">
       <Project>{acbad4b8-cb11-4d02-897a-a64ea592a269}</Project>
