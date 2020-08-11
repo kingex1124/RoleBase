@@ -296,24 +296,24 @@
     <Folder Include="Views\JsonNet\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LoginDTO\LoginDTO.csproj">
-      <Project>{fdc21893-0aa0-4997-9c0f-db1d7b13e1cb}</Project>
-      <Name>LoginDTO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LoginServiceObj\LoginServiceObj.csproj">
-      <Project>{2aee1485-ac3d-471f-ad81-3ae1555ac8f5}</Project>
-      <Name>LoginServiceObj</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LoginVO\LoginVO.csproj">
-      <Project>{01d943a2-d8e3-47bc-bde7-31bef267a08e}</Project>
-      <Name>LoginVO</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Login.DTO\Login.DTO.csproj">
+      <Project>{37fcf020-955a-4c32-814a-4af00bb982c3}</Project>
+      <Name>Login.DTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Login.Service\Login.Service.csproj">
+      <Project>{eb6e278f-c2df-42d8-beb2-934e872e0419}</Project>
+      <Name>Login.Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Login.VO\Login.VO.csproj">
+      <Project>{99f57cf6-1f24-4900-bdf7-640fd01dd465}</Project>
+      <Name>Login.VO</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

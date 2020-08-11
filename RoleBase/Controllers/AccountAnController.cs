@@ -1,7 +1,6 @@
-﻿using LoginDTO.DTO;
-using LoginServiceObj.Service;
-using LoginServiceObj.Service.Interface;
-using LoginVO.VO;
+﻿using Login.DTO;
+using Login.Service;
+using Login.VO;
 using Newtonsoft.Json;
 using RoleBase.ActionFilters;
 using RoleBase.CurrentStatus;

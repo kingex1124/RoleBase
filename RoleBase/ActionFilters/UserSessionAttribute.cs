@@ -1,7 +1,5 @@
-﻿using LoginDTO.DTO;
-using LoginServiceObj.Service;
-using LoginServiceObj.Service.Interface;
-using LoginVO.VO;
+﻿using Login.DTO;
+using Login.VO;
 using RoleBase.CurrentStatus;
 using System;
 using System.Collections.Generic;

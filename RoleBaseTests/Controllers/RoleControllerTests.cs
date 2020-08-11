@@ -1,5 +1,5 @@
-﻿using LoginServiceObj.Service.Interface;
-using LoginVO.VO;
+﻿using Login.Service;
+using Login.VO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
 using Rhino.Mocks;

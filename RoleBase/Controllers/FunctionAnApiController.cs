@@ -1,6 +1,5 @@
-﻿using LoginServiceObj.Service;
-using LoginServiceObj.Service.Interface;
-using LoginVO.VO;
+﻿using Login.Service;
+using Login.VO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
