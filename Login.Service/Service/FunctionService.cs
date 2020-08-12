@@ -41,11 +41,20 @@ namespace Login.Service
         }
 
         /// <summary>
-        /// 新增功能
+        /// 取得作為上層的keyValue資料
         /// </summary>
-        /// <param name="functionVO"></param>
         /// <returns></returns>
-        public string AddFunction(FunctionVO functionVO)
+        public IEnumerable<KeyValuePairVO> GetParentKeyValue()
+        {
+            return _functionBO.GetParentKeyValue();
+        }
+
+    /// <summary>
+    /// 新增功能
+    /// </summary>
+    /// <param name="functionVO"></param>
+    /// <returns></returns>
+    public string AddFunction(FunctionVO functionVO)
         {
             return _functionBO.AddFunction(functionVO);
         }

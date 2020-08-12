@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Login.Service;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,9 +45,9 @@ namespace Login.Service.Tests
 
             List<FunctionVO> reFunctionVO = new List<FunctionVO>()
             {
-                new FunctionVO(){ FunctionID = 1 , Url="Role/RoleManagement" , Description = "瀏覽角色管理畫面" },
-                new FunctionVO(){ FunctionID = 2 , Url="Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" },
-                new FunctionVO(){ FunctionID = 3 , Url="Role/EditRole" , Description = "編輯角色" }
+                new FunctionVO(){ FunctionID = 1 , Url="Role/RoleManagement" , Title = "角色管理" , Description = "瀏覽角色管理畫面" , IsMenu = true , Parent = 0 , ParentName = "No"  },
+                new FunctionVO(){ FunctionID = 2 , Url="Role/RoleAddEditDelete" , Title = "編輯角色" , Description = "角色新增修改刪除畫面" , IsMenu = true , Parent = 1 , ParentName = "角色管理"  },
+                new FunctionVO(){ FunctionID = 3 , Url="Role/EditRole" , Title = "編輯" , Description = "編輯角色" , IsMenu = false , Parent = -1 , ParentName = "Not Menu" }
             };
 
             _functionBO.Stub(o => o.GetFunctionData()).Return(reFunctionVO);
@@ -65,7 +66,51 @@ namespace Login.Service.Tests
             {
                 Assert.AreEqual(result[i].FunctionID, reFunctionVO[i].FunctionID);
                 Assert.AreEqual(result[i].Url, reFunctionVO[i].Url);
+                Assert.AreEqual(result[i].Title, reFunctionVO[i].Title);
                 Assert.AreEqual(result[i].Description, reFunctionVO[i].Description);
+                Assert.AreEqual(result[i].IsMenu, reFunctionVO[i].IsMenu);
+                Assert.AreEqual(result[i].Parent, reFunctionVO[i].Parent);
+                Assert.AreEqual(result[i].ParentName, reFunctionVO[i].ParentName);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region GetParentKeyValueTest
+
+        /// <summary>
+        /// 取得作為上層的keyValue資料
+        /// </summary>
+        [TestMethod()]
+        public void GetParentKeyValueTest()
+        {
+            #region arrang
+
+            List<KeyValuePairVO> reKeyValuePairVO = new List<KeyValuePairVO>()
+            {
+                new KeyValuePairVO(){ Key = 1 , Value = "角色管理"},
+                new KeyValuePairVO(){ Key = 2 , Value = "編輯角色"},
+                new KeyValuePairVO(){ Key = 3 , Value = "新增"},
+            };
+
+            _functionBO.Stub(o => o.GetParentKeyValue()).Return(reKeyValuePairVO);
+
+            #endregion
+
+            #region act
+
+            var result = _target.GetParentKeyValue().ToList();
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < result.Count(); i++)
+            {
+                Assert.AreEqual(result[i].Key, reKeyValuePairVO[i].Key);
+                Assert.AreEqual(result[i].Value, reKeyValuePairVO[i].Value);
             }
 
             #endregion
@@ -84,7 +129,7 @@ namespace Login.Service.Tests
         {
             #region arrange (新增成功)
 
-            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = "";
 
@@ -114,7 +159,7 @@ namespace Login.Service.Tests
         {
             #region arrange (新增失敗)
 
-            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = "新增失敗。";
 
@@ -212,7 +257,7 @@ namespace Login.Service.Tests
         {
             #region arrange (編輯成功)
 
-            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = string.Empty;
 
@@ -242,7 +287,7 @@ namespace Login.Service.Tests
         {
             #region arrange (編輯失敗)
 
-            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = "編輯失敗";
 

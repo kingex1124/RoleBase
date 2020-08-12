@@ -74,6 +74,18 @@ namespace RoleBase.Controllers
         }
 
         /// <summary>
+        /// 取得作為上層的keyValue資料
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult FunctionGetParentData()
+        {
+            var parentData = _functionService.GetParentKeyValue();
+
+            return Json(parentData, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
         /// 新增Function
         /// </summary>
         /// <param name="functionVO"></param>

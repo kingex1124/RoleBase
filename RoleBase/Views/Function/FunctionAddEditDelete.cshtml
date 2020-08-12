@@ -13,14 +13,26 @@
         {
             <div class="row">
                 <label for="textFunctionUrl" class="col-md-1">*@Html.DisplayNameFor(model => model.Url)</label>
-                <input type="text" class="form-control col-md-3" id="textFunctionUrl" name="textRoleName" placeholder="Url">
+                <input type="text" class="form-control col-md-3" id="textFunctionUrl" name="textFunctionUrl" placeholder="Url">
+                <label class="col-md-2">*是否為Menu</label>
+                <div class="form-check col-md-1">
+                    <input class="form-check-input position-static" type="checkbox" id="chkIsMenu">
+                </div>
+            </div>
+            <div class="row my-3">
+                <label for="textFunctionTitle" class="col-md-1">@Html.DisplayNameFor(model => model.Title)</label>
+                <input type="text" class="form-control col-md-3" id="textFunctionTitle" name="textFunctionTitle" placeholder="Title">
+                <div class="col-md-5" id="divParent" hidden="hidden">
+                    <label for="textFunctionParent">@Html.DisplayNameFor(model => model.ParentName)</label>
+                    <select id="cbFunctionParent" name="cbFunctionParent"></select>
+                </div>
             </div>
             <div class="row my-3">
                 <label for="textFunctionDescription" class="col-md-1">@Html.DisplayNameFor(model => model.Description)</label>
-                <input type="text" class="form-control col-md-3" id="textFunctionDescription" name="textRoleDescription" placeholder="敘述">
+                <input type="text" class="form-control col-md-3" id="textFunctionDescription" name="textFunctionDescription" placeholder="敘述">
                 <button class="btn btn-primary mx-3" href="#" id="AddFunctionBtn">新增</button>
             </div>
-             break;
+            break;
         }
     }
 
@@ -29,7 +41,10 @@
             <tr>
                 <th>@Html.DisplayNameFor(model => model.FunctionID)</th>
                 <th>@Html.DisplayNameFor(model => model.Url)</th>
+                <th>@Html.DisplayNameFor(model => model.Title)</th>
                 <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>IsMenu</th>
+                <th>@Html.DisplayNameFor(model => model.ParentName)</th>
                 <th>功能</th>
             </tr>
         </thead>
@@ -39,7 +54,10 @@
                 <tr>
                     <td>@item.FunctionID</td>
                     <td><label id="labFunctionUrl_@item.FunctionID">@item.Url</label><input type="text" id="textFunctionUrl_@item.FunctionID" value="@item.Url" hidden></td>
+                    <td><lable id="labTitle_@item.FunctionID">@item.Title</lable><input type="text" id="textTitle_@item.FunctionID" value="@item.Title" hidden /></td>
                     <td><lable id="labDescription_@item.FunctionID">@item.Description</lable><input type="text" id="textDescription_@item.FunctionID" value="@item.Description" hidden /></td>
+                    <td><lable id="labIsMenu_@item.FunctionID">@item.IsMenu</lable><input type="checkbox" id="ckIsMenu_@item.FunctionID" checked="@item.IsMenu" hidden /></td>
+                    <td><lable id="labParentName_@item.FunctionID">@item.ParentName</lable> <select id="cbParentName_@item.FunctionID" hidden></select><lable id="labParentNameVal_@item.FunctionID" hidden>@item.Parent</lable></td>
                     <td>
                         @foreach (var loginInfo in LoginInfo)
                         {
@@ -48,7 +66,7 @@
                                 <button class="btn btn-primary mx-2" id="btnEdit_@item.FunctionID" onclick="EditFunction(@item.FunctionID)">編輯</button>
                                 <button class="btn btn-success mx-2" id="btnSave_@item.FunctionID" onclick="SaveFunction(@item.FunctionID)" hidden>儲存</button>
                                 <button class="btn btn-secondary mx-2" id="btnCancle_@item.FunctionID" onclick="CancleFunction(@item.FunctionID)" hidden>取消</button>
-                                 break;
+                                break;
                             }
                         }
                         @foreach (var loginInfo in LoginInfo)
@@ -56,7 +74,7 @@
                             if (loginInfo.Url == "Function/DeleteFunction")
                             {
                                 <button class="btn btn-danger" onclick="DeleteFunction(@item.FunctionID)">刪除</button>
-                                 break;
+                                break;
                             }
                         }
                     </td>
@@ -75,7 +93,10 @@
                     url: "@Url.Action("AddFunction", "Function")",
                     data: JSON.stringify({
                         "Url": $("#textFunctionUrl").val(),
-                        "Description": $("#textFunctionDescription").val()
+                        "Description": $("#textFunctionDescription").val(),
+                        "IsMenu": $("#chkIsMenu").prop("checked"),
+                        "Parent": $("#chkIsMenu").prop("checked") === false ? -1 : $("#cbFunctionParent").val(),
+                        "Title": $("#textFunctionTitle").val()
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json"
@@ -94,16 +115,124 @@
                 });
             });
 
+                $("#chkIsMenu").on("click", function () {
+                    // 勾起來的話
+                    if ($("#chkIsMenu").prop("checked") === true) {
+                        $("#divParent").prop("hidden", false);
+
+                        $("#cbFunctionParent").empty();
+                        $("#cbFunctionParent").append($('<option>', {
+                            value: 0,
+                            text: '無'
+                        }));
+
+                    // 取得下拉式選單資料
+                    $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("FunctionGetParentData", "Function")",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json"
+                         }).done(function (data) {
+                             if (data.length !== 0) {
+                                 for (var i = 0; i < data.length; i++) {
+                                     var option = $('<option value="' + data[i].Key + '" >' + data[i].Value + '</option>');
+                                     $("#cbFunctionParent").append(option);
+                                 }
+                             }
+                }).fail(function (data) {
+                    if (data.responseJSON != undefined) {
+                        var Message = data.responseJSON.Message;
+                        console.log(Message);
+                        alert(`fail Message:${Message}`);
+                    }
+                    else {
+                        window.location.href = data.responseText;
+                    }
+                });
+
+                    // 取消打勾的時候
+                    } else {
+                        $("#divParent").prop("hidden", true);
+                        $("#cbFunctionParent").empty();
+                    }
+                });
+
     }());
 
     function EditFunction(id) {
-          $("#btnEdit_" + id).prop("hidden", true);
+        $("#btnEdit_" + id).prop("hidden", true);
         $("#btnSave_" + id).prop("hidden", false);
         $("#btnCancle_" + id).prop("hidden", false);
         $("#labFunctionUrl_" + id).prop("hidden", true);
         $("#textFunctionUrl_" + id).prop("hidden", false);
+        $("#labTitle_" + id).prop("hidden", true);
+        $("#textTitle_" + id).prop("hidden", false);
         $("#labDescription_" + id).prop("hidden", true);
         $("#textDescription_" + id).prop("hidden", false);
+        $("#labIsMenu_" + id).prop("hidden", true);
+        $("#ckIsMenu_" + id).prop("hidden", false);
+
+        $("#ckIsMenu_" + id).on("click", function () {
+            if ($("#ckIsMenu_" + id).prop("checked") === true) {
+                $("#cbParentName_" + id).prop("hidden", false);
+
+                $("#cbParentName_" + id).empty();
+                $("#cbParentName_" + id).append($('<option>', {
+                    value: 0,
+                    text: '無'
+                }));
+
+                GetParentKeyValue(id);
+            }
+            else {
+                $("#cbParentName_" + id).prop("hidden", true);
+            }
+        });
+
+        $("#labParentName_" + id).prop("hidden", true);
+
+         // 取得下拉式選單資料
+        if ($("#ckIsMenu_" + id).prop("checked") === true) {
+            $("#cbParentName_" + id).prop("hidden", false);
+
+            $("#cbParentName_" + id).empty();
+            $("#cbParentName_" + id).append($('<option>', {
+                value: 0,
+                text: '無'
+            }));
+
+            GetParentKeyValue(id);
+
+        } else {
+            $("#cbParentName_" + id).empty();
+        }
+    }
+
+    function GetParentKeyValue(id) {
+         $.ajax({
+                type: "POST",
+                url: "@Url.Action("FunctionGetParentData", "Function")",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            }).done(function (data) {
+                if (data.length !== 0) {
+                    for (var i = 0; i < data.length; i++) {
+                        var option = $('<option value="' + data[i].Key + '" >' + data[i].Value + '</option>');
+                        $("#cbParentName_" + id).append(option);
+                    }
+
+                    $("#cbParentName_" + id).val($("#labParentNameVal_" + id).text());
+                }
+            }).fail(function (data) {
+                if (data.responseJSON != undefined) {
+                    var Message = data.responseJSON.Message;
+                    console.log(Message);
+                    alert(`fail Message:${Message}`);
+                }
+                else {
+                    window.location.href = data.responseText;
+                }
+            });
     }
 
     function SaveFunction(id) {
@@ -113,7 +242,10 @@
                             data: JSON.stringify({
                         "FunctionID": id,
                         "Url": $("#textFunctionUrl_" + id).val(),
-                        "Description": $("#textDescription_" + id).val()
+                        "Title": $("#textTitle_" + id).val(),
+                        "Description": $("#textDescription_" + id).val(),
+                        "IsMenu": $("#ckIsMenu_" + id).prop("checked"),
+                        "Parent": $("#ckIsMenu_" + id).prop("checked") === false ? -1 : $("#cbParentName_" + id).val()
                     }),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json"
@@ -131,26 +263,59 @@
                     }
                 });
         $("#labFunctionUrl_" + id).text($("#textFunctionUrl_" + id).val());
+        $("#labTitle_" + id).text($("#textTitle_" + id).val());
         $("#labDescription_" + id).text($("#textDescription_" + id).val());
+        if ($("#ckIsMenu_" + id).prop("checked") === true) {
+            $("#labIsMenu_" + id).text("True");
+            $("#labParentName_" + id).text($("#cbParentName_" + id + ">option:selected").text());
+        } else {
+            $("#labIsMenu_" + id).text("False");
+            $("#labParentName_" + id).text("Not Menu");
+        }
+
         $("#btnEdit_" + id).prop("hidden", false);
         $("#btnSave_" + id).prop("hidden", true);
         $("#btnCancle_" + id).prop("hidden", true);
         $("#labFunctionUrl_" + id).prop("hidden", false);
         $("#textFunctionUrl_" + id).prop("hidden", true);
+        $("#labTitle_" + id).prop("hidden", false);
+        $("#textTitle_" + id).prop("hidden", true);
         $("#labDescription_" + id).prop("hidden", false);
         $("#textDescription_" + id).prop("hidden", true);
+        $("#labIsMenu_" + id).prop("hidden", false);
+        $("#ckIsMenu_" + id).prop("hidden", true);
+
+        $("#labParentName_" + id).prop("hidden", false);
+        $("#cbParentName_" + id).prop("hidden", true);
+        $("#cbParentName_" + id).empty();
     }
 
     function CancleFunction(id) {
         $("#textFunctionUrl_" + id).val($("#labFunctionUrl_" + id).text());
+        $("#textTitle_" + id).val($("#labTitle_" + id).text());
         $("#textDescription_" + id).val($("#labDescription_" + id).text());
+        if ($("#labIsMenu_" + id).text() === "True") {
+            $("#ckIsMenu_" + id).prop("checked", true);
+        } else {
+            $("#ckIsMenu_" + id).prop("checked", false);
+        }
+
         $("#btnEdit_" + id).prop("hidden", false);
         $("#btnSave_" + id).prop("hidden", true);
         $("#btnCancle_" + id).prop("hidden", true);
         $("#labFunctionUrl_" + id).prop("hidden", false);
         $("#textFunctionUrl_" + id).prop("hidden", true);
+        $("#labTitle_" + id).prop("hidden", false);
+        $("#textTitle_" + id).prop("hidden", true);
         $("#labDescription_" + id).prop("hidden", false);
         $("#textDescription_" + id).prop("hidden", true);
+        $("#labIsMenu_" + id).prop("hidden", false);
+        $("#ckIsMenu_" + id).prop("hidden", true);
+
+        $("#labParentName_" + id).prop("hidden", false);
+        $("#cbParentName_" + id).prop("hidden", true);
+        $("#cbParentName_" + id).empty();
+
     }
 
     function DeleteFunction(id) {

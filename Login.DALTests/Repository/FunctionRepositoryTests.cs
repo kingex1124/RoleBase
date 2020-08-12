@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Login.DAL;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +48,9 @@ namespace Login.DAL.Tests
 
             List<FunctionDTO> reFunctionDTO = new List<FunctionDTO>()
             {
-                new FunctionDTO(){ FunctionID = 1 , Url="Role/RoleManagement" , Description = "瀏覽角色管理畫面" },
-                new FunctionDTO(){ FunctionID = 2 , Url="Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" },
-                new FunctionDTO(){ FunctionID = 3 , Url="Role/EditRole" , Description = "編輯角色" }
+                new FunctionDTO(){ FunctionID = 1 , Url="Role/RoleManagement" , Title = "角色管理" , Description = "瀏覽角色管理畫面" , IsMenu = true , Parent = 0 , ParentName = "No" },
+                new FunctionDTO(){ FunctionID = 2 , Url="Role/RoleAddEditDelete" , Title = "編輯角色" , Description = "角色新增修改刪除畫面" , IsMenu = true , Parent = 1 , ParentName = "角色管理" },
+                new FunctionDTO(){ FunctionID = 3 , Url="Role/EditRole" , Title = "編輯" , Description = "編輯角色" , IsMenu = false , Parent = -1 , ParentName = "Not Menu"}
             };
 
             _dataAccess.Stub(o => o.QueryDataTable<FunctionDTO>(Arg<string>.Is.Anything)).Return(reFunctionDTO);
@@ -68,7 +69,51 @@ namespace Login.DAL.Tests
             {
                 Assert.AreEqual(result[i].FunctionID, reFunctionDTO[i].FunctionID);
                 Assert.AreEqual(result[i].Url, reFunctionDTO[i].Url);
+                Assert.AreEqual(result[i].Title, reFunctionDTO[i].Title);
                 Assert.AreEqual(result[i].Description, reFunctionDTO[i].Description);
+                Assert.AreEqual(result[i].IsMenu, reFunctionDTO[i].IsMenu);
+                Assert.AreEqual(result[i].Parent, reFunctionDTO[i].Parent);
+                Assert.AreEqual(result[i].ParentName, reFunctionDTO[i].ParentName);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region GetParentKeyValueTest
+
+        /// <summary>
+        /// 取得作為上層的keyValue資料
+        /// </summary>
+        [TestMethod()]
+        public void GetParentKeyValueTest()
+        {
+            #region arrange
+
+            List<KeyValuePairDTO> reKeyValuePairDTO = new List<KeyValuePairDTO>()
+            {
+                new KeyValuePairDTO(){ Key = 1 , Value = "角色管理"},
+                new KeyValuePairDTO(){ Key = 2 , Value = "編輯角色"},
+                new KeyValuePairDTO(){ Key = 3 , Value = "新增"},
+            };
+
+            _dataAccess.Stub(o => o.QueryDataTable<KeyValuePairDTO>(Arg<string>.Is.Anything)).Return(reKeyValuePairDTO);
+
+            #endregion
+
+            #region act
+
+            var result = _target.GetParentKeyValue().ToList();
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(result[i].Key, reKeyValuePairDTO[i].Key);
+                Assert.AreEqual(result[i].Value, reKeyValuePairDTO[i].Value);
             }
 
             #endregion
@@ -86,7 +131,7 @@ namespace Login.DAL.Tests
         {
             #region arrange
 
-            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             int reNumber = 1;
 
@@ -157,7 +202,7 @@ namespace Login.DAL.Tests
         {
             #region arrange
 
-            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             int reNumber = 1;
 

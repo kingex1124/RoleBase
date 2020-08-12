@@ -27,5 +27,27 @@ namespace Login.VO
         /// 訊息
         /// </summary>
         public string Message { get; set; }
+
+        /// <summary>
+        /// 是否為選單
+        /// </summary>
+        public bool IsMenu { get; set; }
+
+        /// <summary>
+        /// 上層選單對象
+        /// </summary>
+        public int Parent { get; set; }
+
+        /// <summary>
+        /// 上層名稱
+        /// </summary>
+        [Display(Name = "上層")]
+        public string ParentName { get; set; }
+
+        /// <summary>
+        /// Title名稱
+        /// </summary>
+        [Display(Name = "名稱")]
+        public string Title { get; set; }
     }
 }

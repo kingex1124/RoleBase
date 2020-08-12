@@ -16,5 +16,6 @@ namespace Login.Service
         IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID);
         string SaveRoleFunctionSetting(IEnumerable<FunctionCheckVO> functionCheckVO);
         string ClearRoleFunctionByRoleID(string roleID);
+        IEnumerable<KeyValuePairVO> GetParentKeyValue();
     }
 }

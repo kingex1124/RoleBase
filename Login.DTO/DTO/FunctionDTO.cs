@@ -22,5 +22,26 @@ namespace Login.DTO
         /// </summary>
 
         public string Description { get; set; }
+
+        /// <summary>
+        /// 是否為選單
+        /// </summary>
+        public bool IsMenu { get; set; }
+
+        /// <summary>
+        /// 上層選單對象
+        /// </summary>
+        public int Parent { get; set; }
+        
+        /// <summary>
+        /// 上層名稱
+        /// </summary>
+
+        public string ParentName { get; set; }
+
+        /// <summary>
+        /// Title名稱
+        /// </summary>
+        public string Title { get; set; }
     }
 }
