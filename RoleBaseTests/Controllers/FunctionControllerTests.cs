@@ -70,9 +70,9 @@ namespace RoleBase.Controllers.Tests
 
             List<FunctionVO> reFunctionList = new List<FunctionVO>()
             {
-                new FunctionVO(){ FunctionID = 1 , Url="Role/RoleManagement" , Description = "瀏覽角色管理畫面" },
-                new FunctionVO(){ FunctionID = 2 , Url="Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" },
-                new FunctionVO(){ FunctionID = 3 , Url="Role/EditRole" , Description = "編輯角色" }
+                new FunctionVO(){ FunctionID = 1 , Url="Role/RoleManagement" , Title = "角色管理" , Description = "瀏覽角色管理畫面" , IsMenu = true , Parent = 0 , ParentName = "No" },
+                new FunctionVO(){ FunctionID = 2 , Url="Role/RoleAddEditDelete" , Title = "編輯角色" , Description = "角色新增修改刪除畫面" , IsMenu = true , Parent = 1 , ParentName = "角色管理" },
+                new FunctionVO(){ FunctionID = 3 , Url="Role/EditRole" , Title = "編輯" , Description = "編輯角色" , IsMenu = false , Parent = -1 , ParentName = "Not Menu" }
             };
 
             _functionService.Stub(o => o.GetFunctionData()).Return(reFunctionList);
@@ -91,7 +91,53 @@ namespace RoleBase.Controllers.Tests
             {
                 Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].FunctionID, reFunctionList[i].FunctionID);
                 Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Url, reFunctionList[i].Url);
+                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Title, reFunctionList[i].Title);
                 Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Description, reFunctionList[i].Description);
+                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].IsMenu, reFunctionList[i].IsMenu);
+                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Parent, reFunctionList[i].Parent);
+                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].ParentName, reFunctionList[i].ParentName);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region FunctionGetParentDataTest
+
+        /// <summary>
+        /// 取得作為上層的keyValue資料
+        /// </summary>
+        [TestMethod()]
+        public void FunctionGetParentDataTest()
+        {
+            #region arrange
+
+            List<KeyValuePairVO> reKeyValuePairVO = new List<KeyValuePairVO>()
+            {
+                new KeyValuePairVO(){ Key = 1 , Value = "角色管理"},
+                new KeyValuePairVO(){ Key = 2 , Value = "編輯角色"},
+                new KeyValuePairVO(){ Key = 3 , Value = "新增"},
+            };
+
+            _functionService.Stub(o => o.GetParentKeyValue()).Return(reKeyValuePairVO);
+
+            #endregion
+
+            #region act
+
+            var resultData = _target.FunctionGetParentData();
+
+            var result = (List<KeyValuePairVO>)(((JsonResult)resultData).Data);
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(result[i].Key, reKeyValuePairVO[i].Key);
+                Assert.AreEqual(result[i].Value, reKeyValuePairVO[i].Value);
             }
 
             #endregion
@@ -114,7 +160,7 @@ namespace RoleBase.Controllers.Tests
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
 
-            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = "";
 
@@ -140,7 +186,11 @@ namespace RoleBase.Controllers.Tests
 
             // 測試回傳結果
             Assert.AreEqual(result.Url, functionVO.Url);
+            Assert.AreEqual(result.Title, functionVO.Title);
             Assert.AreEqual(result.Description, functionVO.Description);
+            Assert.AreEqual(result.IsMenu, functionVO.IsMenu);
+            Assert.AreEqual(result.Parent, functionVO.Parent);
+            Assert.AreEqual(result.ParentName, functionVO.ParentName);
             Assert.IsTrue(string.IsNullOrEmpty(result.Message));
 
             #endregion
@@ -159,7 +209,7 @@ namespace RoleBase.Controllers.Tests
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
 
-            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = "新增失敗。";
 
@@ -185,9 +235,13 @@ namespace RoleBase.Controllers.Tests
 
             // 測試回傳結果
             Assert.AreEqual(result.Url, functionVO.Url);
+            Assert.AreEqual(result.Title, functionVO.Title);
             Assert.AreEqual(result.Description, functionVO.Description);
+            Assert.AreEqual(result.IsMenu, functionVO.IsMenu);
+            Assert.AreEqual(result.Parent, functionVO.Parent);
+            Assert.AreEqual(result.ParentName, functionVO.ParentName);
             Assert.AreEqual(result.Message, reMessage);
-          
+
             #endregion
         }
 
@@ -299,7 +353,7 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = string.Empty;
 
@@ -341,7 +395,7 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Description = "瀏覽角色管理畫面" };
+            FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = "編輯失敗";
 
@@ -476,7 +530,7 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
-            List<FunctionCheckVO> functionCheckVO = new List<FunctionCheckVO>() 
+            List<FunctionCheckVO> functionCheckVO = new List<FunctionCheckVO>()
             {
                 new FunctionCheckVO(){ RoleID = 1 , FunctionID = 1 , Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" , Check = true },
                 new FunctionCheckVO(){ RoleID = 1 , FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" , Check = true },
@@ -642,6 +696,5 @@ namespace RoleBase.Controllers.Tests
         #endregion
 
         #endregion
-
     }
 }

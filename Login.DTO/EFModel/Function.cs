@@ -17,5 +17,8 @@ namespace Login.DTO.EFModel
         public int FunctionID { get; set; }
         public string Url { get; set; }
         public string Description { get; set; }
+        public Nullable<bool> IsMenu { get; set; }
+        public Nullable<int> Parent { get; set; }
+        public string Title { get; set; }
     }
 }

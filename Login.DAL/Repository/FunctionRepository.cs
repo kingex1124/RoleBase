@@ -43,9 +43,29 @@ namespace Login.DAL
         /// <returns></returns>
         public IEnumerable<FunctionDTO> GetFunctionData()
         {
-            string sqlStr = "Select * From [Function] Order by FunctionID ";
+            string sqlStr = @"Select *, 
+case when A.[Parent] = -1
+then 'Not Menu'
+when  A.[Parent] = 0 
+then 'No'
+else (select B.[Title] from [Function] B where B.FunctionID = A.[Parent]) end as 'ParentName'
+From [Function] A Order by FunctionID ";
 
             return _dataAccess.QueryDataTable<FunctionDTO>(sqlStr);
+        }
+
+        /// <summary>
+        /// 取得作為上層的keyValue資料
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePairDTO> GetParentKeyValue()
+        {
+            string sqlStr = @"Select FunctionID as 'Key',Title as 'Value'
+From [Function] A 
+where A.IsMenu = 1
+Order by A.[FunctionID] ";
+
+            return _dataAccess.QueryDataTable<KeyValuePairDTO>(sqlStr);
         }
 
         /// <summary>
@@ -56,10 +76,13 @@ namespace Login.DAL
         public int AddFunction(FunctionVO functionVO)
         {
             List<string> param = new List<string>();
-            string sqlStr = @"Insert Into [Function] (Url,Description) 
-                              Values(@p0,@p1) ";
+            string sqlStr = @"Insert Into [Function] (Url,Description,IsMenu,Parent,Title) 
+                              Values(@p0,@p1,@p2,@p3,@p4) ";
             param.Add(functionVO.Url);
             param.Add(functionVO.Description);
+            param.Add(functionVO.IsMenu.ToString());
+            param.Add(functionVO.Parent.ToString());
+            param.Add(functionVO.Title);
 
             return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
         }
@@ -88,11 +111,14 @@ namespace Login.DAL
         {
             List<string> param = new List<string>();
             string sqlStr = @"Update [Function]  
-                            Set Url = @p0 , Description = @p1
-                            Where FunctionID = @p2 ";
+                            Set Url = @p0 , Title = @p1 , Description = @p2 , IsMenu = @p3 , Parent = @p4
+                            Where FunctionID = @p5 ";
 
             param.Add(functionVO.Url);
+            param.Add(functionVO.Title);
             param.Add(functionVO.Description);
+            param.Add(functionVO.IsMenu.ToString());
+            param.Add(functionVO.Parent.ToString());
             param.Add(functionVO.FunctionID.ToString());
 
             return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());

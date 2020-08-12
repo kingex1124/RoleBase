@@ -10,6 +10,7 @@ namespace Login.BO
     public interface IFunctionBO
     {
         IEnumerable<FunctionVO> GetFunctionData();
+        IEnumerable<KeyValuePairVO> GetParentKeyValue();
         string AddFunction(FunctionVO functionVO);
         string DeleteFunction(string id);
         string EditFunction(FunctionVO functionVO);

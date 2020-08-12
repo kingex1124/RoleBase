@@ -47,6 +47,24 @@ namespace Login.DAL
         }
 
         /// <summary>
+        /// 取得作為上層的keyValue資料
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePairDTO> GetParentKeyValue()
+        {
+            var result = (from function in _db.Function
+                          where function.IsMenu == true
+                          orderby function.FunctionID
+                          select new KeyValuePairDTO()
+                          {
+                              Key = function.FunctionID,
+                              Value = function.Title
+                          });
+
+            return result;
+        }
+
+        /// <summary>
         /// 新增功能
         /// </summary>
         /// <param name="functionVO"></param>
@@ -56,7 +74,10 @@ namespace Login.DAL
             Insert(new Function()
             {
                 Url = functionVO.Url,
-                Description = functionVO.Description
+                Description = functionVO.Description,
+                IsMenu = functionVO.IsMenu,
+                Parent = functionVO.Parent,
+                Title = functionVO.Title
             });
 
             return SaveChanges();

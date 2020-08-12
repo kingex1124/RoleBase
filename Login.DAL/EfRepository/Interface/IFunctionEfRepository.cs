@@ -13,6 +13,8 @@ namespace Login.DAL
     {
         IEnumerable<FunctionDTO> GetFunctionData();
 
+        IEnumerable<KeyValuePairDTO> GetParentKeyValue();
+
         int AddFunction(FunctionVO functionVO);
 
         int DeleteFunction(string id);

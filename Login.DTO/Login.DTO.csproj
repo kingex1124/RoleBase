@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="DTO\FunctionCheckDTO.cs" />
     <Compile Include="DTO\FunctionDTO.cs" />
+    <Compile Include="DTO\KeyValuePairDTO.cs" />
     <Compile Include="DTO\RoleDTO.cs" />
     <Compile Include="DTO\RoleFunctionDTO.cs" />
     <Compile Include="DTO\RoleUserDTO.cs" />

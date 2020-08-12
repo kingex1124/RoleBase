@@ -54,6 +54,17 @@ namespace Login.BO
         }
 
         /// <summary>
+        /// 取得作為上層的keyValue資料
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<KeyValuePairVO> GetParentKeyValue()
+        {
+            IEnumerable<KeyValuePairVO> result = Utility.MigrationIEnumerable<KeyValuePairDTO, KeyValuePairVO>(_functionRepo.GetParentKeyValue());
+
+            return result;
+        }
+
+        /// <summary>
         /// 新增功能
         /// </summary>
         /// <param name="functionVO"></param>
