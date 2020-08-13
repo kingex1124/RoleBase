@@ -53,6 +53,16 @@ namespace RoleBase.Controllers
         #region Action
 
         /// <summary>
+        /// 取得選單資料
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetFunctionMenu(string userID)
+        {
+            var data = _functionService.GetFunctionNode(userID);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
         /// Function管理介面
         /// </summary>
         /// <returns></returns>

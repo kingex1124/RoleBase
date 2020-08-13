@@ -111,6 +111,16 @@ namespace Login.Service
             return _functionBO.ClearRoleFunctionByRoleID(roleID);
         }
 
+        /// <summary>
+        /// 取得MenuNode
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        public List<FunctionMenuNode> GetFunctionNode(string userID)
+        {
+            return _functionBO.GetFunctionToNode(userID);
+        }
+
         #endregion
     }
 }

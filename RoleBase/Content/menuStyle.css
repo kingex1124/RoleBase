@@ -1,0 +1,64 @@
+﻿body {
+    background-color: #eee;
+    font: normal 16px/140% Arial,Helvetica,"微軟正黑體";
+}
+
+ul, #sinopac-nav-menu {
+    list-style-type: none;
+}
+
+#sinopac-nav-menu {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    color: #626b7a;
+    width: 100%;
+    background-color: #edf0f1;
+}
+
+.sinopac-menu-node {
+    margin-left: 5px;
+    cursor: pointer;
+    -webkit-user-select: none; /* Safari 3.1+ */
+    -moz-user-select: none; /* Firefox 2+ */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none;
+    height: 40px;
+}
+
+#sinopac-nav-menu a {
+    color: #626b7a;
+}
+
+.sinopac-menu-node::after {
+    content: ">";
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 9px;
+    transition: all 0.5s;
+}
+
+.sinopac-menu-node-opec::after {
+    -ms-transform: rotate(90deg); /* IE 9 */
+    -webkit-transform: rotate(90deg); /* Safari */
+    transform: rotate(90deg);
+}
+
+.sinopac-sub-menu {
+    display: none;
+    padding-left: 25px;
+    padding-bottom: 5px;
+    font-size: 16px;
+}
+
+.active {
+    display: block;
+}
+
+#sinopac-nav-menu li {
+    line-height: 200%;
+}
+
+.sinopac-menu-parent {
+    border-bottom: 1px solid #e6e6e6;
+}

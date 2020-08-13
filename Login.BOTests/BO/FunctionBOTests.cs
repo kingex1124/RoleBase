@@ -24,6 +24,7 @@ namespace Login.BO.Tests
         IFunctionRepository _functionRepo = MockRepository.GenerateStub<IFunctionRepository>();
         IRoleFunctionRepository _roleFunctionRepo = MockRepository.GenerateStub<IRoleFunctionRepository>();
         ISQLTransactionHelper _sqlConnectionHelper = MockRepository.GenerateStub<ISQLTransactionHelper>();
+
         FunctionBO _target;
 
         #endregion
@@ -565,6 +566,136 @@ namespace Login.BO.Tests
             #region assert
 
             Assert.AreEqual(result, reMessage);
+
+            #endregion
+        }
+
+        #endregion
+
+        #region GetFunctionToNodeTest
+
+        /// <summary>
+        /// 取得MenuNode
+        /// </summary>
+        [TestMethod()]
+        public void GetFunctionToNodeTest()
+        {
+            #region arrange
+
+            string userID = "1";
+
+            List<FunctionMenuDTO> reFunctionDTO = new List<FunctionMenuDTO>()
+            {
+                new FunctionMenuDTO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Parent = 0 , Title = "角色管理"},
+                new FunctionMenuDTO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Parent = 1 , Title = "編輯角色"},
+                new FunctionMenuDTO(){ FunctionID = 8 , Url = "Role/RoleUserEdit" , Parent = 1 , Title = "編輯角色使用者"}
+            };
+
+            List<FunctionMenuNode> reFunctionMenuNodeList = new List<FunctionMenuNode>()
+            {
+                new FunctionMenuNode(new FunctionMenuVO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Parent = 0 , Title = "角色管理" })
+                {
+                     Next = new List<FunctionMenuNode>()
+                     {
+                         new FunctionMenuNode(new FunctionMenuVO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Parent = 1 , Title = "編輯角色"}),
+                         new FunctionMenuNode(new FunctionMenuVO(){  FunctionID = 8 , Url = "Role/RoleUserEdit" , Parent = 1 , Title = "編輯角色使用者"})
+                     }
+                }
+            };
+
+            _functionRepo.Stub(o => o.GetMenuData(Arg<string>.Is.Anything)).Return(reFunctionDTO);
+
+            #endregion
+
+            #region act
+
+            var result = _target.GetFunctionToNode(userID).ToList();
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(result[i].Val.FunctionID, reFunctionMenuNodeList[i].Val.FunctionID);
+                Assert.AreEqual(result[i].Val.Url, reFunctionMenuNodeList[i].Val.Url);
+                Assert.AreEqual(result[i].Val.Parent, reFunctionMenuNodeList[i].Val.Parent);
+                Assert.AreEqual(result[i].Val.Title, reFunctionMenuNodeList[i].Val.Title);
+            }
+
+            for (int i = 0; i < result[0].Next.Count; i++)
+            {
+                Assert.AreEqual(result[0].Next[i].Val.FunctionID, reFunctionMenuNodeList[0].Next[i].Val.FunctionID);
+                Assert.AreEqual(result[0].Next[i].Val.Url, reFunctionMenuNodeList[0].Next[i].Val.Url);
+                Assert.AreEqual(result[0].Next[i].Val.Parent, reFunctionMenuNodeList[0].Next[i].Val.Parent);
+                Assert.AreEqual(result[0].Next[i].Val.Title, reFunctionMenuNodeList[0].Next[i].Val.Title);
+            }
+            
+            #endregion
+        }
+
+        #endregion
+
+        #region SetNodeTest
+
+        /// <summary>
+        /// 遞迴產生Node
+        /// </summary>
+        [TestMethod()]
+        public void SetNodeTest()
+        {
+            #region arrange
+
+            List<FunctionMenuVO> reFunctionVO = new List<FunctionMenuVO>()
+            {
+                new FunctionMenuVO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Parent = 0 , Title = "角色管理"},
+                new FunctionMenuVO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Parent = 1 , Title = "編輯角色"},
+                new FunctionMenuVO(){ FunctionID = 8 , Url = "Role/RoleUserEdit" , Parent = 1 , Title = "編輯角色使用者"}
+            };
+
+            List<FunctionMenuNode> reFunctionMenuNodeList = new List<FunctionMenuNode>()
+            {
+                new FunctionMenuNode(new FunctionMenuVO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Parent = 0 , Title = "角色管理" })
+                {
+                     Next = new List<FunctionMenuNode>()
+                     {
+                         new FunctionMenuNode(new FunctionMenuVO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Parent = 1 , Title = "編輯角色"}),
+                         new FunctionMenuNode(new FunctionMenuVO(){  FunctionID = 8 , Url = "Role/RoleUserEdit" , Parent = 1 , Title = "編輯角色使用者"})
+                     }
+                }
+            };
+
+            var result = new List<FunctionMenuNode>() { };
+
+            var node = new FunctionMenuNode(reFunctionVO[0]) { };
+
+            result.Add(node);
+
+            #endregion
+
+            #region act
+
+            _target.SetNode(reFunctionVO.Where(o => o.Parent != 0).ToList(), node);
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(result[i].Val.FunctionID, reFunctionMenuNodeList[i].Val.FunctionID);
+                Assert.AreEqual(result[i].Val.Url, reFunctionMenuNodeList[i].Val.Url);
+                Assert.AreEqual(result[i].Val.Parent, reFunctionMenuNodeList[i].Val.Parent);
+                Assert.AreEqual(result[i].Val.Title, reFunctionMenuNodeList[i].Val.Title);
+            }
+
+            for (int i = 0; i < result[0].Next.Count; i++)
+            {
+                Assert.AreEqual(result[0].Next[i].Val.FunctionID, reFunctionMenuNodeList[0].Next[i].Val.FunctionID);
+                Assert.AreEqual(result[0].Next[i].Val.Url, reFunctionMenuNodeList[0].Next[i].Val.Url);
+                Assert.AreEqual(result[0].Next[i].Val.Parent, reFunctionMenuNodeList[0].Next[i].Val.Parent);
+                Assert.AreEqual(result[0].Next[i].Val.Title, reFunctionMenuNodeList[0].Next[i].Val.Title);
+            }
 
             #endregion
         }
