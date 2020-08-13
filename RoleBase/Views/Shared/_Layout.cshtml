@@ -7,6 +7,8 @@
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/layoutContext.css" rel="stylesheet" />
+    <link href="~/Content/menuStyle.css" rel="stylesheet" />
     <script src="~/Scripts/modernizr-2.8.3.js"></script>
     <script src="~/Scripts/jquery-3.4.1.min.js"></script>
 
@@ -54,6 +56,7 @@
                         {
                             @Html.ActionLink("登出", "Logout", "Account", new { area = "" }, new { @class = "mx-3 btn btn-primary float-right" })
                             <label class="float-right" style="color:white">您好! @Session["UserName"]</label>
+                            <label id="userID" hidden="hidden">@Session["UserID"]</label>
                         }
                         else
                         {
@@ -66,14 +69,89 @@
         </nav>
     </header>
     <div class="container-fluid">
-        @RenderBody()
+        <div class="row">
+            <div class="col-md-2">
+                <ul id="sinopac-nav-menu">
+                </ul>
+            </div>
+            <div class="col-md-10">@RenderBody()</div>
+        </div>
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
 
-
     <script src="~/Scripts/bootstrap.js"></script>
 </body>
 </html>
+
+<script>
+    (function () {
+        // 取得選單資料       
+         $.ajax({
+             type: "POST",
+            url: "@Url.Action("GetFunctionMenu", "Function")",
+            data: JSON.stringify({
+                "userID": $('#userID').text()
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+
+            GernerateMenu(data, $('#sinopac-nav-menu'));
+            Setting();
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+
+    })();
+
+        function GernerateMenu(data, element) {
+            if (data === null)
+                return;
+            else {
+                for (var i = 0; i < data.length; i++) {
+                    //alert(data[i].Val.FunctionID);
+                    // 處理第一筆資料
+
+                    if (data[i].Next !== null) {
+                        var li = $('<li class="sinopac-menu-parent"></li>');
+
+                        var span = $('<span class= "sinopac-menu-node" > <a href="/' + data[i].Val.Url + '">' + data[i].Val.Title + '</a></span >');
+
+                        var ul = $('<ul class="sinopac-sub-menu">');
+
+                        GernerateMenu(data[i].Next, ul);
+                        li.append([span, ul]);
+                        element.append(li);
+                    } else {
+                         var li = $('<li></li>');
+                        var a = $('<a href="/' + data[i].Val.Url + '">' + data[i].Val.Title + '</a>');
+                        li.append(a);
+                        element.append(li);
+                    }
+                }
+            }
+    }
+
+    function Setting() {
+        var toggler = document.getElementsByClassName("sinopac-menu-node");
+        var i;
+
+        for (i = 0; i < toggler.length; i++) {
+            toggler[i].addEventListener("click", function () {
+                this.parentElement.querySelector(".sinopac-sub-menu").classList.toggle("active");
+                this.classList.toggle("sinopac-menu-node-opec");
+            });
+        }
+    };
+
+</script>

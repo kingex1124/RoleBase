@@ -149,6 +149,7 @@ namespace RoleBase.Controllers
 
                     CurrentSecurityLevel = securityLevel;
                     CurrentHttpContext.Session["UserName"] = user.UserName;
+                    CurrentHttpContext.Session["UserID"] = user.UserID;
 
                     // UnitTest用
                     //if (HttpContext == null)

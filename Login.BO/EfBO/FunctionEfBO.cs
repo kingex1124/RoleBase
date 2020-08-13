@@ -191,6 +191,54 @@ namespace Login.BO
             return result;
         }
 
+        /// <summary>
+        /// 取得MenuNode
+        /// </summary>
+        /// <param name="roleID"></param>
+        /// <returns></returns>
+        public List<FunctionMenuNode> GetFunctionToNode(string userID)
+        {
+            var menuData = Utility.MigrationIEnumerable<FunctionMenuDTO, FunctionMenuVO>(_functionEfRepo.GetMenuData(userID));
+
+            var topData = menuData.Where(o => o.Parent == 0).ToList();
+
+            var NotTopData = menuData.Where(o => o.Parent != 0).ToList();
+
+            var result = new List<FunctionMenuNode>() { };
+
+            foreach (var item in topData)
+            {
+                var node = new FunctionMenuNode(item) { };
+                result.Add(node);
+                SetNode(NotTopData, node);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 遞迴產生Node
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        public void SetNode(List<FunctionMenuVO> vo,  FunctionMenuNode node)
+        {
+            var nodeData = node;
+            var nextData = vo.Where(o => o.Parent == nodeData.Val.FunctionID).ToList();
+
+            if (nextData.Any())
+                node.Next = new List<FunctionMenuNode>();
+            else
+                return;
+
+            for (int i = 0; i < nextData.Count(); i++)
+            {
+                node.Next.Add(new FunctionMenuNode(nextData[i]));
+                vo.Remove(nextData[i]);
+                SetNode(vo, node.Next[i]);
+            }
+        }
+
         #endregion
     }
 }

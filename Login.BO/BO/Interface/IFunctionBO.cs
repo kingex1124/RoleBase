@@ -17,5 +17,7 @@ namespace Login.BO
         IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID);
         string SaveRoleFunctionSetting(IEnumerable<FunctionCheckVO> functionCheckVO);
         string ClearRoleFunctionByRoleID(string roleID);
+        List<FunctionMenuNode> GetFunctionToNode(string userID);
+        void SetNode(List<FunctionMenuVO> vo, FunctionMenuNode node);
     }
 }

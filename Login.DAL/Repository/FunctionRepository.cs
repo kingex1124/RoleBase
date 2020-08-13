@@ -124,6 +124,28 @@ Order by A.[FunctionID] ";
             return _dataAccess.ExcuteSQL(sqlStr, param.ToArray());
         }
 
+        /// <summary>
+        /// 取得Menu資料
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<FunctionMenuDTO> GetMenuData(string userID)
+        {
+            List<string> param = new List<string>();
+
+            string sqlStr = @"Select distinct A.FunctionID , A.Url , A.Parent, A.Title
+                              From [dbo].[RoleUser] B 
+							  Join [dbo].[RoleFunction] C 
+							  on B.[RoleID] = C.RoleID  
+							  Join [dbo].[Function] A
+							  On A.FunctionID = C.FunctionID
+                              where A.IsMenu = 1 And B.UserID = @p0
+                              Order by A.[FunctionID]  ";
+
+            param.Add(userID);
+
+            return _dataAccess.QueryDataTable<FunctionMenuDTO>(sqlStr, param.ToArray());
+        }
+
         #endregion
     }
 }

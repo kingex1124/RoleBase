@@ -4,6 +4,7 @@ using Login.VO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -110,6 +111,30 @@ namespace Login.DAL
             Update(functionData);
 
             return SaveChanges();
+        }
+
+        /// <summary>
+        /// 取得Menu資料
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<FunctionMenuDTO> GetMenuData(string userID)
+        {
+            int userIDNum = string.IsNullOrWhiteSpace(userID) ? -1 : Convert.ToInt32(userID);
+            var result = (from roleUser in _db.RoleUser
+                          join roleFunction in _db.RoleFunction
+                          on roleUser.RoleID equals roleFunction.RoleID
+                          join function in _db.Function
+                          on roleFunction.FunctionID equals function.FunctionID
+                          where function.IsMenu == true && roleUser.UserID == userIDNum
+                          select new FunctionMenuDTO()
+                          {
+                               FunctionID = function.FunctionID,
+                               Url = function.Url,
+                               Parent = function.Parent.Value,
+                               Title = function.Title,
+                          });
+
+            return result;
         }
 
         #endregion

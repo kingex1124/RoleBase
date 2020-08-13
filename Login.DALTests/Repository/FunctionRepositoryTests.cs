@@ -225,6 +225,50 @@ namespace Login.DAL.Tests
 
         #endregion
 
+        #region GetMenuDataTest
+
+        /// <summary>
+        /// 取得Menu資料
+        /// </summary>
+        [TestMethod()]
+        public void GetMenuDataTest()
+        {
+            #region arrang
+
+            string userID = "1";
+
+            List<FunctionMenuDTO> reFunctionMenuDTO = new List<FunctionMenuDTO>()
+            {
+                new FunctionMenuDTO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Parent = 0 , Title = "角色管理"},
+                new FunctionMenuDTO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Parent = 1 , Title = "編輯角色"},
+                new FunctionMenuDTO(){ FunctionID = 8 , Url = "Role/RoleUserEdit" , Parent = 1 , Title = "編輯角色使用者"}
+            };
+
+            _dataAccess.Stub(o => o.QueryDataTable<FunctionMenuDTO>(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reFunctionMenuDTO);
+
+            #endregion
+
+            #region act
+
+            var result = _target.GetMenuData(userID).ToList();
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(result[i].FunctionID, reFunctionMenuDTO[i].FunctionID);
+                Assert.AreEqual(result[i].Url, reFunctionMenuDTO[i].Url);
+                Assert.AreEqual(result[i].Parent, reFunctionMenuDTO[i].Parent);
+                Assert.AreEqual(result[i].Title, reFunctionMenuDTO[i].Title);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         #endregion
     }
 }

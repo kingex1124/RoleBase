@@ -501,6 +501,65 @@ namespace Login.Service.Tests
 
         #endregion
 
+        #region GetFunctionNodeTest
+
+        /// <summary>
+        /// 取得MenuNode
+        /// </summary>
+        /// <param name="userID"></param>
+        /// <returns></returns>
+        [TestMethod()]
+        public void GetFunctionNodeTest()
+        {
+            #region arrange
+
+            string userID = "1";
+
+            List<FunctionMenuNode> reFunctionMenuNodeList = new List<FunctionMenuNode>()
+            {
+                new FunctionMenuNode(new FunctionMenuVO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Parent = 0 , Title = "角色管理" })
+                {
+                     Next = new List<FunctionMenuNode>()
+                     {
+                         new FunctionMenuNode(new FunctionMenuVO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Parent = 1 , Title = "編輯角色"}),
+                         new FunctionMenuNode(new FunctionMenuVO(){  FunctionID = 8 , Url = "Role/RoleUserEdit" , Parent = 1 , Title = "編輯角色使用者"})
+                     }
+                }
+            };
+
+            _functionBO.Stub(o => o.GetFunctionToNode(Arg<string>.Is.Anything)).Return(reFunctionMenuNodeList);
+
+            #endregion
+
+            #region act
+
+            var result = _target.GetFunctionNode(userID).ToList();
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                Assert.AreEqual(result[i].Val.FunctionID, reFunctionMenuNodeList[i].Val.FunctionID);
+                Assert.AreEqual(result[i].Val.Url, reFunctionMenuNodeList[i].Val.Url);
+                Assert.AreEqual(result[i].Val.Parent, reFunctionMenuNodeList[i].Val.Parent);
+                Assert.AreEqual(result[i].Val.Title, reFunctionMenuNodeList[i].Val.Title);
+            }
+
+            for (int i = 0; i < result[0].Next.Count; i++)
+            {
+                Assert.AreEqual(result[0].Next[i].Val.FunctionID, reFunctionMenuNodeList[0].Next[i].Val.FunctionID);
+                Assert.AreEqual(result[0].Next[i].Val.Url, reFunctionMenuNodeList[0].Next[i].Val.Url);
+                Assert.AreEqual(result[0].Next[i].Val.Parent, reFunctionMenuNodeList[0].Next[i].Val.Parent);
+                Assert.AreEqual(result[0].Next[i].Val.Title, reFunctionMenuNodeList[0].Next[i].Val.Title);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         #endregion
     }
 }

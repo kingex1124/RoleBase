@@ -20,5 +20,7 @@ namespace Login.DAL
         int DeleteFunction(string id);
 
         int EditFunction(FunctionVO functionVO);
+
+        IEnumerable<FunctionMenuDTO> GetMenuData(string userID);
     }
 }

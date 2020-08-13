@@ -46,6 +46,8 @@
     <Compile Include="VO\Account.cs" />
     <Compile Include="VO\AccountInfoData.cs" />
     <Compile Include="VO\FunctionCheckVO.cs" />
+    <Compile Include="VO\FunctionMenuNode.cs" />
+    <Compile Include="VO\FunctionMenuVO.cs" />
     <Compile Include="VO\FunctionVO.cs" />
     <Compile Include="VO\KeyValuePairVO.cs" />
     <Compile Include="VO\RoleVO.cs" />
