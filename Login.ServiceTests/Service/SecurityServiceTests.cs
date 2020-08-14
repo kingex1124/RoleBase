@@ -40,13 +40,13 @@ namespace Login.Service.Tests
             #region arrange
 
             // 傳入參數
-            string roleId = "1";
+            string userID = "1";
 
             List<SecurityRoleFunctionDTO> reSRFDTOList = new List<SecurityRoleFunctionDTO>()
             {
-                new SecurityRoleFunctionDTO(){ RoleName = "Admin" ,  Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" },
-                new SecurityRoleFunctionDTO(){ RoleName = "Admin" ,  Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" },
-                new SecurityRoleFunctionDTO(){ RoleName = "Admin" ,  Url = "Role/EditRole" , Description = "編輯角色" }
+                new SecurityRoleFunctionDTO(){  Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" },
+                new SecurityRoleFunctionDTO(){  Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" },
+                new SecurityRoleFunctionDTO(){  Url = "Role/EditRole" , Description = "編輯角色" }
             };
 
             _securityBO.Stub(o => o.GetSecurityRoleFunction(Arg<string>.Is.Anything)).Return(reSRFDTOList);
@@ -55,7 +55,7 @@ namespace Login.Service.Tests
 
             #region act
 
-            var result = _target.GetSecurityRoleFunction(roleId).ToList();
+            var result = _target.GetSecurityRoleFunction(userID).ToList();
 
             #endregion
 
@@ -63,7 +63,6 @@ namespace Login.Service.Tests
 
             for (int i = 0; i < result.Count(); i++)
             {
-                Assert.AreEqual(result[i].RoleName, reSRFDTOList[i].RoleName);
                 Assert.AreEqual(result[i].Url, reSRFDTOList[i].Url);
                 Assert.AreEqual(result[i].Description, reSRFDTOList[i].Description);
             }

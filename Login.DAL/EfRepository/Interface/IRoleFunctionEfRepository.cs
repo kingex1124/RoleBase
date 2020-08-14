@@ -10,7 +10,7 @@ namespace Login.DAL
 {
     public interface IRoleFunctionEfRepository : IRepository<RoleFunction>
     {
-        IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId);
+        IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string userID);
 
         int DeleteRoleFunctionByFunctionID(string functionID);
 

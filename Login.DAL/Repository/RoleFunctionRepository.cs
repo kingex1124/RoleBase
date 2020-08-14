@@ -39,19 +39,20 @@ namespace Login.DAL
         /// <summary>
         /// 取得該角色ID所具備的權限功能
         /// </summary>
-        /// <param name="roleId"></param>
+        /// <param name="userID"></param>
         /// <returns></returns>
-        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId)
+        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string userID)
         {
             List<string> param = new List<string>();
 
-            string sqlStr = @"select R.RoleName,F.Url,F.Description
-                                from [dbo].[Role] R  
-                                join [dbo].[RoleFunction] RF on R.RoleID=RF.RoleID 
-                                join [dbo].[Function]  F on RF.FunctionID=F.FunctionID  
-                                where R.RoleID= @p0";
+            string sqlStr = @"Select distinct D.Url,D.Description from (select A.RoleID from [dbo].[RoleUser] A
+where A.UserID = @p0) B 
+Join [dbo].[RoleFunction] C
+on B.RoleID = C.RoleID 
+join [dbo].[Function] D
+on C.FunctionID = D.FunctionID";
 
-            param.Add(roleId);
+            param.Add(userID);
 
             return _dataAccess.QueryDataTable<SecurityRoleFunctionDTO>(sqlStr, param.ToArray());
         }

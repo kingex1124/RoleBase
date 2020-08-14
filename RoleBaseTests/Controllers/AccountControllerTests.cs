@@ -33,7 +33,7 @@ namespace RoleBase.Controllers.Tests
 
         public AccountControllerTests()
         {
-            _target = new AccountController(_registService, _loginService, _securityService);     
+            _target = new AccountController(_registService, _loginService, _securityService);
         }
 
         #endregion
@@ -73,7 +73,7 @@ namespace RoleBase.Controllers.Tests
             httpContext.Response.StatusCode = 200;
 
             // 傳入參數
-            Account account = new Account() 
+            Account account = new Account()
             {
                 UserName = "Kevan",
                 Password = "1qaz@WSX",
@@ -245,29 +245,29 @@ namespace RoleBase.Controllers.Tests
             // 透過ID取得該使用者所有的權限資料包
             List<SecurityRoleFunctionDTO> reSRFRole1 = new List<SecurityRoleFunctionDTO>()
             {
-                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "首頁" , Url ="Home/Index"},
-                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
-                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
-                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "編輯角色" , Url ="Role/EditRole"},
-                new SecurityRoleFunctionDTO(){  RoleName = "Admin" , Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
+                new SecurityRoleFunctionDTO(){  Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
             };
 
             List<SecurityRoleFunctionDTO> reSRFRole2 = new List<SecurityRoleFunctionDTO>()
             {
-                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "首頁" , Url ="Home/Index"},
-                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
-                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
-                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "編輯角色" , Url ="Role/EditRole"},
-                new SecurityRoleFunctionDTO(){  RoleName = "A" , Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
+                new SecurityRoleFunctionDTO(){  Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
             };
 
             List<SecurityRoleFunctionDTO> reSRFRole3 = new List<SecurityRoleFunctionDTO>()
             {
-                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "首頁" , Url ="Home/Index"},
-                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
-                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
-                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "編輯角色" , Url ="Role/EditRole"},
-                new SecurityRoleFunctionDTO(){  RoleName = "B" , Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
+                new SecurityRoleFunctionDTO(){  Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
             };
 
             List<SecurityRoleFunctionDTO> reSRF = new List<SecurityRoleFunctionDTO>();
@@ -295,16 +295,16 @@ namespace RoleBase.Controllers.Tests
             #endregion
 
             #region act
-            
+
             var result = _target.Login(accountInfoData) as RedirectToRouteResult;
 
             #endregion
 
             #region assert
-         
+
             // 驗證 Action
             Assert.IsTrue(string.IsNullOrEmpty(result.RouteValues["action"].ToString()) || result.RouteValues["action"].ToString() == "Index");
-           
+
             // 驗證 Controller
             Assert.IsTrue(string.IsNullOrEmpty(result.RouteValues["controller"].ToString()) || result.RouteValues["controller"].ToString() == "Home");
 
@@ -321,12 +321,11 @@ namespace RoleBase.Controllers.Tests
 
             for (int i = 0; i < sessionInfo.SecurityUrl.Count; i++)
             {
-                Assert.AreEqual(sessionInfo.SecurityUrl[i].RoleName, reSRF[i].RoleName);
                 Assert.AreEqual(sessionInfo.SecurityUrl[i].Url, reSRF[i].Url);
                 Assert.AreEqual(sessionInfo.SecurityUrl[i].Description, reSRF[i].Description);
             }
-           
-            Assert.AreEqual(sessionInfo.UserData.UserId , 1);
+
+            Assert.AreEqual(sessionInfo.UserData.UserId, 1);
             Assert.AreEqual(sessionInfo.UserData.AccountName, "kevan");
 
             Assert.AreEqual(_target.CurrentHttpContext.Session["UserName"], "kevan");
@@ -360,10 +359,10 @@ namespace RoleBase.Controllers.Tests
                 Password = "1qaz@WSX",
                 Message = "該帳號不存在。"
             };
-      
+
             // 驗證帳號密碼
             _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
-     
+
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
@@ -420,7 +419,7 @@ namespace RoleBase.Controllers.Tests
             #endregion
 
             #region act
-            
+
             var result = _target.Login(accountInfoData) as ViewResult;
 
             #endregion
@@ -460,6 +459,5 @@ namespace RoleBase.Controllers.Tests
         #endregion
 
         #endregion
-
     }
 }

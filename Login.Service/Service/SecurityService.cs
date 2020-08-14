@@ -32,9 +32,9 @@ namespace Login.Service
 
         #region 方法
 
-        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId)
+        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string userID)
         {
-            return _securityBO.GetSecurityRoleFunction(roleId);
+            return _securityBO.GetSecurityRoleFunction(userID);
         }
 
         #endregion

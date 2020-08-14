@@ -63,6 +63,24 @@ namespace RoleBase.Controllers.Tests
         [TestMethod()]
         public void RoleAddEditDeleteTest()
         {
+            // act
+            var result = _target.RoleAddEditDelete() as ViewResult;
+
+            // assert
+            // 驗證 Action
+            Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "RoleAddEditDelete");
+        }
+
+        #endregion
+
+        #region QueryRoleTest
+
+        /// <summary>
+        /// 查詢腳色資料
+        /// </summary>
+        [TestMethod()]
+        public void QueryRoleTest()
+        {
             #region arrange
 
             List<RoleVO> reRoleVO = new List<RoleVO>()
@@ -77,19 +95,20 @@ namespace RoleBase.Controllers.Tests
             #endregion
 
             #region act
-            
-            var result = _target.RoleAddEditDelete() as ViewResult;
+
+            var resultData = _target.QueryRole();
+
+            var result = (List<RoleVO>)((JsonResult)resultData).Data;
 
             #endregion
 
             #region assert
 
-            // 驗證資料
-            for (int i = 0; i < ((List<RoleVO>)result.Model).Count; i++)
+            for (int i = 0; i < result.Count; i++)
             {
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVO[i].RoleID);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVO[i].RoleName);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVO[i].Description);
+                Assert.AreEqual(result[i].RoleID, reRoleVO[i].RoleID);
+                Assert.AreEqual(result[i].RoleName, reRoleVO[i].RoleName); 
+                Assert.AreEqual(result[i].Description, reRoleVO[i].Description);
             }
 
             #endregion
@@ -134,7 +153,7 @@ namespace RoleBase.Controllers.Tests
             #endregion
 
             #region assert
-            
+
             // 測試回應狀態
             Assert.AreEqual(_target.CurrentHttpContext.Response.StatusCode, 200);
 
@@ -402,7 +421,7 @@ namespace RoleBase.Controllers.Tests
                 Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVO[i].RoleName);
                 Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVO[i].Description);
             }
-           
+
 
             #endregion
         }

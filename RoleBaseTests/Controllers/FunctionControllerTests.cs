@@ -1,12 +1,15 @@
-﻿using Login.Service;
+﻿using Login.DTO;
+using Login.Service;
 using Login.VO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Rhino.Mocks;
+using Rhino.Mocks.Constraints;
 using RoleBase.Controllers;
 using RoleBaseTests.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -20,6 +23,9 @@ namespace RoleBase.Controllers.Tests
 
         IFunctionService _functionService = MockRepository.GenerateStub<IFunctionService>();
         IRoleService _roleService = MockRepository.GenerateStub<IRoleService>();
+        ILoginService _loginService = MockRepository.GenerateStub<ILoginService>();
+        ISecurityService _securityService = MockRepository.GenerateStub<ISecurityService>();
+
         FunctionController _target;
 
         #endregion
@@ -28,7 +34,7 @@ namespace RoleBase.Controllers.Tests
 
         public FunctionControllerTests()
         {
-            _target = new FunctionController(_functionService, _roleService);
+            _target = new FunctionController(_functionService, _roleService, _loginService, _securityService);
         }
 
         #endregion
@@ -543,6 +549,8 @@ namespace RoleBase.Controllers.Tests
 
             _functionService.Stub(o => o.SaveRoleFunctionSetting(Arg<List<FunctionCheckVO>>.Is.Anything)).Return(reMessage);
 
+            SessionReflashSetting();
+
             #endregion
 
             #region act
@@ -631,6 +639,8 @@ namespace RoleBase.Controllers.Tests
             string reMessage = string.Empty;
 
             _functionService.Stub(o => o.ClearRoleFunctionByRoleID(Arg<string>.Is.Anything)).Return(reMessage);
+
+            SessionReflashSetting();
 
             #endregion
 
@@ -728,7 +738,7 @@ namespace RoleBase.Controllers.Tests
             var resultData = _target.GetFunctionMenu(userID);
 
             var result = (List<FunctionMenuNode>)((JsonResult)resultData).Data;
-            
+
             #endregion
 
             #region assert
@@ -755,5 +765,111 @@ namespace RoleBase.Controllers.Tests
         #endregion
 
         #endregion
+
+        #region SessionReflashTest
+
+        [TestMethod()]
+        public void SessionReflashTest()
+        {
+            #region arrange 
+
+            List<RoleDTO> reRoleDTO = new List<RoleDTO>()
+            {
+                new RoleDTO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
+                new RoleDTO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
+                new RoleDTO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
+            };
+
+            List<SecurityRoleFunctionDTO> reSRFRole = new List<SecurityRoleFunctionDTO>()
+            {
+                new SecurityRoleFunctionDTO(){  Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
+            };
+
+            // httpContext物件設定
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+            httpContext.Session["UserID"] = 1;
+            httpContext.Session["AccountName"] = "kevan";
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            _loginService.Stub(o => o.GetRoleDataByUserID(Arg<string>.Is.Anything)).Return(reRoleDTO);
+
+            _securityService.Stub(o => o.GetSecurityRoleFunction(Arg<string>.Is.Anything)).Return(reSRFRole);
+
+            #endregion
+
+            #region act
+
+            _target.SessionReflash();
+
+            #endregion
+
+            #region assert
+
+            for (int i = 0; i < _target.CurrentSecurityLevel.SecurityRole.Count; i++)
+            {
+                Assert.AreEqual(_target.CurrentSecurityLevel.SecurityRole[i].RoleID, reRoleDTO[i].RoleID);
+                Assert.AreEqual(_target.CurrentSecurityLevel.SecurityRole[i].RoleName, reRoleDTO[i].RoleName);
+                Assert.AreEqual(_target.CurrentSecurityLevel.SecurityRole[i].Description, reRoleDTO[i].Description);
+            }
+
+            for (int i = 0; i < _target.CurrentSecurityLevel.SecurityUrl.Count; i++)
+            {
+                Assert.AreEqual(_target.CurrentSecurityLevel.SecurityUrl[i].Url, reSRFRole[i].Url);
+                Assert.AreEqual(_target.CurrentSecurityLevel.SecurityUrl[i].Description, reSRFRole[i].Description);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region 私有方法
+
+        /// <summary>
+        /// 測通刷新方法時所用的
+        /// </summary>
+        private void SessionReflashSetting()
+        {
+            #region arrange 
+
+            List<RoleDTO> reRoleDTO = new List<RoleDTO>()
+            {
+                new RoleDTO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
+                new RoleDTO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
+                new RoleDTO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
+            };
+
+            List<SecurityRoleFunctionDTO> reSRFRole = new List<SecurityRoleFunctionDTO>()
+            {
+                new SecurityRoleFunctionDTO(){  Description = "首頁" , Url ="Home/Index"},
+                new SecurityRoleFunctionDTO(){  Description = "瀏覽角色管理畫面" , Url ="Role/RoleManagement"},
+                new SecurityRoleFunctionDTO(){  Description = "角色新增修改刪除畫面" , Url ="Role/RoleAddEditDelete"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色" , Url ="Role/EditRole"},
+                new SecurityRoleFunctionDTO(){  Description = "編輯角色使用者畫面" , Url ="Role/RoleUserEdit"}
+            };
+
+            // httpContext物件設定
+            var httpContext = FakeHttpContextManager.CreateHttpContextBase();
+            httpContext.Session["UserID"] = 1;
+            httpContext.Session["AccountName"] = "kevan";
+
+            // 設定httpContext
+            _target.CurrentHttpContext = httpContext;
+
+            _loginService.Stub(o => o.GetRoleDataByUserID(Arg<string>.Is.Anything)).Return(reRoleDTO);
+
+            _securityService.Stub(o => o.GetSecurityRoleFunction(Arg<string>.Is.Anything)).Return(reSRFRole);
+
+            #endregion
+        }
+
+        #endregion
+
     }
 }

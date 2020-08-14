@@ -33,9 +33,9 @@ namespace Login.BO
 
         #region 方法
 
-        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId)
+        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string userID)
         {
-            return _roleFunctionEfRepo.GetSecurityRoleFunction(roleId);
+            return _roleFunctionEfRepo.GetSecurityRoleFunction(userID);
         }
 
         #endregion

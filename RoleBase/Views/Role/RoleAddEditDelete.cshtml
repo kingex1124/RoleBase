@@ -18,63 +18,44 @@
             <div class="row my-3">
                 <label for="textRoleDescription" class="col-md-1">@Html.DisplayNameFor(model => model.Description)</label>
                 <input type="text" class="form-control col-md-3" id="textRoleDescription" name="textRoleDescription" placeholder="敘述">
-                <button class="btn btn-primary mx-3" href="#" id="AddRoleBtn">新增</button>
+                <button class="btn btn-primary mx-3" href="#" id="btnAddRole">新增</button>
             </div>
-            break;
+            <hr />
+        }
+        if (item.Url == "Role/QueryRole")
+        {
+            <div class="row">
+                <label for="textQueryRoleName" class="col-md-1">@Html.DisplayNameFor(model => model.RoleName)</label>
+                <input type="text" class="form-control col-md-3" id="textQueryRoleName" name="textQueryRoleName" placeholder="角色名稱">
+                <button class="btn btn-primary mx-3" id="btnQueryRole">查詢</button>
+            </div>
+            <br />
         }
     }
 
 
-
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.RoleID)</th>
-            <th>@Html.DisplayNameFor(model => model.RoleName)</th>
-            <th>@Html.DisplayNameFor(model => model.Description)</th>
-            <th>功能</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <td>@item.RoleID</td>
-                <td><label id="labRoleName_@item.RoleID">@item.RoleName</label><input type="text" id="textRoleName_@item.RoleID" value="@item.RoleName" hidden></td>
-                <td><lable id="labDescription_@item.RoleID">@item.Description</lable><input type="text" id="textDescription_@item.RoleID" value="@item.Description" hidden /></td>
-                <td>
-                    @foreach (var loginInfo in LoginInfo)
-                    {
-                        if (loginInfo.Url == "Role/EditRole")
-                        {
-                            <button class="btn btn-primary mx-2" id="btnEdit_@item.RoleID" onclick="EditRole(@item.RoleID)">編輯</button>
-                            <button class="btn btn-success mx-2" id="btnSave_@item.RoleID" onclick="SaveRole(@item.RoleID)" hidden>儲存</button>
-                            <button class="btn btn-secondary mx-2" id="btnCancle_@item.RoleID" onclick="CancleRole(@item.RoleID)" hidden>取消</button>
-                            break;
-
-                        }
-                    }
-                    @foreach (var loginInfo in LoginInfo)
-                    {
-                        if (loginInfo.Url == "Role/DeleteRole")
-                        {
-                            <button class="btn btn-danger" onclick="DeleteRole(@item.RoleID)">刪除</button>
-                            break;
-                        }
-                    }
-
-                </td>
+                <th>@Html.DisplayNameFor(model => model.RoleID)</th>
+                <th>@Html.DisplayNameFor(model => model.RoleName)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>功能</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody id="roleQueryTbody">
+        </tbody>
+    </table>
 }
 
 <script>
         (function () {
 
-            $("#AddRoleBtn").on("click", function () {
+            // 綁定查詢事件
+            $("#btnQueryRole").on("click", SetAuth);
+
+            // 綁定新增事件
+            $("#btnAddRole").on("click", function () {
                 $.ajax({
                     type: "POST",
                     url: "@Url.Action("AddRole", "Role")",
@@ -86,7 +67,8 @@
                     dataType: "json"
                 }).done(function (data) {
                     alert("Add success");
-                      window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+                    SetAuth();
+                      //window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
                 }).fail(function (data) {
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON.Message;
@@ -100,6 +82,83 @@
             });
 
     }());
+
+    function SetAuth() {
+
+        // 取得授權資料
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetAuthList", "Account")",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (auData) {
+            if (auData != undefined) {
+                QueryRole(auData.SecurityUrl);
+            }
+        }).fail(function (auData) {
+            if (auData.responseJSON != undefined) {
+                var Message = auData.responseJSON.Message;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+        });
+    }
+
+    function QueryRole(loginInfo) {
+
+        $('#btnQueryRole').prop("disabled", true);
+
+        $('#roleQueryTbody').empty();
+
+        //取得角色資料
+         $.ajax({
+            type: "POST",
+            url: "@Url.Action("QueryRole", "Role")",
+            //data: JSON.stringify({
+            //    "id": id
+            //}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            for (var i = 0; i < data.length; i++) {
+
+                var cell1 = $('<td></td>').text(data[i].RoleID);
+                var cell2 = $('<td><label id="labRoleName_' + data[i].RoleID +'">' + data[i].RoleName + '</label><input type="text" id="textRoleName_' + data[i].RoleID + '" value="' + data[i].RoleName + '" hidden></td>');
+                var cell3 = $('<td><lable id="labDescription_' + data[i].RoleID +'">' + data[i].Description + '</lable><input type="text" id="textDescription_' + data[i].RoleID +'" value="' + data[i].Description + '" hidden /></td>');
+
+                var cell4 = $('<td></td>');
+                if (loginInfo != undefined) {
+
+                    if (loginInfo.find(o => o.Url == "Role/EditRole") != undefined)
+                    {
+                        var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + data[i].RoleID + '" onclick="EditRole(' + data[i].RoleID + ')">編輯</button>');
+                        var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + data[i].RoleID + '" onclick="SaveRole(' + data[i].RoleID + ')" hidden>儲存</button>');
+                        var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + data[i].RoleID + '" onclick="CancleRole(' + data[i].RoleID + ')" hidden>取消</button>');
+                        cell4.append([btn1, btn2, btn3]);
+                    }
+                    if (loginInfo.find(o => o.Url == "Role/DeleteRole") != undefined)
+                    {
+                        var btn4 = $('<button class="btn btn-danger" onclick="DeleteRole(' + data[i].RoleID + ')">刪除</button>');
+                        cell4.append([btn4]);
+                    }
+                }
+
+                var row = $('<tr></tr>').append([cell1, cell2, cell3, cell4]);
+                $("#roleQueryTbody").append(row);
+            }
+            $('#btnQueryRole').prop("disabled", false);
+
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+    }
 
     function EditRole(id) {
         $("#btnEdit_" + id).prop("hidden", true);
@@ -125,7 +184,8 @@
                     dataType: "json"
                 }).done(function (data) {
                     alert("Edit success");
-                      window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+                    SetAuth();
+                     // window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
                 }).fail(function (data) {
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON.Message;
@@ -173,7 +233,8 @@
                     dataType: "json"
                 }).done(function (data) {
                     alert("Delete success");
-                      window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+                    SetAuth();
+                      //window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
                 }).fail(function (data) {
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON;
