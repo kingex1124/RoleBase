@@ -9,10 +9,6 @@ namespace Login.DTO
     public class SecurityRoleFunctionDTO
     {
         /// <summary>
-        /// 角色名稱
-        /// </summary>
-        public string RoleName { get; set; }
-        /// <summary>
         /// 功能
         /// </summary>
         public string Url { get; set; }     

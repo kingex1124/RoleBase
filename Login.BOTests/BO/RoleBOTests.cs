@@ -53,14 +53,14 @@ namespace Login.BO.Tests
             {
                 new RoleDTO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
                 new RoleDTO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
-                new RoleDTO(){ RoleID = 3 , RoleName = "B" , Description = "B1"},
+                new RoleDTO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
             List<RoleVO> reRoleVOList = new List<RoleVO>()
             {
                 new RoleVO(){ RoleID = 1 , RoleName = "Admin" , Description = "最高權限"},
                 new RoleVO(){ RoleID = 2 , RoleName = "A" , Description = "A1"},
-                new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"},
+                new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
             _roleRepo.Stub(o => o.GetRoleData()).Return(reRoleDTOList);

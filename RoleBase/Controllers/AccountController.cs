@@ -45,16 +45,15 @@ namespace RoleBase.Controllers
 
                 return SessionConnectionPool.GetCurrentUserInfo;
             }
-            set 
+            set
             {
                 if (HttpContext != null)
                     SessionConnectionPool.SetCurrentUserInfo(value);
                 else
                     SessionConnectionPool.SetCurrentUserInfo(CurrentHttpContext, value);
-                _currentUserInfo = value; 
+                _currentUserInfo = value;
             }
         }
-
         #endregion
 
         #region 建構子
@@ -80,11 +79,20 @@ namespace RoleBase.Controllers
 
         #region Action
 
+        /// <summary>
+        /// 註冊頁面
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Regist()
         {
             return View("Regist");
         }
 
+        /// <summary>
+        /// 註冊帳號
+        /// </summary>
+        /// <param name="account"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult RegistAccount(Account account)
         {
@@ -108,11 +116,20 @@ namespace RoleBase.Controllers
             return Json(account, JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// 登入頁面
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Login()
         {
             return View("Login");
         }
 
+        /// <summary>
+        /// 登入
+        /// </summary>
+        /// <param name="accountInfoData"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Login(AccountInfoData accountInfoData)
         {
@@ -142,14 +159,14 @@ namespace RoleBase.Controllers
 
                     securityLevel.UserData = userInfoData;
                     securityLevel.SecurityRole = _loginService.GetRoleDataByUserID(user.UserID.ToString()).ToList();
-
-                    foreach (var item in securityLevel.SecurityRole)
-                        securityLevel.SecurityUrl.AddRange(_securityService.GetSecurityRoleFunction(item.RoleID.ToString()));
+             
+                    securityLevel.SecurityUrl.AddRange(_securityService.GetSecurityRoleFunction(securityLevel.UserData.UserId.ToString()));
 
 
                     CurrentSecurityLevel = securityLevel;
                     CurrentHttpContext.Session["UserName"] = user.UserName;
                     CurrentHttpContext.Session["UserID"] = user.UserID;
+                    CurrentHttpContext.Session["AccountName"] = user.AccountName;
 
                     // UnitTest用
                     //if (HttpContext == null)
@@ -168,6 +185,10 @@ namespace RoleBase.Controllers
             }
         }
 
+        /// <summary>
+        /// 登出
+        /// </summary>
+        /// <returns></returns>
         public ActionResult Logout()
         {
             CurrentHttpContext.Session.Clear();
@@ -175,7 +196,16 @@ namespace RoleBase.Controllers
             return RedirectToAction("Login", "Account");
         }
 
-        #endregion
+        /// <summary>
+        /// 取得授權資料
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult GetAuthList()
+        {
+            var authData = CurrentHttpContext.Session[AccountInfoData.LoginInfo];
+            return Json(authData, JsonRequestBehavior.AllowGet);
+        }
 
+        #endregion
     }
 }

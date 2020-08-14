@@ -30,7 +30,6 @@ namespace RoleBase.Controllers
             }
             set { _currentHttpContext = value; }
         }
-
         #endregion
 
         #region 建構子
@@ -66,8 +65,19 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleAddEditDelete()
         {
+            //var roleData = _roleService.GetRoleData();
+            return View("RoleAddEditDelete");
+        }
+
+        /// <summary>
+        /// 查詢腳色資料
+        /// </summary>
+        /// <returns></returns>
+        [UserSession]
+        public ActionResult QueryRole()
+        {
             var roleData = _roleService.GetRoleData();
-            return View(roleData);
+            return Json(roleData, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

@@ -157,7 +157,6 @@
     <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\menuJS.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
@@ -261,6 +260,7 @@
     <Compile Include="Controllers\AccountAnApiController.cs" />
     <Compile Include="Controllers\AccountAnController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\FunctionAnApiController.cs" />
     <Compile Include="Controllers\FunctionController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

@@ -30,24 +30,22 @@ namespace Login.DAL
         /// <summary>
         /// 取得該角色ID所具備的權限功能
         /// </summary>
-        /// <param name="roleId"></param>
+        /// <param name="userID"></param>
         /// <returns></returns>
-        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId)
+        public IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string userID)
         {
-            int idData = Convert.ToInt32(roleId);
+            int idData = Convert.ToInt32(userID);
 
-            var result = (from role in _db.Role
+            var result = (from roleData in (from roleUser in _db.RoleUser where roleUser.UserID == idData select roleUser.RoleID) 
                           join roleFunction in _db.RoleFunction
-                          on role.RoleID equals roleFunction.RoleID
+                          on roleData equals roleFunction.RoleID
                           join function in _db.Function
                           on roleFunction.FunctionID equals function.FunctionID
-                          where role.RoleID == idData
-                          select new SecurityRoleFunctionDTO()
+                          select  new SecurityRoleFunctionDTO()
                           {
-                              RoleName = role.RoleName,
                               Url = function.Url,
                               Description = function.Description
-                          });
+                          }).Distinct();
 
             return result;
         }

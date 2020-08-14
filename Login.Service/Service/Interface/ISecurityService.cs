@@ -9,6 +9,6 @@ namespace Login.Service
 {
     public interface ISecurityService
     {
-        IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId);
+        IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string userID);
     }
 }

@@ -9,6 +9,6 @@ namespace Login.BO
 {
     public interface ISecurityBO
     {
-        IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string roleId);
+        IEnumerable<SecurityRoleFunctionDTO> GetSecurityRoleFunction(string userID);
     }
 }

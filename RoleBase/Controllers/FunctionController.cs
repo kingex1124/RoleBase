@@ -1,6 +1,7 @@
 ﻿using Login.Service;
 using Login.VO;
 using RoleBase.ActionFilters;
+using RoleBase.CurrentStatus;
 using RoleBase.Helper;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,9 @@ namespace RoleBase.Controllers
         IFunctionService _functionService;
         IRoleService _roleService;
 
+        ILoginService _loginService;
+        ISecurityService _securityService;
+
         private HttpContextBase _currentHttpContext;
 
         public HttpContextBase CurrentHttpContext
@@ -32,6 +36,27 @@ namespace RoleBase.Controllers
             set { _currentHttpContext = value; }
         }
 
+        private SecurityLevel _currentUserInfo;
+
+        public SecurityLevel CurrentSecurityLevel
+        {
+            get
+            {
+                if (_currentUserInfo != null)
+                    return _currentUserInfo;
+
+                return SessionConnectionPool.GetCurrentUserInfo;
+            }
+            set
+            {
+                if (HttpContext != null)
+                    SessionConnectionPool.SetCurrentUserInfo(value);
+                else
+                    SessionConnectionPool.SetCurrentUserInfo(CurrentHttpContext, value);
+                _currentUserInfo = value;
+            }
+        }
+
         #endregion
 
         #region 建構子
@@ -39,13 +64,17 @@ namespace RoleBase.Controllers
         public FunctionController()
         {
             _functionService = RouteConfig.Container.Resolve<IFunctionService>();
-            _roleService = RouteConfig.Container.Resolve<IRoleService>(); 
+            _roleService = RouteConfig.Container.Resolve<IRoleService>();
+            _loginService = RouteConfig.Container.Resolve<ILoginService>();
+            _securityService = RouteConfig.Container.Resolve<ISecurityService>();
         }
 
-        public FunctionController(IFunctionService functionService, IRoleService roleService)
+        public FunctionController(IFunctionService functionService, IRoleService roleService, ILoginService loginService, ISecurityService securityService)
         {
             _functionService = functionService;
             _roleService = roleService;
+            _loginService = loginService;
+            _securityService = securityService;
         }
 
         #endregion
@@ -229,7 +258,28 @@ namespace RoleBase.Controllers
                 else
                     CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
             }
+            SessionReflash();
             return Json(result, JsonRequestBehavior.AllowGet);
+        }
+
+        /// <summary>
+        /// 刷新權限Sesstion
+        /// </summary>
+        public void SessionReflash()
+        {
+            SecurityLevel securityLevel = new SecurityLevel();
+            AccountInfoData userInfoData = new AccountInfoData()
+            {
+                UserId = Convert.ToInt32(CurrentHttpContext.Session["UserID"]),
+                AccountName = CurrentHttpContext.Session["AccountName"].ToString()
+            };
+
+            securityLevel.UserData = userInfoData;
+            securityLevel.SecurityRole = _loginService.GetRoleDataByUserID(CurrentHttpContext.Session["UserID"].ToString()).ToList();
+
+            securityLevel.SecurityUrl.AddRange(_securityService.GetSecurityRoleFunction(securityLevel.UserData.UserId.ToString()));
+
+            CurrentSecurityLevel = securityLevel;
         }
 
         #endregion
