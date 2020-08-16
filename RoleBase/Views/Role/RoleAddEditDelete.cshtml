@@ -11,6 +11,7 @@
     {
         if (item.Url == "Role/AddRole")
         {
+            <!-- #region 角色新增 -->
             <div class="row">
                 <label for="textRoleName" class="col-md-1">*@Html.DisplayNameFor(model => model.RoleName)</label>
                 <input type="text" class="form-control col-md-3" id="textRoleName" name="textRoleName" placeholder="角色名稱">
@@ -21,19 +22,22 @@
                 <button class="btn btn-primary mx-3" href="#" id="btnAddRole">新增</button>
             </div>
             <hr />
+            <!-- #endregion My Region -->
         }
         if (item.Url == "Role/QueryRole")
         {
+            <!-- #region 查詢 -->
             <div class="row">
                 <label for="textQueryRoleName" class="col-md-1">@Html.DisplayNameFor(model => model.RoleName)</label>
                 <input type="text" class="form-control col-md-3" id="textQueryRoleName" name="textQueryRoleName" placeholder="角色名稱">
                 <button class="btn btn-primary mx-3" id="btnQueryRole">查詢</button>
             </div>
             <br />
+            <!-- #endregion My Region -->
         }
     }
 
-
+    <!--#region Table-->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -46,6 +50,7 @@
         <tbody id="roleQueryTbody">
         </tbody>
     </table>
+    <!-- #endregion -->
 }
 
 <script>
