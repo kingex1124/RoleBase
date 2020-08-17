@@ -21,8 +21,21 @@ namespace Login.DTO
         /// </summary>
         public string Url { get; set; }
         /// <summary>
+        /// 功能名稱
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
         /// 描述
         /// </summary>
         public string Description { get; set; }
+        /// <summary>
+        /// 是否為Menu
+        /// </summary>
+        public bool IsMenu { get; set; }
+        /// <summary>
+        /// 上層對象
+        /// </summary>
+        public string ParentName { get; set; }
+
     }
 }

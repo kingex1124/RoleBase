@@ -94,9 +94,14 @@ on C.FunctionID = D.FunctionID";
 
             string sqlStr = @"SELECT 
 case when A.[RoleID] IS NULL then CAST(0 AS BIT) Else CAST(1 AS BIT) end AS 'Check' ,
-      B.[FunctionID],B.Url,B.Description
+      B.[FunctionID],B.Url,B.Title, B.Description, B.IsMenu , 
+case when B.[Parent] = -1
+then 'Not Menu'
+when  B.[Parent] = 0 
+then 'No'
+else (select C.[Title] from [Function] C where C.FunctionID = B.[Parent]) end as 'ParentName'
   FROM 
-  (Select * From [RoleFunction] where RoleID=@p0) A 
+  (Select * From [RoleFunction] where RoleID = @p0 ) A 
   Right join [Function] B on A.FunctionID = B.FunctionID 
   Order By B.[FunctionID] ";
 

@@ -127,9 +127,9 @@ namespace Login.DAL.Tests
 
             List<FunctionCheckDTO> reFunctionCheckDTO = new List<FunctionCheckDTO>()
             {
-                new FunctionCheckDTO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" , Check = true },
-                new FunctionCheckDTO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" , Check = true },
-                new FunctionCheckDTO(){ FunctionID = 3 , Url = "Role/EditRole" , Description = "編輯角色" , Check = false }
+                new FunctionCheckDTO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Title = "角色管理", Description = "瀏覽角色管理畫面" , IsMenu = true, ParentName = "No", Check = true },
+                new FunctionCheckDTO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Title = "編輯角色", Description = "角色新增修改刪除畫面" , IsMenu = true, ParentName = "角色管理" , Check = true },
+                new FunctionCheckDTO(){ FunctionID = 3 , Url = "Role/EditRole", Title = "編輯" , Description = "編輯角色" , IsMenu = false, ParentName = "Not Menu" , Check = false }
             };
 
             _dataAccess.Stub(o => o.QueryDataTable<FunctionCheckDTO>(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reFunctionCheckDTO);
@@ -148,7 +148,10 @@ namespace Login.DAL.Tests
             {
                 Assert.AreEqual(result[i].FunctionID, reFunctionCheckDTO[i].FunctionID);
                 Assert.AreEqual(result[i].Url, reFunctionCheckDTO[i].Url);
+                Assert.AreEqual(result[i].Title, reFunctionCheckDTO[i].Title);
                 Assert.AreEqual(result[i].Description, reFunctionCheckDTO[i].Description);
+                Assert.AreEqual(result[i].IsMenu, reFunctionCheckDTO[i].IsMenu);
+                Assert.AreEqual(result[i].ParentName, reFunctionCheckDTO[i].ParentName);
                 Assert.AreEqual(result[i].Check, reFunctionCheckDTO[i].Check);
             }
 

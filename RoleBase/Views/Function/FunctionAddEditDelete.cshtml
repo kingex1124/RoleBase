@@ -208,8 +208,9 @@
                 var cell2 = $('<td><label id="labFunctionUrl_' + data[i].FunctionID + '">' + data[i].Url + '</label><input type="text" id="textFunctionUrl_' + data[i].FunctionID + '" value="' + data[i].Url + '" hidden></td>');
                 var cell3 = $('<td><lable id="labTitle_' + data[i].FunctionID + '">' + data[i].Title + '</lable><input type="text" id="textTitle_' + data[i].FunctionID + '" value="' + data[i].Title + '" hidden /></td>');
                 var cell4 = $('<td><lable id="labDescription_' + data[i].FunctionID + '">' + data[i].Description + '</lable><input type="text" id="textDescription_' + data[i].FunctionID + '" value="' + data[i].Description + '" hidden /></td>');
-                var cell5 = $('<td><lable id="labIsMenu_' + data[i].FunctionID + '">' + data[i].IsMenu + '</lable><input type="checkbox" id="ckIsMenu_' + data[i].FunctionID + '" checked="' + data[i].IsMenu + '" hidden /></td>');
-                var cell6 = $('<td><lable id="labParentName_' + data[i].FunctionID + '">' + data[i].ParentName + '</lable><select id="cbParentName_' + data[i].FunctionID + '" hidden /></select><lable id="labParentNameVal_"' + data[i].FunctionID + '" hidden>' + data[i].Parent + '</lable></td>');
+                var cell5 = $('<td><lable id="labIsMenu_' + data[i].FunctionID + '">' + data[i].IsMenu + '</lable><input type="checkbox" id="ckIsMenu_' + data[i].FunctionID + '"' + (data[i].IsMenu ? " checked " : " ") + '" hidden /></td>');
+
+                var cell6 = $('<td><lable id="labParentName_' + data[i].FunctionID + '">' + data[i].ParentName + '</lable><select id="cbParentName_' + data[i].FunctionID + '" hidden ></select><lable id="labParentNameVal_' + data[i].FunctionID + '" hidden>' + data[i].Parent + '</lable></td>');
 
                 var cell7 = $('<td></td>');
 
@@ -397,7 +398,7 @@
         $("#textFunctionUrl_" + id).val($("#labFunctionUrl_" + id).text());
         $("#textTitle_" + id).val($("#labTitle_" + id).text());
         $("#textDescription_" + id).val($("#labDescription_" + id).text());
-        if ($("#labIsMenu_" + id).text() === "True") {
+        if ($("#labIsMenu_" + id).text() === "true") {
             $("#ckIsMenu_" + id).prop("checked", true);
         } else {
             $("#ckIsMenu_" + id).prop("checked", false);

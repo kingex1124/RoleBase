@@ -90,13 +90,18 @@ namespace RoleBase.Controllers.Tests
                 new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+
+            };
+
             _roleService.Stub(o => o.GetRoleData()).Return(reRoleVO);
 
             #endregion
 
             #region act
 
-            var resultData = _target.QueryRole();
+            var resultData = _target.QueryRole(pageDataVO);
 
             var result = (List<RoleVO>)((JsonResult)resultData).Data;
 
@@ -107,7 +112,7 @@ namespace RoleBase.Controllers.Tests
             for (int i = 0; i < result.Count; i++)
             {
                 Assert.AreEqual(result[i].RoleID, reRoleVO[i].RoleID);
-                Assert.AreEqual(result[i].RoleName, reRoleVO[i].RoleName); 
+                Assert.AreEqual(result[i].RoleName, reRoleVO[i].RoleName);
                 Assert.AreEqual(result[i].Description, reRoleVO[i].Description);
             }
 
@@ -393,6 +398,24 @@ namespace RoleBase.Controllers.Tests
         [TestMethod()]
         public void RoleUserEditTest()
         {
+            // act
+            var result = _target.RoleUserEdit() as ViewResult;
+
+            // assert
+            // 驗證 Action
+            Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "RoleUserEdit");
+        }
+
+        #endregion
+
+        #region QueryRoleUserEditRoleTest
+
+        /// <summary>
+        /// 查詢角色資料
+        /// </summary>
+        [TestMethod()]
+        public void QueryRoleUserEditRoleTest()
+        {
             #region arrange
 
             List<RoleVO> reRoleVO = new List<RoleVO>()
@@ -408,20 +431,20 @@ namespace RoleBase.Controllers.Tests
 
             #region act
 
-            var result = _target.RoleUserEdit() as ViewResult;
+            var resultData = _target.QueryRoleUserEditRole();
+
+            var result = (List<RoleVO>)((JsonResult)resultData).Data;
 
             #endregion
 
             #region assert
 
-            // 驗證資料
-            for (int i = 0; i < ((List<RoleVO>)result.Model).Count; i++)
+            for (int i = 0; i < result.Count; i++)
             {
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVO[i].RoleID);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVO[i].RoleName);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVO[i].Description);
+                Assert.AreEqual(result[i].RoleID, reRoleVO[i].RoleID);
+                Assert.AreEqual(result[i].RoleName, reRoleVO[i].RoleName);
+                Assert.AreEqual(result[i].Description, reRoleVO[i].Description);
             }
-
 
             #endregion
         }
@@ -663,5 +686,7 @@ namespace RoleBase.Controllers.Tests
         #endregion
 
         #endregion
+
+
     }
 }

@@ -72,6 +72,25 @@ namespace RoleBase.Controllers.Tests
         [TestMethod()]
         public void FunctionAddEditDeleteTest()
         {
+            // act
+            var result = _target.FunctionAddEditDelete() as ViewResult;
+
+            // assert
+            // 驗證 Action
+            Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "FunctionAddEditDelete");
+        }
+
+        #endregion
+
+        #region QueryFunction
+
+        /// <summary>
+        /// 查詢功能
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod()]
+        public void QueryFunctionTest()
+        {
             #region arrange
 
             List<FunctionVO> reFunctionList = new List<FunctionVO>()
@@ -87,21 +106,23 @@ namespace RoleBase.Controllers.Tests
 
             #region act
 
-            var resultData = _target.FunctionAddEditDelete() as ViewResult;
+            var resultData = _target.QueryFunction();
+
+            var result = (List<FunctionVO>)((JsonResult)resultData).Data;
 
             #endregion
 
             #region assert
 
-            for (int i = 0; i < ((List<FunctionVO>)resultData.Model).Count; i++)
+            for (int i = 0; i < result.Count; i++)
             {
-                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].FunctionID, reFunctionList[i].FunctionID);
-                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Url, reFunctionList[i].Url);
-                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Title, reFunctionList[i].Title);
-                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Description, reFunctionList[i].Description);
-                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].IsMenu, reFunctionList[i].IsMenu);
-                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].Parent, reFunctionList[i].Parent);
-                Assert.AreEqual(((List<FunctionVO>)resultData.Model)[i].ParentName, reFunctionList[i].ParentName);
+                Assert.AreEqual(result[i].FunctionID, reFunctionList[i].FunctionID);
+                Assert.AreEqual(result[i].Url, reFunctionList[i].Url);
+                Assert.AreEqual(result[i].Title, reFunctionList[i].Title);
+                Assert.AreEqual(result[i].Description, reFunctionList[i].Description);
+                Assert.AreEqual(result[i].IsMenu, reFunctionList[i].IsMenu);
+                Assert.AreEqual(result[i].Parent, reFunctionList[i].Parent);
+                Assert.AreEqual(result[i].ParentName, reFunctionList[i].ParentName);
             }
 
             #endregion
@@ -109,7 +130,7 @@ namespace RoleBase.Controllers.Tests
 
         #endregion
 
-        #region FunctionGetParentDataTest
+        #region FunctionGetParentData
 
         /// <summary>
         /// 取得作為上層的keyValue資料
@@ -437,6 +458,25 @@ namespace RoleBase.Controllers.Tests
         [TestMethod()]
         public void RoleFunctionEditTest()
         {
+            // act
+            var result = _target.RoleFunctionEdit() as ViewResult;
+
+            // assert
+            // 驗證 Action
+            Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "RoleFunctionEdit");
+        }
+
+        #endregion
+
+        #region QueryRoleFunctionEditRole
+
+        /// <summary>
+        /// 查詢腳色資料
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod()]
+        public void QueryRoleFunctionEditRoleTest()
+        {
             #region arrange
 
             List<RoleVO> reRoleVOList = new List<RoleVO>()
@@ -452,18 +492,20 @@ namespace RoleBase.Controllers.Tests
 
             #region act
 
-            var result = _target.RoleFunctionEdit() as ViewResult;
+            var resultData = _target.QueryRoleFunctionEditRole();
+
+            var result = (List<RoleVO>)((JsonResult)resultData).Data;
 
             #endregion
 
             #region assert
 
             // 驗證資料
-            for (int i = 0; i < ((List<RoleVO>)result.Model).Count; i++)
+            for (int i = 0; i < result.Count; i++)
             {
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleID, reRoleVOList[i].RoleID);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].RoleName, reRoleVOList[i].RoleName);
-                Assert.AreEqual(((List<RoleVO>)result.Model)[i].Description, reRoleVOList[i].Description);
+                Assert.AreEqual(result[i].RoleID, reRoleVOList[i].RoleID);
+                Assert.AreEqual(result[i].RoleName, reRoleVOList[i].RoleName);
+                Assert.AreEqual(result[i].Description, reRoleVOList[i].Description);
             }
 
             #endregion
@@ -486,9 +528,9 @@ namespace RoleBase.Controllers.Tests
 
             List<FunctionCheckVO> reFunctionCheckVO = new List<FunctionCheckVO>()
             {
-                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 1 , Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" , Check = true },
-                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" , Check = true },
-                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 3 , Url = "Role/EditRole" , Description = "編輯角色" , Check = false }
+                new FunctionCheckVO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Title = "角色管理", Description = "瀏覽角色管理畫面" , IsMenu = true, ParentName = "No", Check = true },
+                new FunctionCheckVO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Title = "編輯角色", Description = "角色新增修改刪除畫面" , IsMenu = true, ParentName = "角色管理" , Check = true },
+                new FunctionCheckVO(){ FunctionID = 3 , Url = "Role/EditRole", Title = "編輯" , Description = "編輯角色" , IsMenu = false, ParentName = "Not Menu" , Check = false }
             };
 
             _functionService.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything)).Return(reFunctionCheckVO);
@@ -510,7 +552,10 @@ namespace RoleBase.Controllers.Tests
                 Assert.AreEqual(result[i].RoleID, reFunctionCheckVO[i].RoleID);
                 Assert.AreEqual(result[i].FunctionID, reFunctionCheckVO[i].FunctionID);
                 Assert.AreEqual(result[i].Url, reFunctionCheckVO[i].Url);
+                Assert.AreEqual(result[i].Title, reFunctionCheckVO[i].Title);
                 Assert.AreEqual(result[i].Description, reFunctionCheckVO[i].Description);
+                Assert.AreEqual(result[i].IsMenu, reFunctionCheckVO[i].IsMenu);
+                Assert.AreEqual(result[i].ParentName, reFunctionCheckVO[i].ParentName);
                 Assert.AreEqual(result[i].Check, reFunctionCheckVO[i].Check);
             }
 
@@ -869,7 +914,7 @@ namespace RoleBase.Controllers.Tests
             #endregion
         }
 
-        #endregion
 
+        #endregion
     }
 }
