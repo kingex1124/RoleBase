@@ -74,6 +74,7 @@ namespace RoleBase.Controllers
         /// </summary>
         /// <returns></returns>
         [UserSession]
+        [HttpPost]
         public ActionResult QueryRole(PageDataVO pageDataVO)
         {
             var roleData = _roleService.GetRoleData();
@@ -166,6 +167,8 @@ namespace RoleBase.Controllers
         /// 查詢腳色資料
         /// </summary>
         /// <returns></returns>
+        [UserSession]
+        [HttpPost]
         public ActionResult QueryRoleUserEditRole()
         {
             var roleData = _roleService.GetRoleData();

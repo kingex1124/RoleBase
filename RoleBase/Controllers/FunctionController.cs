@@ -108,8 +108,16 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult FunctionAddEditDelete()
         {
+            // var functionData = _functionService.GetFunctionData();
+            return View("FunctionAddEditDelete");
+        }
+
+        [UserSession]
+        [HttpPost]
+        public ActionResult QueryFunction()
+        {
             var functionData = _functionService.GetFunctionData();
-            return View(functionData);
+            return Json(functionData, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
