@@ -11,6 +11,7 @@
     {
         if (item.Url == "Function/AddFunction")
         {
+            <!-- #region 新增功能 -->
             <div class="row">
                 <label for="textFunctionUrl" class="col-md-1">*@Html.DisplayNameFor(model => model.Url)</label>
                 <input type="text" class="form-control col-md-3" id="textFunctionUrl" name="textFunctionUrl" placeholder="Url">
@@ -32,10 +33,34 @@
                 <input type="text" class="form-control col-md-3" id="textFunctionDescription" name="textFunctionDescription" placeholder="敘述">
                 <button class="btn btn-primary mx-3" href="#" id="AddFunctionBtn">新增</button>
             </div>
-            break;
+
+            <!-- #endregion -->
+        }
+
+        if (item.Url == "Function/QueryFunction")
+        {
+            <!-- #region 查詢 -->
+            <hr />
+            <div class="row">
+                <label for="textQueryUrl" class="col-md-1">@Html.DisplayNameFor(model => model.Url)</label>
+                <input type="text" class="form-control col-md-3" id="textQueryUrl" name="textQueryUrl" placeholder="Url">
+                <label class="col-md-2">是否為Menu</label>
+                <div class="form-check col-md-1">
+                    <input class="form-check-input position-static" type="checkbox" id="chkQueryIsMenu">
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <label for="textQueryTitle" class="col-md-1">@Html.DisplayNameFor(model => model.Title)</label>
+                <input type="text" class="form-control col-md-3" id="textQueryTitle" name="textQueryTitle" placeholder="名稱">
+                <button class="btn btn-primary mx-3" id="btnQueryFunction">查詢</button>
+            </div>
+            <br />
+            <!-- #endregion -->
         }
     }
 
+    <!-- #region Table -->
     <table class="table table-bordered">
         <thead>
             <tr>
@@ -48,116 +73,183 @@
                 <th>功能</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.FunctionID</td>
-                    <td><label id="labFunctionUrl_@item.FunctionID">@item.Url</label><input type="text" id="textFunctionUrl_@item.FunctionID" value="@item.Url" hidden></td>
-                    <td><lable id="labTitle_@item.FunctionID">@item.Title</lable><input type="text" id="textTitle_@item.FunctionID" value="@item.Title" hidden /></td>
-                    <td><lable id="labDescription_@item.FunctionID">@item.Description</lable><input type="text" id="textDescription_@item.FunctionID" value="@item.Description" hidden /></td>
-                    <td><lable id="labIsMenu_@item.FunctionID">@item.IsMenu</lable><input type="checkbox" id="ckIsMenu_@item.FunctionID" checked="@item.IsMenu" hidden /></td>
-                    <td><lable id="labParentName_@item.FunctionID">@item.ParentName</lable> <select id="cbParentName_@item.FunctionID" hidden></select><lable id="labParentNameVal_@item.FunctionID" hidden>@item.Parent</lable></td>
-                    <td>
-                        @foreach (var loginInfo in LoginInfo)
-                        {
-                            if (loginInfo.Url == "Function/EditFunction")
-                            {
-                                <button class="btn btn-primary mx-2" id="btnEdit_@item.FunctionID" onclick="EditFunction(@item.FunctionID)">編輯</button>
-                                <button class="btn btn-success mx-2" id="btnSave_@item.FunctionID" onclick="SaveFunction(@item.FunctionID)" hidden>儲存</button>
-                                <button class="btn btn-secondary mx-2" id="btnCancle_@item.FunctionID" onclick="CancleFunction(@item.FunctionID)" hidden>取消</button>
-                                break;
-                            }
-                        }
-                        @foreach (var loginInfo in LoginInfo)
-                        {
-                            if (loginInfo.Url == "Function/DeleteFunction")
-                            {
-                                <button class="btn btn-danger" onclick="DeleteFunction(@item.FunctionID)">刪除</button>
-                                break;
-                            }
-                        }
-                    </td>
-                </tr>
-            }
+        <tbody id="functionQueryTbody">
         </tbody>
     </table>
+    <!-- #endregion-->
+
 }
 
 <script>
-            (function () {
+    (function () {
 
-            $("#AddFunctionBtn").on("click", function () {
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("AddFunction", "Function")",
-                    data: JSON.stringify({
-                        "Url": $("#textFunctionUrl").val(),
-                        "Description": $("#textFunctionDescription").val(),
-                        "IsMenu": $("#chkIsMenu").prop("checked"),
-                        "Parent": $("#chkIsMenu").prop("checked") === false ? -1 : $("#cbFunctionParent").val(),
-                        "Title": $("#textFunctionTitle").val()
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                }).done(function (data) {
-                    alert("Add success");
-                      window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
-                }).fail(function (data) {
-                    if (data.responseJSON != undefined) {
-                        var Message = data.responseJSON.Message;
-                        console.log(Message);
-                        alert(`fail Message:${Message}`);
-                    }
-                    else {
-                        window.location.href = data.responseText;
-                    }
-                });
-            });
+    // #region 綁定新增事件
+    $("#AddFunctionBtn").on("click", function () {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("AddFunction", "Function")",
+            data: JSON.stringify({
+                "Url": $("#textFunctionUrl").val(),
+                "Description": $("#textFunctionDescription").val(),
+                "IsMenu": $("#chkIsMenu").prop("checked"),
+                "Parent": $("#chkIsMenu").prop("checked") === false ? -1 : $("#cbFunctionParent").val(),
+                "Title": $("#textFunctionTitle").val()
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            alert("Add success");
+              window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON.Message;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+    });
 
-                $("#chkIsMenu").on("click", function () {
-                    // 勾起來的話
-                    if ($("#chkIsMenu").prop("checked") === true) {
-                        $("#divParent").prop("hidden", false);
+    // #endregion
 
-                        $("#cbFunctionParent").empty();
-                        $("#cbFunctionParent").append($('<option>', {
-                            value: 0,
-                            text: '無'
-                        }));
+    // #region 綁定是否為選單的checkBox事件
+    $("#chkIsMenu").on("click", function () {
+        // 勾起來的話
+        if ($("#chkIsMenu").prop("checked") === true) {
+            $("#divParent").prop("hidden", false);
 
-                    // 取得下拉式選單資料
-                    $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("FunctionGetParentData", "Function")",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                         }).done(function (data) {
-                             if (data.length !== 0) {
-                                 for (var i = 0; i < data.length; i++) {
-                                     var option = $('<option value="' + data[i].Key + '" >' + data[i].Value + '</option>');
-                                     $("#cbFunctionParent").append(option);
-                                 }
-                             }
-                }).fail(function (data) {
-                    if (data.responseJSON != undefined) {
-                        var Message = data.responseJSON.Message;
-                        console.log(Message);
-                        alert(`fail Message:${Message}`);
-                    }
-                    else {
-                        window.location.href = data.responseText;
-                    }
-                });
+            $("#cbFunctionParent").empty();
+            $("#cbFunctionParent").append($('<option>', {
+                value: 0,
+                text: '無'
+            }));
 
-                    // 取消打勾的時候
-                    } else {
-                        $("#divParent").prop("hidden", true);
-                        $("#cbFunctionParent").empty();
-                    }
-                });
+        // 取得下拉式選單資料
+        $.ajax({
+        type: "POST",
+        url: "@Url.Action("FunctionGetParentData", "Function")",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+             }).done(function (data) {
+                 if (data.length !== 0) {
+                     for (var i = 0; i < data.length; i++) {
+                         var option = $('<option value="' + data[i].Key + '" >' + data[i].Value + '</option>');
+                         $("#cbFunctionParent").append(option);
+                     }
+                 }
+    }).fail(function (data) {
+        if (data.responseJSON != undefined) {
+            var Message = data.responseJSON.Message;
+            console.log(Message);
+            alert(`fail Message:${Message}`);
+        }
+        else {
+            window.location.href = data.responseText;
+        }
+    });
+
+        // 取消打勾的時候
+        } else {
+            $("#divParent").prop("hidden", true);
+            $("#cbFunctionParent").empty();
+        }
+    });
+
+    // #endregion
+
+    // 綁定查詢事件
+    $("#btnQueryFunction").on("click", SetAuth);
 
     }());
+
+    function SetAuth() {
+
+        // #region 取得授權資料
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetAuthList", "Account")",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (auData) {
+            if (auData != undefined) {
+                QueryFunction(auData.SecurityUrl);
+            }
+        }).fail(function (auData) {
+            if (auData.responseJSON != undefined) {
+                var Message = auData.responseJSON.Message;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+        });
+        // #endregion
+    }
+
+    function QueryFunction(loginInfo) {
+
+        $('#btnQueryFunction').prop("disabled", true);
+
+        $('#functionQueryTbody').empty();
+
+        // #region 取得功能資料
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("QueryFunction", "Function")",
+            //data: JSON.stringify({
+            //    "WhereCondition": "RoleName," + $("#textQueryRoleName").val()
+            //}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            for (var i = 0; i < data.length; i++) {
+
+                var cell1 = $('<td></td>').text(data[i].FunctionID);
+                var cell2 = $('<td><label id="labFunctionUrl_' + data[i].FunctionID + '">' + data[i].Url + '</label><input type="text" id="textFunctionUrl_' + data[i].FunctionID + '" value="' + data[i].Url + '" hidden></td>');
+                var cell3 = $('<td><lable id="labTitle_' + data[i].FunctionID + '">' + data[i].Title + '</lable><input type="text" id="textTitle_' + data[i].FunctionID + '" value="' + data[i].Title + '" hidden /></td>');
+                var cell4 = $('<td><lable id="labDescription_' + data[i].FunctionID + '">' + data[i].Description + '</lable><input type="text" id="textDescription_' + data[i].FunctionID + '" value="' + data[i].Description + '" hidden /></td>');
+                var cell5 = $('<td><lable id="labIsMenu_' + data[i].FunctionID + '">' + data[i].IsMenu + '</lable><input type="checkbox" id="ckIsMenu_' + data[i].FunctionID + '" checked="' + data[i].IsMenu + '" hidden /></td>');
+                var cell6 = $('<td><lable id="labParentName_' + data[i].FunctionID + '">' + data[i].ParentName + '</lable><select id="cbParentName_' + data[i].FunctionID + '" hidden /></select><lable id="labParentNameVal_"' + data[i].FunctionID + '" hidden>' + data[i].Parent + '</lable></td>');
+
+                var cell7 = $('<td></td>');
+
+                if (loginInfo != undefined) {
+
+                    if (loginInfo.find(o => o.Url == "Function/EditFunction") != undefined)
+                    {
+                        var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + data[i].FunctionID + '" onclick="EditFunction(' + data[i].FunctionID + ')">編輯</button>');
+                        var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + data[i].FunctionID + '" onclick="SaveFunction(' + data[i].FunctionID + ')" hidden>儲存</button>');
+                        var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + data[i].FunctionID + '" onclick="CancleFunction(' + data[i].FunctionID + ')" hidden>取消</button>');
+                        cell7.append([btn1, btn2, btn3]);
+                    }
+                    if (loginInfo.find(o => o.Url == "Function/DeleteFunction") != undefined)
+                    {
+                        var btn4 = $('<button class="btn btn-danger" onclick="DeleteFunction(' + data[i].FunctionID + ')">刪除</button>');
+                        cell7.append([btn4]);
+                    }
+                }
+
+                var row = $('<tr></tr>').append([cell1, cell2, cell3, cell4, cell5, cell6, cell7]);
+
+                $("#functionQueryTbody").append(row);
+            }
+
+            $('#btnQueryFunction').prop("disabled", false);
+
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+
+        // #endregion
+
+    }
 
     function EditFunction(id) {
         $("#btnEdit_" + id).prop("hidden", true);
@@ -209,6 +301,8 @@
     }
 
     function GetParentKeyValue(id) {
+
+        // #region 取得上層下拉式選單資料
          $.ajax({
                 type: "POST",
                 url: "@Url.Action("FunctionGetParentData", "Function")",
@@ -233,35 +327,44 @@
                     window.location.href = data.responseText;
                 }
             });
+
+        // #endregion
+
     }
 
     function SaveFunction(id) {
-              $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("EditFunction", "Function")",
-                            data: JSON.stringify({
-                        "FunctionID": id,
-                        "Url": $("#textFunctionUrl_" + id).val(),
-                        "Title": $("#textTitle_" + id).val(),
-                        "Description": $("#textDescription_" + id).val(),
-                        "IsMenu": $("#ckIsMenu_" + id).prop("checked"),
-                        "Parent": $("#ckIsMenu_" + id).prop("checked") === false ? -1 : $("#cbParentName_" + id).val()
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                }).done(function (data) {
-                    alert("Edit success");
-                      window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
-                }).fail(function (data) {
-                    if (data.responseJSON != undefined) {
-                        var Message = data.responseJSON.Message;
-                        console.log(Message);
-                        alert(`fail Message:${Message}`);
-                    }
-                    else {
-                        window.location.href = data.responseText;
-                    }
-                });
+
+        // #region 儲存功能
+        $.ajax({
+              type: "POST",
+              url: "@Url.Action("EditFunction", "Function")",
+                      data: JSON.stringify({
+                  "FunctionID": id,
+                  "Url": $("#textFunctionUrl_" + id).val(),
+                  "Title": $("#textTitle_" + id).val(),
+                  "Description": $("#textDescription_" + id).val(),
+                  "IsMenu": $("#ckIsMenu_" + id).prop("checked"),
+                  "Parent": $("#ckIsMenu_" + id).prop("checked") === false ? -1 : $("#cbParentName_" + id).val()
+              }),
+              contentType: "application/json; charset=utf-8",
+              dataType: "json"
+        }).done(function (data) {
+            alert("Edit success");
+            SetAuth();
+
+        }).fail(function (data) {
+              if (data.responseJSON != undefined) {
+                  var Message = data.responseJSON.Message;
+                  console.log(Message);
+                  alert(`fail Message:${Message}`);
+              }
+              else {
+                  window.location.href = data.responseText;
+              }
+        });
+
+        // #endregion
+
         $("#labFunctionUrl_" + id).text($("#textFunctionUrl_" + id).val());
         $("#labTitle_" + id).text($("#textTitle_" + id).val());
         $("#labDescription_" + id).text($("#textDescription_" + id).val());
@@ -315,36 +418,41 @@
         $("#labParentName_" + id).prop("hidden", false);
         $("#cbParentName_" + id).prop("hidden", true);
         $("#cbParentName_" + id).empty();
-
     }
 
     function DeleteFunction(id) {
-         if (confirm("你確定要刪除嗎？")) {
-                     $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("DeleteFunction", "Function")",
-                    data: JSON.stringify({
-                        "id":id
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                }).done(function (data) {
-                    alert("Delete success");
-                      window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
-                }).fail(function (data) {
-                    if (data.responseJSON != undefined) {
-                        var Message = data.responseJSON;
-                        console.log(Message);
-                        alert(`fail Message:${Message}`);
-                    }
-                    else {
-                        window.location.href = data.responseText;
-                    }
-                });
-                   //alert("點選了確定");
-               }
-               else {
-                   //alert("點選了取消");
-               }
+
+        if (confirm("你確定要刪除嗎？")) {
+
+        // #region 刪除功能
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DeleteFunction", "Function")",
+            data: JSON.stringify({
+                "id":id
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            alert("Delete success");
+            SetAuth();
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+
+        // #endregion
+
+              //alert("點選了確定");
+        }
+        else {
+              //alert("點選了取消");
+        }
     }
 </script>
