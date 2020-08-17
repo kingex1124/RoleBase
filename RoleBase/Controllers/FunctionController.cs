@@ -196,6 +196,7 @@ namespace RoleBase.Controllers
         public ActionResult EditFunction(FunctionVO functionVO)
         {
             var result = _functionService.EditFunction(functionVO);
+            SessionReflash();
 
             if (!string.IsNullOrEmpty(result))
             {
