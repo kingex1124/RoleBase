@@ -96,6 +96,14 @@
             break;
         }
     }
+    foreach (var securityUrl in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
+    {
+        if (securityUrl.Url == "Function/CancleEditRoleFunction")
+        {
+            <button class="btn btn-secondary" id="cancleEditRoleFunction" hidden onclick="SaveReturnRoleData()">取消</button>
+            break;
+        }
+    }
 }
 
 <script>
@@ -258,10 +266,11 @@
         $("#divSearchRole").prop("hidden", true);
         $("#divSearchFunction").prop("hidden", false);
         $("#roleTable").prop("hidden", true);
-        $("#functionTable").prop("hidden", false);    
+        $("#functionTable").prop("hidden", false);
         $("#functionTableBody").empty();
         roleID = id;
         $("#roleNameShow").text($("#labRoleName_" + id).text());
+        $("#cancleEditRoleFunction").prop("hidden", false);
     }
 
     // 按下儲存時，回到Role查詢畫面
@@ -273,6 +282,7 @@
         $("#functionTableBody").empty();
         $("#saveSetting").prop("hidden", true);
         $("#roleNameShow").text("");
+        $("#cancleEditRoleFunction").prop("hidden", true);
         SetAuthByRole();
     }
 
@@ -341,7 +351,7 @@
             }
         });
 
-                // #endregion 
+                // #endregion
 
         } else {
 
