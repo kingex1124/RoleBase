@@ -7,6 +7,27 @@
 
 @if (Session["LoginInfo"] != null)
 {
+    var LoginInfo = ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl;
+
+    foreach (var item in LoginInfo)
+    {
+        if (item.Url == "Role/QueryRoleUserEditRole")
+        {
+            <!-- #region 查詢-->
+
+            <div class="row" id="divSearchRole">
+                <label for="textQueryRoleName" class="col-md-1">@Html.DisplayNameFor(model => model.RoleName)</label>
+                <input type="text" class="form-control col-md-3" id="textQueryRoleName" name="textQueryRoleName" placeholder="角色名稱">
+                <button class="btn btn-primary mx-3" id="btnQueryRole">查詢</button>
+            </div>
+            <br />
+
+            <!-- #endregion-->
+        }
+    }
+
+    <!-- #region 角色Table -->
+
     <table class="table table-bordered" id="roleTable">
         <thead>
             <tr>
@@ -16,27 +37,36 @@
                 <th>功能</th>
             </tr>
         </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@item.RoleID</td>
-                    <td><label id="labRoleName_@item.RoleID">@item.RoleName</label></td>
-                    <td><lable id="labDescription_@item.RoleID">@item.Description</lable></td>
-                    <td>
-                        @foreach (var securityUrl in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
-                        {
-                            if (securityUrl.Url == "Role/GetUserByRole")
-                            {
-                                <button class="btn btn-primary mx-2" onclick="EditRole(@item.RoleID)">編輯</button>
-                                 break;
-                            }
-                        }
-                    </td>
-                </tr>
-            }
+        <tbody id="roleQueryTbody">
         </tbody>
     </table>
+
+    <!-- #endregion -->
+
+    foreach (var item in LoginInfo)
+    {
+        if (item.Url == "Role/QueryRoleUserEditUser")
+        {
+            <!-- #region 查詢-->
+            <div id="divSearchUser" hidden>
+                <div class="row">
+                    <label for="textQueryUserAccount" class="col-md-1">帳號</label>
+                    <input type="text" class="form-control col-md-3" id="textQueryUserAccount" name="textQueryUserAccount" placeholder="帳號">
+                </div>
+                <br />
+                <div class="row">
+                    <label for="textQueryUserName" class="col-md-1">使用者名稱</label>
+                    <input type="text" class="form-control col-md-3" id="textQueryUserName" name="textQueryUserName" placeholder="使用者名稱">
+                    <button class="btn btn-primary mx-3" id="btnQueryUser">查詢</button>
+                </div>
+                <br />
+            </div>
+
+            <!-- #endregion-->
+        }
+    }
+
+    <!-- #region 角色與User關聯Table -->
     <div><label id="roleNameShow"></label></div>
     <table class="table table-bordered" id="userTable" hidden>
         <thead>
@@ -50,35 +80,137 @@
         <tbody id="userTableBody">
         </tbody>
     </table>
+
+    <!-- #endregion -->
+
     foreach (var securityUrl in ((RoleBase.CurrentStatus.SecurityLevel)Session["LoginInfo"]).SecurityUrl)
     {
         if (securityUrl.Url == "Role/SaveRoleUserSetting")
         {
             <button class="btn btn-primary" id="saveSetting" hidden onclick="SaveSetting()">儲存設定</button>
-             break;
+            break;
         }
     }
 }
 
 <script>
-    //用來存取角色ID
-    var roleID;
+    (function () {
+        // 綁定查詢事件
+        $("#btnQueryRole").on("click", SetAuthByRole);
+        $("#btnQueryUser").on("click", SetAuthByUser);
+    })();
 
-    //按下編輯角色按鈕時觸發的事件
-    function EditRole(id) {
-        $("#roleTable").prop("hidden", true);
-        $("#userTable").prop("hidden", false);
-        $("#saveSetting").prop("hidden", false);
-        $("#userTableBody").empty();
-        roleID = id;
-        $("#roleNameShow").text($("#labRoleName_" + id).text());
+    function SetAuthByRole() {
 
-        //取得該角色所選取的所有使用者
+        // #region 取得授權資料
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetAuthList", "Account")",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (auData) {
+            if (auData != undefined) {
+                QueryRole(auData.SecurityUrl);
+            }
+        }).fail(function (auData) {
+            if (auData.responseJSON != undefined) {
+                var Message = auData.responseJSON.Message;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+        });
+        // #endregion
+    }
+
+    function QueryRole(loginInfo) {
+
+        $('#btnQueryRole').prop("disabled", true);
+
+        $('#roleQueryTbody').empty();
+
+        // #region 取得角色資料
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("QueryRoleUserEditRole", "Role")",
+            data: JSON.stringify({
+                "WhereCondition": "RoleName," + $("#textQueryRoleName").val()
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            for (var i = 0; i < data.length; i++) {
+
+                var cell1 = $('<td></td>').text(data[i].RoleID);
+                var cell2 = $('<td><label id="labRoleName_' + data[i].RoleID +'">' + data[i].RoleName + '</label><input type="text" id="textRoleName_' + data[i].RoleID + '" value="' + data[i].RoleName + '" hidden></td>');
+                var cell3 = $('<td><lable id="labDescription_' + data[i].RoleID +'">' + data[i].Description + '</lable><input type="text" id="textDescription_' + data[i].RoleID +'" value="' + data[i].Description + '" hidden /></td>');
+
+                var cell4 = $('<td></td>');
+
+                if (loginInfo != undefined) {
+
+                    if (loginInfo.find(o => o.Url == "Role/GetUserByRole") != undefined)
+                    {
+                        var btn1 = $('<button class="btn btn-primary mx-2" onclick="EditRole(' + data[i].RoleID + ')">編輯</button>');
+                        cell4.append([btn1]);
+                    }
+                }
+
+                var row = $('<tr></tr>').append([cell1, cell2, cell3, cell4]);
+
+                $("#roleQueryTbody").append(row);
+            }
+
+            $('#btnQueryRole').prop("disabled", false);
+
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+
+        // #endregion
+    }
+
+    function SetAuthByUser() {
+
+        // #region 取得授權資料
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetAuthList", "Account")",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (auData) {
+            if (auData != undefined) {
+                QueryUser(auData.SecurityUrl);
+            }
+        }).fail(function (auData) {
+            if (auData.responseJSON != undefined) {
+                var Message = auData.responseJSON.Message;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+        });
+        // #endregion
+
+    }
+
+    function QueryUser(loginInfo) {
+
+        $('#btnQueryRole').prop("disabled", true);
+
+        $('#roleQueryTbody').empty();
+
+        // #region 取得該角色所選取的所有使用者
         $.ajax({
             type: "POST",
             url: "@Url.Action("GetUserByRole", "Role")",
             data: JSON.stringify({
-                "id": id
+                "id": roleID
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
@@ -95,6 +227,7 @@
                 var row = $('<tr></tr>').append([cell1, cell2, cell3, cell4]);
                 $("#userTableBody").append(row);
             }
+            $("#saveSetting").prop("hidden", false);
 
         }).fail(function (data) {
             if (data.responseJSON != undefined) {
@@ -106,14 +239,44 @@
                 window.location.href = data.responseText;
             }
         });
+
+        // #endregion
+
+    }
+
+
+    //用來存取角色ID
+    var roleID;
+
+    //按下編輯角色按鈕時觸發的事件
+    function EditRole(id) {
+        $("#divSearchRole").prop("hidden", true);
+        $("#divSearchUser").prop("hidden", false);
+        $("#roleTable").prop("hidden", true);
+        $("#userTable").prop("hidden", false);
+        $("#userTableBody").empty();
+        roleID = id;
+        $("#roleNameShow").text($("#labRoleName_" + id).text());
+    }
+
+    // 按下儲存時，回到Role查詢畫面
+    function SaveReturnRoleData() {
+        $("#divSearchRole").prop("hidden", false);
+        $("#divSearchUser").prop("hidden", true);
+        $("#roleTable").prop("hidden", false);
+        $("#userTable").prop("hidden", true);
+        $("#userTableBody").empty();
+        $("#saveSetting").prop("hidden", true);
+        $("#roleNameShow").text("");
+        SetAuthByRole();
     }
 
     //按下儲存設定時所觸發的事件
     function SaveSetting() {
 
-            var arr = [];
+        var arr = [];
 
-            //取得所選取的table資料組成Json格式
+        // #region 取得所選取的table資料組成Json格式
             $.each($("#userTableBody > tr"), function (m, n) {
 
                 var userCheckVO = {};
@@ -146,10 +309,12 @@
                 }
             });
 
+        // #endregion
+
             //上傳
         if (arr.length !== 0) {
 
-                    //存取所勾選的資料
+        // #region 存取所勾選的資料
                     $.ajax({
                     type: "POST",
                     url: "@Url.Action("SaveRoleUserSetting", "Role")",
@@ -160,7 +325,8 @@
                     dataType: "json"
                 }).done(function (data) {
                     alert("Setting success");
-                      window.location.href = "@Url.Action("RoleUserEdit", "Role")";
+                    SaveReturnRoleData();
+                      //window.location.href = "@Url.Action("RoleUserEdit", "Role")";
                 }).fail(function (data) {
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON;
@@ -171,8 +337,12 @@
                         window.location.href = data.responseText;
                     }
                 });
+
+                // #endregion
+
         } else {
-                  //如果通通沒勾選時所觸發的清空方法
+
+        // #region 如果通通沒勾選時所觸發的清空方法
                   $.ajax({
                     type: "POST",
                     url: "@Url.Action("SaveRoleUserSetting", "Role")",
@@ -183,7 +353,8 @@
                     dataType: "json"
                 }).done(function (data) {
                     alert("Setting success");
-                      window.location.href = "@Url.Action("RoleUserEdit", "Role")";
+                    SaveReturnRoleData();
+                      //window.location.href = "@Url.Action("RoleUserEdit", "Role")";
                 }).fail(function (data) {
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON;
@@ -194,6 +365,9 @@
                         window.location.href = data.responseText;
                     }
                 });
+
+            // #endregion
+
         }
 
     }

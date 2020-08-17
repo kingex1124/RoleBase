@@ -74,7 +74,7 @@ namespace RoleBase.Controllers
         /// </summary>
         /// <returns></returns>
         [UserSession]
-        public ActionResult QueryRole()
+        public ActionResult QueryRole(PageDataVO pageDataVO)
         {
             var roleData = _roleService.GetRoleData();
             return Json(roleData, JsonRequestBehavior.AllowGet);
@@ -158,8 +158,18 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleUserEdit()
         {
+            //var roleData = _roleService.GetRoleData();
+            return View("RoleUserEdit");
+        }
+
+        /// <summary>
+        /// 查詢腳色資料
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult QueryRoleUserEditRole()
+        {
             var roleData = _roleService.GetRoleData();
-            return View(roleData);
+            return Json(roleData, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
