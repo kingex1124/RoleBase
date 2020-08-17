@@ -112,6 +112,10 @@ namespace RoleBase.Controllers
             return View("FunctionAddEditDelete");
         }
 
+        /// <summary>
+        /// 查詢功能
+        /// </summary>
+        /// <returns></returns>
         [UserSession]
         [HttpPost]
         public ActionResult QueryFunction()
@@ -210,8 +214,20 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleFunctionEdit()
         {
+           //var roleData = _roleService.GetRoleData();
+            return View("RoleFunctionEdit");
+        }
+
+        /// <summary>
+        /// 查詢腳色資料
+        /// </summary>
+        /// <returns></returns>
+        [UserSession]
+        [HttpPost]
+        public ActionResult QueryRoleFunctionEditRole()
+        {
             var roleData = _roleService.GetRoleData();
-            return View(roleData);
+            return Json(roleData, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

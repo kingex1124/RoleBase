@@ -324,9 +324,9 @@ namespace Login.Service.Tests
 
             List<FunctionCheckVO> reFunctionCheckVO = new List<FunctionCheckVO>()
             {
-                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 1 , Url = "Role/RoleManagement" , Description = "瀏覽角色管理畫面" , Check = true },
-                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Description = "角色新增修改刪除畫面" , Check = true },
-                new FunctionCheckVO(){ RoleID = 1 , FunctionID = 3 , Url = "Role/EditRole" , Description = "編輯角色" , Check = false }
+                new FunctionCheckVO(){ FunctionID = 1 , Url = "Role/RoleManagement" , Title = "角色管理", Description = "瀏覽角色管理畫面" , IsMenu = true, ParentName = "No", Check = true },
+                new FunctionCheckVO(){ FunctionID = 2 , Url = "Role/RoleAddEditDelete" , Title = "編輯角色", Description = "角色新增修改刪除畫面" , IsMenu = true, ParentName = "角色管理" , Check = true },
+                new FunctionCheckVO(){ FunctionID = 3 , Url = "Role/EditRole", Title = "編輯" , Description = "編輯角色" , IsMenu = false, ParentName = "Not Menu" , Check = false }
             };
 
             _functionBO.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything)).Return(reFunctionCheckVO);
@@ -346,7 +346,10 @@ namespace Login.Service.Tests
                 Assert.AreEqual(result[i].RoleID, reFunctionCheckVO[i].RoleID);
                 Assert.AreEqual(result[i].FunctionID, reFunctionCheckVO[i].FunctionID);
                 Assert.AreEqual(result[i].Url, reFunctionCheckVO[i].Url);
+                Assert.AreEqual(result[i].Title, reFunctionCheckVO[i].Title);
                 Assert.AreEqual(result[i].Description, reFunctionCheckVO[i].Description);
+                Assert.AreEqual(result[i].IsMenu, reFunctionCheckVO[i].IsMenu);
+                Assert.AreEqual(result[i].ParentName, reFunctionCheckVO[i].ParentName);
                 Assert.AreEqual(result[i].Check, reFunctionCheckVO[i].Check);
             }
 

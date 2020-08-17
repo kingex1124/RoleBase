@@ -164,7 +164,7 @@ namespace RoleBase.Controllers
         }
 
         /// <summary>
-        /// 查詢腳色資料
+        /// 查詢角色資料
         /// </summary>
         /// <returns></returns>
         [UserSession]

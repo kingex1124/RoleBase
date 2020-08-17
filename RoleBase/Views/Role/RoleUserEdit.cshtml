@@ -201,7 +201,7 @@
 
     function QueryUser(loginInfo) {
 
-        $('#btnQueryRole').prop("disabled", true);
+        $('#btnQueryUser').prop("disabled", true);
 
         $('#roleQueryTbody').empty();
 
@@ -228,6 +228,7 @@
                 $("#userTableBody").append(row);
             }
             $("#saveSetting").prop("hidden", false);
+            $('#btnQueryUser').prop("disabled", false);
 
         }).fail(function (data) {
             if (data.responseJSON != undefined) {

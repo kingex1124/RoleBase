@@ -24,10 +24,25 @@ namespace Login.VO
         [Display(Name = "Url")]
         public string Url { get; set; }
         /// <summary>
+        /// 功能名稱
+        /// </summary>
+        [Display(Name = "名稱")]
+        public string Title { get; set; }
+        /// <summary>
         /// 描述
         /// </summary>
         [Display(Name = "描述")]
         public string Description { get; set; }
+        /// <summary>
+        /// 是否為Menu
+        /// </summary>
+        [Display(Name = "是否為Menu")]
+        public bool IsMenu { get; set; }
+        /// <summary>
+        /// 上層對象
+        /// </summary>
+        [Display(Name = "上層")]
+        public string ParentName { get; set; }
         /// <summary>
         /// 角色ID
         /// </summary>
