@@ -50,6 +50,7 @@
     <Compile Include="VO\FunctionMenuVO.cs" />
     <Compile Include="VO\FunctionVO.cs" />
     <Compile Include="VO\KeyValuePairVO.cs" />
+    <Compile Include="VO\PageDataVO.cs" />
     <Compile Include="VO\RoleVO.cs" />
     <Compile Include="VO\UserCheckVO.cs" />
   </ItemGroup>

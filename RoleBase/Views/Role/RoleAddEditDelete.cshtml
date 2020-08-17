@@ -33,7 +33,7 @@
                 <button class="btn btn-primary mx-3" id="btnQueryRole">查詢</button>
             </div>
             <br />
-            <!-- #endregion My Region -->
+            <!-- #endregion -->
         }
     }
 
@@ -59,7 +59,7 @@
             // 綁定查詢事件
             $("#btnQueryRole").on("click", SetAuth);
 
-            // 綁定新增事件
+            // #region 綁定新增事件
             $("#btnAddRole").on("click", function () {
                 $.ajax({
                     type: "POST",
@@ -86,11 +86,13 @@
                 });
             });
 
+            // #endregion
+
     }());
 
     function SetAuth() {
 
-        // 取得授權資料
+        // #region 取得授權資料
         $.ajax({
             type: "POST",
             url: "@Url.Action("GetAuthList", "Account")",
@@ -107,6 +109,7 @@
                 alert(`fail Message:${Message}`);
             }
         });
+        // #endregion
     }
 
     function QueryRole(loginInfo) {
@@ -115,13 +118,13 @@
 
         $('#roleQueryTbody').empty();
 
-        //取得角色資料
-         $.ajax({
+        // #region 取得角色資料
+        $.ajax({
             type: "POST",
             url: "@Url.Action("QueryRole", "Role")",
-            //data: JSON.stringify({
-            //    "id": id
-            //}),
+            data: JSON.stringify({
+                "WhereCondition": "RoleName," + $("#textQueryRoleName").val()
+            }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         }).done(function (data) {
@@ -132,6 +135,7 @@
                 var cell3 = $('<td><lable id="labDescription_' + data[i].RoleID +'">' + data[i].Description + '</lable><input type="text" id="textDescription_' + data[i].RoleID +'" value="' + data[i].Description + '" hidden /></td>');
 
                 var cell4 = $('<td></td>');
+
                 if (loginInfo != undefined) {
 
                     if (loginInfo.find(o => o.Url == "Role/EditRole") != undefined)
@@ -149,8 +153,10 @@
                 }
 
                 var row = $('<tr></tr>').append([cell1, cell2, cell3, cell4]);
+
                 $("#roleQueryTbody").append(row);
             }
+
             $('#btnQueryRole').prop("disabled", false);
 
         }).fail(function (data) {
@@ -163,6 +169,8 @@
                 window.location.href = data.responseText;
             }
         });
+
+        // #endregion
     }
 
     function EditRole(id) {
@@ -177,30 +185,35 @@
     }
 
     function SaveRole(id) {
-                        $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("EditRole", "Role")",
-                            data: JSON.stringify({
-                        "RoleID": id,
-                        "RoleName": $("#textRoleName_" + id).val(),
-                        "Description": $("#textDescription_" + id).val()
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                }).done(function (data) {
-                    alert("Edit success");
-                    SetAuth();
-                     // window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
-                }).fail(function (data) {
-                    if (data.responseJSON != undefined) {
-                        var Message = data.responseJSON.Message;
-                        console.log(Message);
-                        alert(`fail Message:${Message}`);
-                    }
-                    else {
-                        window.location.href = data.responseText;
-                    }
-                });
+
+        // #region 儲存修改資料
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("EditRole", "Role")",
+                    data: JSON.stringify({
+                "RoleID": id,
+                "RoleName": $("#textRoleName_" + id).val(),
+                "Description": $("#textDescription_" + id).val()
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        }).done(function (data) {
+            alert("Edit success");
+            SetAuth();
+             // window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+        }).fail(function (data) {
+            if (data.responseJSON != undefined) {
+                var Message = data.responseJSON.Message;
+                console.log(Message);
+                alert(`fail Message:${Message}`);
+            }
+            else {
+                window.location.href = data.responseText;
+            }
+        });
+
+        // #endregion
+
         $("#labRoleName_" + id).text($("#textRoleName_" + id).val());
         $("#labDescription_" + id).text($("#textDescription_" + id).val());
         $("#btnEdit_" + id).prop("hidden", false);
@@ -225,36 +238,42 @@
 
     }
 
-           function DeleteRole(id)
-           {
-               if (confirm("你確定要刪除嗎？")) {
-                     $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("DeleteRole", "Role")",
-                    data: JSON.stringify({
-                        "id":id
-                    }),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json"
-                }).done(function (data) {
-                    alert("Delete success");
-                    SetAuth();
-                      //window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
-                }).fail(function (data) {
-                    if (data.responseJSON != undefined) {
-                        var Message = data.responseJSON;
-                        console.log(Message);
-                        alert(`fail Message:${Message}`);
-                    }
-                    else {
-                        window.location.href = data.responseText;
-                    }
-                });
-                   //alert("點選了確定");
-               }
-               else {
-                   //alert("點選了取消");
-               }
-            }
+    function DeleteRole(id)
+    {
+        if (confirm("你確定要刪除嗎？")) {
+
+        // #region 刪除角色資料
+        $.ajax({
+             type: "POST",
+             url: "@Url.Action("DeleteRole", "Role")",
+             data: JSON.stringify({
+                 "id":id
+             }),
+             contentType: "application/json; charset=utf-8",
+             dataType: "json"
+         }).done(function (data) {
+             alert("Delete success");
+             SetAuth();
+               //window.location.href = "@Url.Action("RoleAddEditDelete", "Role")";
+         }).fail(function (data) {
+             if (data.responseJSON != undefined) {
+                 var Message = data.responseJSON;
+                 console.log(Message);
+                 alert(`fail Message:${Message}`);
+             }
+             else {
+                 window.location.href = data.responseText;
+             }
+         });
+            //alert("點選了確定");
+
+            // #endregion
+
+        }
+        else {
+            //alert("點選了取消");
+        }
+
+     }
 </script>
 
