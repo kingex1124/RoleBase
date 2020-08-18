@@ -104,7 +104,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON.Message;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
@@ -143,7 +143,7 @@
         if (data.responseJSON != undefined) {
             var Message = data.responseJSON.Message;
             console.log(Message);
-            alert(`fail Message:${Message}`);
+            alert("fail Message:" + Message);
         }
         else {
             window.location.href = data.responseText;
@@ -180,7 +180,7 @@
             if (auData.responseJSON != undefined) {
                 var Message = auData.responseJSON.Message;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
         });
         // #endregion
@@ -216,14 +216,16 @@
 
                 if (loginInfo != undefined) {
 
-                    if (loginInfo.find(o => o.Url == "Function/EditFunction") != undefined)
+                    //if (loginInfo.find(o => o.Url == "Function/EditFunction") != undefined)
+                    if (loginInfo.find(function (o) { return o.Url === "Function/EditFunction" }) !== undefined)
                     {
                         var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + data[i].FunctionID + '" onclick="EditFunction(' + data[i].FunctionID + ')">編輯</button>');
                         var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + data[i].FunctionID + '" onclick="SaveFunction(' + data[i].FunctionID + ')" hidden>儲存</button>');
                         var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + data[i].FunctionID + '" onclick="CancleFunction(' + data[i].FunctionID + ')" hidden>取消</button>');
                         cell7.append([btn1, btn2, btn3]);
                     }
-                    if (loginInfo.find(o => o.Url == "Function/DeleteFunction") != undefined)
+                    //if (loginInfo.find(o => o.Url == "Function/DeleteFunction") != undefined)
+                    if (loginInfo.find(function (o) { return o.Url === "Function/DeleteFunction" }) !== undefined)
                     {
                         var btn4 = $('<button class="btn btn-danger" onclick="DeleteFunction(' + data[i].FunctionID + ')">刪除</button>');
                         cell7.append([btn4]);
@@ -241,7 +243,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
@@ -322,7 +324,7 @@
                 if (data.responseJSON != undefined) {
                     var Message = data.responseJSON.Message;
                     console.log(Message);
-                    alert(`fail Message:${Message}`);
+                    alert("fail Message:" + Message);
                 }
                 else {
                     window.location.href = data.responseText;
@@ -357,7 +359,7 @@
               if (data.responseJSON != undefined) {
                   var Message = data.responseJSON.Message;
                   console.log(Message);
-                  alert(`fail Message:${Message}`);
+                  alert("fail Message:" + Message);
               }
               else {
                   window.location.href = data.responseText;
@@ -441,7 +443,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
