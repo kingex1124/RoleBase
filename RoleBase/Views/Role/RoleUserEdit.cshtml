@@ -126,7 +126,7 @@
             if (auData.responseJSON != undefined) {
                 var Message = auData.responseJSON.Message;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
         });
         // #endregion
@@ -158,7 +158,8 @@
 
                 if (loginInfo != undefined) {
 
-                    if (loginInfo.find(o => o.Url == "Role/GetUserByRole") != undefined)
+                    //if (loginInfo.find(o => o.Url == "Role/GetUserByRole") != undefined)
+                    if (loginInfo.find(function (o) { return o.Url === "Role/GetUserByRole"}) !== undefined)
                     {
                         var btn1 = $('<button class="btn btn-primary mx-2" onclick="EditRole(' + data[i].RoleID + ')">編輯</button>');
                         cell4.append([btn1]);
@@ -176,7 +177,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
@@ -202,7 +203,7 @@
             if (auData.responseJSON != undefined) {
                 var Message = auData.responseJSON.Message;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
         });
         // #endregion
@@ -244,7 +245,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
@@ -344,7 +345,7 @@
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON;
                         console.log(Message);
-                        alert(`fail Message:${Message}`);
+                        alert("fail Message:" + Message);
                     }
                     else {
                         window.location.href = data.responseText;
@@ -372,7 +373,7 @@
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON;
                         console.log(Message);
-                        alert(`fail Message:${Message}`);
+                        alert("fail Message:" + Message);
                     }
                     else {
                         window.location.href = data.responseText;

@@ -11,7 +11,7 @@
     <link href="~/Content/menuStyle.css" rel="stylesheet" />
     <script src="~/Scripts/modernizr-2.8.3.js"></script>
     <script src="~/Scripts/jquery-3.4.1.min.js"></script>
-
+    <script src="~/Scripts/extensionJavascriptFindMethod.js"></script>
 </head>
 <body>
     <header>
@@ -84,11 +84,11 @@
 
     <script src="~/Scripts/bootstrap.js"></script>
 </body>
-</html>
+
 
 <script>
     (function () {
-        // 取得選單資料       
+        // 取得選單資料
          $.ajax({
              type: "POST",
             url: "@Url.Action("GetFunctionMenu", "Function")",
@@ -105,7 +105,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
@@ -155,3 +155,4 @@
     };
 
 </script>
+</html>

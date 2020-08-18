@@ -78,7 +78,7 @@
                     if (data.responseJSON != undefined) {
                         var Message = data.responseJSON.Message;
                         console.log(Message);
-                        alert(`fail Message:${Message}`);
+                        alert("fail Message:" + Message);
                     }
                     else {
                         window.location.href = data.responseText;
@@ -106,7 +106,7 @@
             if (auData.responseJSON != undefined) {
                 var Message = auData.responseJSON.Message;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
         });
         // #endregion
@@ -138,14 +138,16 @@
 
                 if (loginInfo != undefined) {
 
-                    if (loginInfo.find(o => o.Url == "Role/EditRole") != undefined)
+                    //if (loginInfo.find(o => o.Url == "Role/EditRole") != undefined)
+                    if (loginInfo.find(function (o) { return o.Url === "Role/EditRole" }) !== undefined)
                     {
                         var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + data[i].RoleID + '" onclick="EditRole(' + data[i].RoleID + ')">編輯</button>');
                         var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + data[i].RoleID + '" onclick="SaveRole(' + data[i].RoleID + ')" hidden>儲存</button>');
                         var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + data[i].RoleID + '" onclick="CancleRole(' + data[i].RoleID + ')" hidden>取消</button>');
                         cell4.append([btn1, btn2, btn3]);
                     }
-                    if (loginInfo.find(o => o.Url == "Role/DeleteRole") != undefined)
+                    // if (loginInfo.find(o => o.Url == "Role/DeleteRole") != undefined)
+                    if (loginInfo.find(function (o) { return o.Url === "Role/DeleteRole" }) !== undefined)
                     {
                         var btn4 = $('<button class="btn btn-danger" onclick="DeleteRole(' + data[i].RoleID + ')">刪除</button>');
                         cell4.append([btn4]);
@@ -163,7 +165,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
@@ -205,7 +207,7 @@
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON.Message;
                 console.log(Message);
-                alert(`fail Message:${Message}`);
+                alert("fail Message:" + Message);
             }
             else {
                 window.location.href = data.responseText;
@@ -259,7 +261,7 @@
              if (data.responseJSON != undefined) {
                  var Message = data.responseJSON;
                  console.log(Message);
-                 alert(`fail Message:${Message}`);
+                 alert("fail Message:" + Message);
              }
              else {
                  window.location.href = data.responseText;
