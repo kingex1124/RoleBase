@@ -67,14 +67,19 @@ namespace Login.DAL
 
             string condition = string.Empty;
 
-            for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+            if (pageDataVO.WhereCondition != null)
             {
-                if (i != pageDataVO.WhereCondition.Count - 1)
-                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
-                else
-                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
-                param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+                for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+                {
+                    if (i != pageDataVO.WhereCondition.Count - 1)
+                        condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
+                    else
+                        condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
+                    param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+                }
             }
+            else
+                condition = "1=1";
 
             string sqlStr = string.Format(@"Select [RoleID],[RoleName],[Description] From  
                              (Select ROW_NUMBER() OVER(ORDER BY RoleID ) AS row, * from [Role] where {0} ) as tb1
@@ -97,14 +102,19 @@ namespace Login.DAL
 
             string condition = string.Empty;
 
-            for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+            if (pageDataVO.WhereCondition != null)
             {
-                if (i != pageDataVO.WhereCondition.Count - 1)
-                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
-                else
-                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
-                param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+                for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+                {
+                    if (i != pageDataVO.WhereCondition.Count - 1)
+                        condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
+                    else
+                        condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
+                    param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+                }
             }
+            else
+                condition = "1=1";
 
             string sqlStr = string.Format(@"Select count(*) From [Role] where {0}", condition);
 
