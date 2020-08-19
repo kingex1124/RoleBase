@@ -225,10 +225,12 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         [UserSession]
         [HttpPost]
-        public ActionResult QueryRoleFunctionEditRole()
+        public ActionResult QueryRoleFunctionEditRole(PageDataVO pageDataVO)
         {
-            var roleData = _roleService.GetRoleData();
-            return Json(roleData, JsonRequestBehavior.AllowGet);
+            RoleTableResultVO result = new RoleTableResultVO();
+            result.RoleData = _roleService.GetRoleData(pageDataVO);
+            result.TableMaxPage = pageDataVO.AllPageNumber;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

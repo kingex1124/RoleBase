@@ -56,9 +56,10 @@ namespace Login.DAL
         /// 取得Role資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<RoleDTO> GetRoleData()
+        public IEnumerable<RoleDTO> GetRoleData(PageDataVO pageDataVO)
         {
             var result = (from role in _db.Role
+                          where role.RoleName == pageDataVO.WhereCondition[0].Value
                           orderby role.RoleID
                           select new RoleDTO()
                           {
@@ -67,7 +68,27 @@ namespace Login.DAL
                               Description = role.Description
                           });
 
-            return result;
+            return result.Skip(pageDataVO.LowerBound).Take(pageDataVO.PageSize == null ? 0 : Convert.ToInt32(pageDataVO.PageSize));
+        }
+
+        /// <summary>
+        /// 取得資料總筆數
+        /// </summary>
+        /// <param name="pageDataVO"></param>
+        /// <returns></returns>
+        public int GetRoleCount(PageDataVO pageDataVO)
+        {
+            var result = (from role in _db.Role
+                          where role.RoleName == pageDataVO.WhereCondition[0].Value
+                          orderby role.RoleID
+                          select new RoleDTO()
+                          {
+                              RoleID = role.RoleID,
+                              RoleName = role.RoleName,
+                              Description = role.Description
+                          });
+
+            return result.Count();
         }
 
         /// <summary>
@@ -106,7 +127,6 @@ namespace Login.DAL
 
         public int EditRole(RoleVO roleVO)
         {
-
             var roleData = _db.Role.Where(o => o.RoleID == roleVO.RoleID).FirstOrDefault();
             roleData.RoleName = roleVO.RoleName;
             roleData.Description = roleVO.Description;

@@ -197,7 +197,7 @@
             type: "POST",
             url: "@Url.Action("QueryFunction", "Function")",
             //data: JSON.stringify({
-            //    "WhereCondition": "RoleName," + $("#textQueryRoleName").val()
+            //    "WhereCondition": [{ "Key": "RoleName", "Value": $("#textQueryRoleName").val() }]
             //}),
             contentType: "application/json; charset=utf-8",
             dataType: "json"

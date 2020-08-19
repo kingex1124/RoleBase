@@ -13,7 +13,9 @@ namespace Login.DAL
     {
         IEnumerable<RoleDTO> GetRoleDataByAccountName(string userID);
 
-        IEnumerable<RoleDTO> GetRoleData();
+        IEnumerable<RoleDTO> GetRoleData(PageDataVO pageDataVO);
+
+        int GetRoleCount(PageDataVO pageDataVO);
 
         int AddRole(RoleVO roleVO);
 

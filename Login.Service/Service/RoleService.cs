@@ -36,9 +36,9 @@ namespace Login.Service
         /// 取得Role資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<RoleVO> GetRoleData()
+        public IEnumerable<RoleVO> GetRoleData(PageDataVO pageDataVO)
         {
-            return _roleBO.GetRoleData();
+            return _roleBO.GetRoleData(pageDataVO);
         }
 
         /// <summary>

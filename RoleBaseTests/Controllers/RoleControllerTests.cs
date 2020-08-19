@@ -92,10 +92,19 @@ namespace RoleBase.Controllers.Tests
 
             PageDataVO pageDataVO = new PageDataVO()
             {
-
+                AllPageNumber = 1,
+                PageNumber = 1,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "RoleName",
+                             Value = ""
+                        }
+                   }
             };
 
-            _roleService.Stub(o => o.GetRoleData()).Return(reRoleVO);
+            _roleService.Stub(o => o.GetRoleData(pageDataVO)).Return(reRoleVO);
 
             #endregion
 
@@ -103,17 +112,21 @@ namespace RoleBase.Controllers.Tests
 
             var resultData = _target.QueryRole(pageDataVO);
 
-            var result = (List<RoleVO>)((JsonResult)resultData).Data;
+            var result = (RoleTableResultVO)((JsonResult)resultData).Data;
+
+            var roleData = result.RoleData.ToList();
 
             #endregion
 
             #region assert
 
-            for (int i = 0; i < result.Count; i++)
+            Assert.AreEqual(result.TableMaxPage, pageDataVO.AllPageNumber);
+
+            for (int i = 0; i < roleData.Count; i++)
             {
-                Assert.AreEqual(result[i].RoleID, reRoleVO[i].RoleID);
-                Assert.AreEqual(result[i].RoleName, reRoleVO[i].RoleName);
-                Assert.AreEqual(result[i].Description, reRoleVO[i].Description);
+                Assert.AreEqual(roleData[i].RoleID, reRoleVO[i].RoleID);
+                Assert.AreEqual(roleData[i].RoleName, reRoleVO[i].RoleName);
+                Assert.AreEqual(roleData[i].Description, reRoleVO[i].Description);
             }
 
             #endregion
@@ -425,25 +438,43 @@ namespace RoleBase.Controllers.Tests
                 new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
-            _roleService.Stub(o => o.GetRoleData()).Return(reRoleVO);
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                AllPageNumber = 1,
+                PageNumber = 1,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "RoleName",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _roleService.Stub(o => o.GetRoleData(pageDataVO)).Return(reRoleVO);
 
             #endregion
 
             #region act
 
-            var resultData = _target.QueryRoleUserEditRole();
+            var resultData = _target.QueryRoleUserEditRole(pageDataVO);
 
-            var result = (List<RoleVO>)((JsonResult)resultData).Data;
+            var result = (RoleTableResultVO)((JsonResult)resultData).Data;
+
+            var roleData = result.RoleData.ToList();
 
             #endregion
 
             #region assert
 
-            for (int i = 0; i < result.Count; i++)
+            Assert.AreEqual(result.TableMaxPage, pageDataVO.AllPageNumber);
+
+            for (int i = 0; i < roleData.Count; i++)
             {
-                Assert.AreEqual(result[i].RoleID, reRoleVO[i].RoleID);
-                Assert.AreEqual(result[i].RoleName, reRoleVO[i].RoleName);
-                Assert.AreEqual(result[i].Description, reRoleVO[i].Description);
+                Assert.AreEqual(roleData[i].RoleID, reRoleVO[i].RoleID);
+                Assert.AreEqual(roleData[i].RoleName, reRoleVO[i].RoleName);
+                Assert.AreEqual(roleData[i].Description, reRoleVO[i].Description);
             }
 
             #endregion

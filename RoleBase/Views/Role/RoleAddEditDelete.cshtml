@@ -50,10 +50,16 @@
         <tbody id="roleQueryTbody">
         </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination" id="PagUI">
+
+        </ul>
+    </nav>
     <!-- #endregion -->
 }
 
 <script>
+    var pageNumber = 1;
         (function () {
 
             // 綁定查詢事件
@@ -123,33 +129,34 @@
             type: "POST",
             url: "@Url.Action("QueryRole", "Role")",
             data: JSON.stringify({
-                "WhereCondition": "RoleName," + $("#textQueryRoleName").val()
+                "PageNumber": pageNumber,
+                "WhereCondition": [{ "Key": "RoleName", "Value": $("#textQueryRoleName").val() }]
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         }).done(function (data) {
-            for (var i = 0; i < data.length; i++) {
+            var roleData = data.RoleData;
 
-                var cell1 = $('<td></td>').text(data[i].RoleID);
-                var cell2 = $('<td><label id="labRoleName_' + data[i].RoleID +'">' + data[i].RoleName + '</label><input type="text" id="textRoleName_' + data[i].RoleID + '" value="' + data[i].RoleName + '" hidden></td>');
-                var cell3 = $('<td><lable id="labDescription_' + data[i].RoleID +'">' + data[i].Description + '</lable><input type="text" id="textDescription_' + data[i].RoleID +'" value="' + data[i].Description + '" hidden /></td>');
+            for (var i = 0; i < roleData.length; i++) {
+
+                var cell1 = $('<td></td>').text(roleData[i].RoleID);
+                var cell2 = $('<td><label id="labRoleName_' + roleData[i].RoleID + '">' + roleData[i].RoleName + '</label><input type="text" id="textRoleName_' + roleData[i].RoleID + '" value="' + roleData[i].RoleName + '" hidden></td>');
+                var cell3 = $('<td><lable id="labDescription_' + roleData[i].RoleID + '">' + roleData[i].Description + '</lable><input type="text" id="textDescription_' + roleData[i].RoleID + '" value="' + roleData[i].Description + '" hidden /></td>');
 
                 var cell4 = $('<td></td>');
 
                 if (loginInfo != undefined) {
 
                     //if (loginInfo.find(o => o.Url == "Role/EditRole") != undefined)
-                    if (loginInfo.find(function (o) { return o.Url === "Role/EditRole" }) !== undefined)
-                    {
-                        var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + data[i].RoleID + '" onclick="EditRole(' + data[i].RoleID + ')">編輯</button>');
-                        var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + data[i].RoleID + '" onclick="SaveRole(' + data[i].RoleID + ')" hidden>儲存</button>');
-                        var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + data[i].RoleID + '" onclick="CancleRole(' + data[i].RoleID + ')" hidden>取消</button>');
+                    if (loginInfo.find(function (o) { return o.Url === "Role/EditRole" }) !== undefined) {
+                        var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + roleData[i].RoleID + '" onclick="EditRole(' + roleData[i].RoleID + ')">編輯</button>');
+                        var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + roleData[i].RoleID + '" onclick="SaveRole(' + roleData[i].RoleID + ')" hidden>儲存</button>');
+                        var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + roleData[i].RoleID + '" onclick="CancleRole(' + roleData[i].RoleID + ')" hidden>取消</button>');
                         cell4.append([btn1, btn2, btn3]);
                     }
                     // if (loginInfo.find(o => o.Url == "Role/DeleteRole") != undefined)
-                    if (loginInfo.find(function (o) { return o.Url === "Role/DeleteRole" }) !== undefined)
-                    {
-                        var btn4 = $('<button class="btn btn-danger" onclick="DeleteRole(' + data[i].RoleID + ')">刪除</button>');
+                    if (loginInfo.find(function (o) { return o.Url === "Role/DeleteRole" }) !== undefined) {
+                        var btn4 = $('<button class="btn btn-danger" onclick="DeleteRole(' + roleData[i].RoleID + ')">刪除</button>');
                         cell4.append([btn4]);
                     }
                 }
@@ -158,6 +165,56 @@
 
                 $("#roleQueryTbody").append(row);
             }
+            // 加入分頁UI
+
+            // 處理分頁按鈕
+            $("#PagUI > li").remove();
+
+            // 上一頁
+            var preLi = $("<li class='page-item'></li>");
+            var prePage = parseInt(pageNumber) - 1;
+            if (prePage <= 0)
+                prePage = 1;
+
+            var preA = $("<a class='page-link' href='#' aria-label='Previous' onclick=Search(" + prePage + ")></a>");
+
+            var preSpane = $("<span aria-hidden='true'>&laquo;</span>");
+            var preSpane1 = $("<span class='sr-only'>Previous</span>");
+            preA.append([preSpane, preSpane1]);
+            preLi.append(preA);
+            $("#PagUI").append(preLi);
+
+            var tableMaxPage = data.TableMaxPage;
+
+            for (var i = 0; i < tableMaxPage; i++) {
+                var pagedata = (parseInt(i) + 1);
+                if (i + 1 === pageNumber) {
+                    var li = $("<li class='page-item active'> </li>");
+                    var a = $(" <a class='page-link' href='#' id='Page - +" + pagedata + ")' onclick='Search( " + pagedata + ")'> " + pagedata + "</a>");
+                    li.append(a);
+                    $("#PagUI").append(li);
+                }
+                else {
+                    var li = $("<li class='page-item'> </li>");
+                    var a = $(" <a class='page-link' href='#' id='Page - +" + pagedata + ")' onclick='Search( " + pagedata + ")'> " + pagedata + "</a>");
+                    li.append(a);
+                    $("#PagUI").append(li);
+                }
+            }
+
+            // 下一頁
+            var nexLi = $("<li class='page-item'></li>");
+            var nexPage = parseInt(pageNumber) + 1;
+            if (nexPage >= tableMaxPage)
+                nexPage = tableMaxPage;
+
+            var nexA = $("<a class='page-link' href='#' aria-label='Next' onclick=Search(" + nexPage + ")></a>");
+
+            var nexSpane = $("<span aria-hidden='true'>&raquo;</span>");
+            var nexSpane1 = $("<span class='sr-only'>Next</span>");
+            nexA.append([nexSpane, nexSpane1]);
+            nexLi.append(nexA);
+            $("#PagUI").append(nexLi);
 
             $('#btnQueryRole').prop("disabled", false);
 
@@ -173,6 +230,11 @@
         });
 
         // #endregion
+    }
+
+    function Search(page) {
+        pageNumber = page;
+        SetAuth();
     }
 
     function EditRole(id) {
