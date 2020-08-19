@@ -62,7 +62,7 @@
                 <br />
             </div>
             <nav aria-label="Page navigation example">
-                <ul class="pagination" id="PagUI">
+                <ul class="pagination" id="pagUI">
                 </ul>
             </nav>
             <!-- #endregion-->
@@ -107,7 +107,7 @@
 }
 
 <script>
-    var pageNumber = 1;
+    var _pageNumber = 1;
     (function () {
         // 綁定查詢事件
         $("#btnQueryRole").on("click", SetAuthByRole);
@@ -147,7 +147,7 @@
             type: "POST",
             url: "@Url.Action("QueryRoleUserEditRole", "Role")",
             data: JSON.stringify({
-                "PageNumber": pageNumber,
+                "PageNumber": _pageNumber,
                 "WhereCondition": [{ "Key": "RoleName", "Value": $("#textQueryRoleName").val() }]
             }),
             contentType: "application/json; charset=utf-8",
@@ -181,11 +181,11 @@
             // 加入分頁UI
 
             // 處理分頁按鈕
-            $("#PagUI > li").remove();
+            $("#pagUI > li").remove();
 
             // 上一頁
             var preLi = $("<li class='page-item'></li>");
-            var prePage = parseInt(pageNumber) - 1;
+            var prePage = parseInt(_pageNumber) - 1;
             if (prePage <= 0)
                 prePage = 1;
 
@@ -195,29 +195,29 @@
             var preSpane1 = $("<span class='sr-only'>Previous</span>");
             preA.append([preSpane, preSpane1]);
             preLi.append(preA);
-            $("#PagUI").append(preLi);
+            $("#pagUI").append(preLi);
 
             var tableMaxPage = data.TableMaxPage;
 
             for (var i = 0; i < tableMaxPage; i++) {
                 var pagedata = (parseInt(i) + 1);
-                if (i + 1 === pageNumber) {
+                if (i + 1 === _pageNumber) {
                     var li = $("<li class='page-item active'> </li>");
                     var a = $(" <a class='page-link' href='#' id='Page - +" + pagedata + ")' onclick='Search( " + pagedata + ")'> " + pagedata + "</a>");
                     li.append(a);
-                    $("#PagUI").append(li);
+                    $("#pagUI").append(li);
                 }
                 else {
                     var li = $("<li class='page-item'> </li>");
                     var a = $(" <a class='page-link' href='#' id='Page - +" + pagedata + ")' onclick='Search( " + pagedata + ")'> " + pagedata + "</a>");
                     li.append(a);
-                    $("#PagUI").append(li);
+                    $("#pagUI").append(li);
                 }
             }
 
             // 下一頁
             var nexLi = $("<li class='page-item'></li>");
-            var nexPage = parseInt(pageNumber) + 1;
+            var nexPage = parseInt(_pageNumber) + 1;
             if (nexPage >= tableMaxPage)
                 nexPage = tableMaxPage;
 
@@ -227,7 +227,7 @@
             var nexSpane1 = $("<span class='sr-only'>Next</span>");
             nexA.append([nexSpane, nexSpane1]);
             nexLi.append(nexA);
-            $("#PagUI").append(nexLi);
+            $("#pagUI").append(nexLi);
 
 
             $('#btnQueryRole').prop("disabled", false);
@@ -246,7 +246,7 @@
     }
 
     function Search(page) {
-        pageNumber = page;
+        _pageNumber = page;
         SetAuthByRole();
     }
 
@@ -329,7 +329,7 @@
         $("#roleTable").prop("hidden", true);
         $("#userTable").prop("hidden", false);
         $("#userTableBody").empty();
-        $("#PagUI").prop("hidden", true);
+        $("#pagUI").prop("hidden", true);
         roleID = id;
         $("#roleNameShow").text($("#labRoleName_" + id).text());
         $("#cancleEditRoleUser").prop("hidden", false);
@@ -342,7 +342,7 @@
         $("#roleTable").prop("hidden", false);
         $("#userTable").prop("hidden", true);
         $("#userTableBody").empty();
-        $("#PagUI").prop("hidden", false);
+        $("#pagUI").prop("hidden", false);
         $("#saveSetting").prop("hidden", true);
         $("#roleNameShow").text("");
         $("#cancleEditRoleUser").prop("hidden", true);
