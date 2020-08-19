@@ -39,7 +39,12 @@ namespace RoleBase.Controllers
         public IEnumerable<RoleVO> RoleAddEditDelete()
         {
             // Thread.Sleep(1000);
-            var roleData = _roleService.GetRoleData();
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                PageSize = 0
+            };
+            var roleData = _roleService.GetRoleData(pageDataVO);
             return roleData;
         }
 

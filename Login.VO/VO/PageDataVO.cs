@@ -92,10 +92,19 @@ namespace Login.VO
         /// <summary>
         /// 查詢條件
         /// </summary>
-        public string WhereCondition
+        public List<KeyValueVO> WhereCondition
         {
             get;
             set;
         }
+
+        /// <summary>
+        /// 所取下限
+        /// </summary>
+        public int LowerBound { get; set; }
+        /// <summary>
+        /// 所取上限
+        /// </summary>
+        public int UpperBound { get; set; }
     }
 }

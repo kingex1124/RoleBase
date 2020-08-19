@@ -48,13 +48,26 @@ namespace Login.Service.Tests
                 new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"},
             };
 
-            _roleBO.Stub(o => o.GetRoleData()).Return(reRoleVOList);
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "RoleName",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _roleBO.Stub(o => o.GetRoleData(pageDataVO)).Return(reRoleVOList);
 
             #endregion
 
             #region act
 
-            var result = _target.GetRoleData().ToList();
+            var result = _target.GetRoleData(pageDataVO).ToList();
 
             #endregion
 

@@ -65,7 +65,6 @@ namespace RoleBase.Controllers
         [UserSession]
         public ActionResult RoleAddEditDelete()
         {
-            //var roleData = _roleService.GetRoleData();
             return View("RoleAddEditDelete");
         }
 
@@ -76,9 +75,11 @@ namespace RoleBase.Controllers
         [UserSession]
         [HttpPost]
         public ActionResult QueryRole(PageDataVO pageDataVO)
-        {
-            var roleData = _roleService.GetRoleData();
-            return Json(roleData, JsonRequestBehavior.AllowGet);
+        {        
+            RoleTableResultVO result = new RoleTableResultVO();
+            result.RoleData = _roleService.GetRoleData(pageDataVO);
+            result.TableMaxPage = pageDataVO.AllPageNumber;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -169,10 +170,12 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         [UserSession]
         [HttpPost]
-        public ActionResult QueryRoleUserEditRole()
+        public ActionResult QueryRoleUserEditRole(PageDataVO pageDataVO)
         {
-            var roleData = _roleService.GetRoleData();
-            return Json(roleData, JsonRequestBehavior.AllowGet);
+            RoleTableResultVO result = new RoleTableResultVO();
+            result.RoleData = _roleService.GetRoleData(pageDataVO);
+            result.TableMaxPage = pageDataVO.AllPageNumber;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

@@ -59,13 +59,30 @@ namespace Login.BO.Tests
                 new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"},
             };
 
-            _roleEfRepo.Stub(o => o.GetRoleData()).Return(reRoleDTOList);
+            int renumber = 3;
+
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "RoleName",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _roleEfRepo.Stub(o => o.GetRoleCount(pageDataVO)).Return(renumber);
+
+            _roleEfRepo.Stub(o => o.GetRoleData(pageDataVO)).Return(reRoleDTOList);
 
             #endregion
 
             #region act
 
-            var result = _target.GetRoleData().ToList();
+            var result = _target.GetRoleData(pageDataVO).ToList();
 
             #endregion
 

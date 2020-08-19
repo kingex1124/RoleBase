@@ -4,6 +4,7 @@ using Login.DTO.EFModel;
 using Login.VO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,9 +46,26 @@ namespace Login.BO
         /// 取得Role資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<RoleVO> GetRoleData()
+        public IEnumerable<RoleVO> GetRoleData(PageDataVO pageDataVO)
         {
-            return Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleEfRepo.GetRoleData());
+            pageDataVO.PageSize = Convert.ToInt32(ConfigurationManager.AppSettings["TablePageCount"]);
+
+            pageDataVO.DataCount = _roleEfRepo.GetRoleCount(pageDataVO);
+
+            if (pageDataVO.DataCount % pageDataVO.PageSize.Value == 0)
+                pageDataVO.AllPageNumber = pageDataVO.DataCount / pageDataVO.PageSize.Value;
+            else
+                pageDataVO.AllPageNumber = pageDataVO.DataCount / pageDataVO.PageSize.Value + 1;
+
+            pageDataVO.LowerBound = (pageDataVO.PageNumber - 1) * pageDataVO.PageSize.Value;
+            pageDataVO.UpperBound = pageDataVO.LowerBound + pageDataVO.PageSize.Value + 1;
+            if (pageDataVO.LowerBound >= pageDataVO.DataCount)
+            {
+                pageDataVO.UpperBound = pageDataVO.DataCount + 1;
+                pageDataVO.LowerBound = pageDataVO.UpperBound - (pageDataVO.PageSize.Value + 1);
+            }
+
+            return Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleEfRepo.GetRoleData(pageDataVO));
         }
 
         /// <summary>

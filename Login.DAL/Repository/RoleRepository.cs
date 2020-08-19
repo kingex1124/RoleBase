@@ -61,11 +61,54 @@ namespace Login.DAL
         /// 取得Role資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<RoleDTO> GetRoleData()
+        public IEnumerable<RoleDTO> GetRoleData(PageDataVO pageDataVO)
         {
-            string sqlStr = "Select * From [Role] Order by RoleID ";
+            List<string> param = new List<string>();
 
-            return _dataAccess.QueryDataTable<RoleDTO>(sqlStr);
+            string condition = string.Empty;
+
+            for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+            {
+                if (i != pageDataVO.WhereCondition.Count - 1)
+                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
+                else
+                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
+                param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+            }
+
+            string sqlStr = string.Format(@"Select [RoleID],[RoleName],[Description] From  
+                             (Select ROW_NUMBER() OVER(ORDER BY RoleID ) AS row, * from [Role] where {0} ) as tb1
+                              where row > @p{1}  and row < @p{2} ", condition, param.Count, param.Count + 1);
+
+            param.Add(pageDataVO.LowerBound.ToString());
+            param.Add(pageDataVO.UpperBound.ToString());
+
+            return _dataAccess.QueryDataTable<RoleDTO>(sqlStr, param.ToArray());
+        }
+
+        /// <summary>
+        /// 取得資料總筆數
+        /// 只有where條件會影響總筆數
+        /// </summary>
+        /// <returns></returns>
+        public int GetRoleCount(PageDataVO pageDataVO)
+        {
+            List<string> param = new List<string>();
+
+            string condition = string.Empty;
+
+            for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+            {
+                if (i != pageDataVO.WhereCondition.Count - 1)
+                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
+                else
+                    condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
+                param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+            }
+
+            string sqlStr = string.Format(@"Select count(*) From [Role] where {0}", condition);
+
+            return (int)_dataAccess.ExecuteScalar(sqlStr, param.ToArray());
         }
 
         /// <summary>
@@ -78,6 +121,7 @@ namespace Login.DAL
             List<string> param = new List<string>();
             string sqlStr = @"Insert Into [Role] (RoleName,Description) 
                               Values(@p0,@p1) ";
+
             param.Add(roleVO.RoleName);
             param.Add(roleVO.Description);
 
@@ -104,7 +148,6 @@ namespace Login.DAL
         /// </summary>
         /// <param name="roleVO"></param>
         /// <returns></returns>
-
         public int EditRole(RoleVO roleVO)
         {
             List<string> param = new List<string>();

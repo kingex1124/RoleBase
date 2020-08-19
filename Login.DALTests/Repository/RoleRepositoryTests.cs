@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Login.DAL;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,13 +95,30 @@ namespace Login.DAL.Tests
                 new RoleDTO(){ RoleID = 3, RoleName = "B" , Description = "B1" },
             };
 
-            _dataAccess.Stub(o => o.QueryDataTable<RoleDTO>(Arg<string>.Is.Anything)).Return(reRoleDTO);
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageSize = 3,
+                DataCount = 3,
+                PageNumber = 1,
+                LowerBound = 0,
+                UpperBound = 2,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "RoleName",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _dataAccess.Stub(o => o.QueryDataTable<RoleDTO>(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reRoleDTO);
 
             #endregion
 
             #region act
 
-            var result = _target.GetRoleData().ToList();
+            var result = _target.GetRoleData(pageDataVO).ToList();
 
             #endregion
 
@@ -112,6 +130,54 @@ namespace Login.DAL.Tests
                 Assert.AreEqual(result[i].RoleName, reRoleDTO[i].RoleName);
                 Assert.AreEqual(result[i].Description, reRoleDTO[i].Description);
             }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region GetRoleCount
+
+        /// <summary>
+        /// 取得資料總筆數
+        /// </summary>
+        [TestMethod()]
+        public void GetRoleCountTest()
+        {
+            #region arrange
+
+            int reNumber = 3;
+
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageSize = 3,
+                DataCount = 3,
+                PageNumber = 1,
+                LowerBound = 0,
+                UpperBound = 2,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "RoleName",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _dataAccess.Stub(o => o.ExecuteScalar(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reNumber);
+
+            #endregion
+
+            #region act
+
+            var result = _target.GetRoleCount(pageDataVO);
+
+            #endregion
+
+            #region assert
+
+            Assert.AreEqual(result, reNumber);
 
             #endregion
         }

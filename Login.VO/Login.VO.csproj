@@ -49,8 +49,10 @@
     <Compile Include="VO\FunctionMenuNode.cs" />
     <Compile Include="VO\FunctionMenuVO.cs" />
     <Compile Include="VO\FunctionVO.cs" />
+    <Compile Include="VO\KeyValueVO.cs" />
     <Compile Include="VO\KeyValuePairVO.cs" />
     <Compile Include="VO\PageDataVO.cs" />
+    <Compile Include="VO\RoleTableResultVO.cs" />
     <Compile Include="VO\RoleVO.cs" />
     <Compile Include="VO\UserCheckVO.cs" />
   </ItemGroup>

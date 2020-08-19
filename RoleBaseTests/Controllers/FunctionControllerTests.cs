@@ -373,9 +373,27 @@ namespace RoleBase.Controllers.Tests
         {
             #region arrange (編輯成功)
 
+            List<RoleDTO> reRoleDTO = new List<RoleDTO>()
+            {
+                new RoleDTO(){ RoleID = 1, RoleName = "Admin" , Description = "最高權限" },
+                new RoleDTO(){ RoleID = 2, RoleName = "A" , Description = "A1" },
+                new RoleDTO(){ RoleID = 3, RoleName = "B" , Description = "B1" },
+            };
+
+            List<SecurityRoleFunctionDTO> reSecurityRoleFunctionDTO = new List<SecurityRoleFunctionDTO>()
+            {
+                new SecurityRoleFunctionDTO(){ Url ="Role/RoleManagement" ,Description = "瀏覽角色管理畫面"},
+                new SecurityRoleFunctionDTO(){ Url ="Role/RoleAddEditDelete" ,Description = "角色新增修改刪除畫面"},
+                new SecurityRoleFunctionDTO(){ Url ="Role/EditRole" ,Description = "編輯角色"}
+            };
+
             // httpContext物件設定
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
+
+            httpContext.Session["UserID"] = 1;
+
+            httpContext.Session["AccountName"] = "kevan";
 
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
@@ -383,6 +401,10 @@ namespace RoleBase.Controllers.Tests
             FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = string.Empty;
+
+            _loginService.Stub(o => o.GetRoleDataByUserID(Arg<string>.Is.Anything)).Return(reRoleDTO);
+
+            _securityService.Stub(o => o.GetSecurityRoleFunction(Arg<string>.Is.Anything)).Return(reSecurityRoleFunctionDTO);
 
             _functionService.Stub(o => o.EditFunction(Arg<FunctionVO>.Is.Anything)).Return(reMessage);
 
@@ -415,6 +437,20 @@ namespace RoleBase.Controllers.Tests
         {
             #region arrange (編輯成功)
 
+            List<RoleDTO> reRoleDTO = new List<RoleDTO>()
+            {
+                new RoleDTO(){ RoleID = 1, RoleName = "Admin" , Description = "最高權限" },
+                new RoleDTO(){ RoleID = 2, RoleName = "A" , Description = "A1" },
+                new RoleDTO(){ RoleID = 3, RoleName = "B" , Description = "B1" },
+            };
+
+            List<SecurityRoleFunctionDTO> reSecurityRoleFunctionDTO = new List<SecurityRoleFunctionDTO>()
+            {
+                new SecurityRoleFunctionDTO(){ Url ="Role/RoleManagement" ,Description = "瀏覽角色管理畫面"},
+                new SecurityRoleFunctionDTO(){ Url ="Role/RoleAddEditDelete" ,Description = "角色新增修改刪除畫面"},
+                new SecurityRoleFunctionDTO(){ Url ="Role/EditRole" ,Description = "編輯角色"}
+            };
+
             // httpContext物件失敗
             var httpContext = FakeHttpContextManager.CreateHttpContextBase();
             httpContext.Response.StatusCode = 200;
@@ -422,9 +458,17 @@ namespace RoleBase.Controllers.Tests
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
 
+            httpContext.Session["UserID"] = 1;
+
+            httpContext.Session["AccountName"] = "kevan";
+
             FunctionVO functionVO = new FunctionVO() { FunctionID = 1, Url = "Role/RoleManagement", Title = "角色管理", Description = "瀏覽角色管理畫面", IsMenu = true, Parent = 0 };
 
             string reMessage = "編輯失敗";
+
+            _loginService.Stub(o => o.GetRoleDataByUserID(Arg<string>.Is.Anything)).Return(reRoleDTO);
+
+            _securityService.Stub(o => o.GetSecurityRoleFunction(Arg<string>.Is.Anything)).Return(reSecurityRoleFunctionDTO);
 
             _functionService.Stub(o => o.EditFunction(Arg<FunctionVO>.Is.Anything)).Return(reMessage);
 
@@ -486,26 +530,41 @@ namespace RoleBase.Controllers.Tests
                 new RoleVO(){ RoleID = 3 , RoleName = "B" , Description = "B1"}
             };
 
-            _roleService.Stub(o => o.GetRoleData()).Return(reRoleVOList);
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "RoleName",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _roleService.Stub(o => o.GetRoleData(pageDataVO)).Return(reRoleVOList);
 
             #endregion
 
             #region act
 
-            var resultData = _target.QueryRoleFunctionEditRole();
+            var resultData = _target.QueryRoleFunctionEditRole(pageDataVO);
 
-            var result = (List<RoleVO>)((JsonResult)resultData).Data;
+            var result = (RoleTableResultVO)((JsonResult)resultData).Data;
+
+            var roleData = result.RoleData.ToList();
 
             #endregion
 
             #region assert
 
             // 驗證資料
-            for (int i = 0; i < result.Count; i++)
+            for (int i = 0; i < roleData.Count; i++)
             {
-                Assert.AreEqual(result[i].RoleID, reRoleVOList[i].RoleID);
-                Assert.AreEqual(result[i].RoleName, reRoleVOList[i].RoleName);
-                Assert.AreEqual(result[i].Description, reRoleVOList[i].Description);
+                Assert.AreEqual(roleData[i].RoleID, reRoleVOList[i].RoleID);
+                Assert.AreEqual(roleData[i].RoleName, reRoleVOList[i].RoleName);
+                Assert.AreEqual(roleData[i].Description, reRoleVOList[i].Description);
             }
 
             #endregion

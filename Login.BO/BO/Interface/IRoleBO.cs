@@ -9,7 +9,7 @@ namespace Login.BO
 {
     public interface IRoleBO
     {
-        IEnumerable<RoleVO> GetRoleData();
+        IEnumerable<RoleVO> GetRoleData(PageDataVO pageDataVO);
         string AddRole(RoleVO roleVO);
         string DeleteRole(string id);
         string EditRole(RoleVO roleVO);
