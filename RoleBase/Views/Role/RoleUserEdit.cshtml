@@ -131,6 +131,8 @@
                 var Message = auData.responseJSON.Message;
                 console.log(Message);
                 alert("fail Message:" + Message);
+            } else {
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
             }
         });
         // #endregion
@@ -238,7 +240,8 @@
                 alert("fail Message:" + Message);
             }
             else {
-                window.location.href = data.responseText;
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
+                 // window.location.href = data.responseText;
             }
         });
 
@@ -267,6 +270,8 @@
                 var Message = auData.responseJSON.Message;
                 console.log(Message);
                 alert("fail Message:" + Message);
+            } else {
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
             }
         });
         // #endregion
@@ -311,7 +316,8 @@
                 alert("fail Message:" + Message);
             }
             else {
-                window.location.href = data.responseText;
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
+                 // window.location.href = data.responseText;
             }
         });
 
@@ -412,7 +418,8 @@
                         alert("fail Message:" + Message);
                     }
                     else {
-                        window.location.href = data.responseText;
+                         window.location.href = "@Url.Action("ErrorPage", "Home")";
+                         // window.location.href = data.responseText;
                     }
                 });
 
@@ -440,7 +447,8 @@
                         alert("fail Message:" + Message);
                     }
                     else {
-                        window.location.href = data.responseText;
+                         window.location.href = "@Url.Action("ErrorPage", "Home")";
+                         // window.location.href = data.responseText;
                     }
                 });
 

@@ -28,6 +28,15 @@ namespace RoleBase.Controllers
             return View("NoCompetence");
         }
 
+        /// <summary>
+        /// 錯誤頁面
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult ErrorPage()
+        {
+            return View("ErrorPage");
+        }
+
         #endregion
     }
 }
