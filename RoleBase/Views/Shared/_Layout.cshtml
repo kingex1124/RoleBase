@@ -108,7 +108,8 @@
                 alert("fail Message:" + Message);
             }
             else {
-                window.location.href = data.responseText;
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
+                 // window.location.href = data.responseText;
             }
         });
 

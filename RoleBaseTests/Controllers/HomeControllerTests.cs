@@ -63,6 +63,24 @@ namespace RoleBase.Controllers.Tests
             Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "NoCompetence");
         }
 
+        #region ErrorPage
+
+        /// <summary>
+        /// 錯誤頁面
+        /// </summary>
+        [TestMethod()]
+        public void ErrorPageTest()
+        {
+            // act
+            var result = _target.NoCompetence() as ViewResult;
+
+            // assert
+            // 驗證 Action
+            Assert.IsTrue(!string.IsNullOrEmpty(result.ViewName) && result.ViewName == "ErrorPage");
+        }
+
+        #endregion
+
         #endregion
 
         #endregion

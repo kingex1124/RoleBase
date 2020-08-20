@@ -112,7 +112,8 @@
                 alert("fail Message:" + Message);
             }
             else {
-                window.location.href = data.responseText;
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
+                 // window.location.href = data.responseText;
             }
         });
     });
@@ -144,16 +145,17 @@
                          $("#cbFunctionParent").append(option);
                      }
                  }
-    }).fail(function (data) {
+        }).fail(function (data) {
         if (data.responseJSON != undefined) {
             var Message = data.responseJSON.Message;
             console.log(Message);
             alert("fail Message:" + Message);
         }
         else {
-            window.location.href = data.responseText;
+             window.location.href = "@Url.Action("ErrorPage", "Home")";
+             // window.location.href = data.responseText;
         }
-    });
+        });
 
         // 取消打勾的時候
         } else {
@@ -192,6 +194,9 @@
                 console.log(Message);
                 alert("fail Message:" + Message);
             }
+            else {
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
+            }
         });
         // #endregion
     }
@@ -220,7 +225,7 @@
             var functionData = data.FunctionData;
 
             for (var i = 0; i < functionData.length; i++) {
-          
+
                 var cell1 = $('<td></td>').text(functionData[i].FunctionID);
                 var cell2 = $('<td><label id="labFunctionUrl_' + functionData[i].FunctionID + '">' + functionData[i].Url + '</label><input type="text" id="textFunctionUrl_' + functionData[i].FunctionID + '" value="' + functionData[i].Url + '" hidden></td>');
                 var cell3 = $('<td><lable id="labTitle_' + functionData[i].FunctionID + '">' + functionData[i].Title + '</lable><input type="text" id="textTitle_' + functionData[i].FunctionID + '" value="' + functionData[i].Title + '" hidden /></td>');
@@ -314,7 +319,8 @@
                 alert("fail Message:" + Message);
             }
             else {
-                window.location.href = data.responseText;
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
+                 // window.location.href = data.responseText;
             }
         });
 
@@ -400,7 +406,8 @@
                     alert("fail Message:" + Message);
                 }
                 else {
-                    window.location.href = data.responseText;
+                     window.location.href = "@Url.Action("ErrorPage", "Home")";
+                     // window.location.href = data.responseText;
                 }
             });
 
@@ -435,7 +442,8 @@
                   alert("fail Message:" + Message);
               }
               else {
-                  window.location.href = data.responseText;
+                   window.location.href = "@Url.Action("ErrorPage", "Home")";
+                   // window.location.href = data.responseText;
               }
         });
 
@@ -519,7 +527,8 @@
                 alert("fail Message:" + Message);
             }
             else {
-                window.location.href = data.responseText;
+                 window.location.href = "@Url.Action("ErrorPage", "Home")";
+                 // window.location.href = data.responseText;
             }
         });
 
