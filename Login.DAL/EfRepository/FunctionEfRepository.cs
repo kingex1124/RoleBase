@@ -33,9 +33,13 @@ namespace Login.DAL
         /// 取得Function資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<FunctionDTO> GetFunctionData()
+        public IEnumerable<FunctionDTO> GetFunctionData(PageDataVO pageDataVO)
         {
+            var isMenu = Convert.ToBoolean(pageDataVO.WhereCondition[2].Value);
             var result = (from function in _db.Function
+                          where function.Url == pageDataVO.WhereCondition[0].Value &&
+                          function.Title == pageDataVO.WhereCondition[1].Value &&
+                          function.IsMenu == isMenu
                           orderby function.FunctionID
                           select new FunctionDTO()
                           {
@@ -44,7 +48,30 @@ namespace Login.DAL
                               Description = function.Description
                           });
 
-            return result;
+            return result.Skip(pageDataVO.LowerBound).Take(pageDataVO.PageSize == null ? 0 : Convert.ToInt32(pageDataVO.PageSize));
+        }
+
+        /// <summary>
+        /// 取得資料總筆數
+        /// </summary>
+        /// <param name="pageDataVO"></param>
+        /// <returns></returns>
+        public int GetFunctionCount(PageDataVO pageDataVO)
+        {
+            var isMenu = Convert.ToBoolean(pageDataVO.WhereCondition[2].Value);
+            var result = (from function in _db.Function
+                          where function.Url == pageDataVO.WhereCondition[0].Value &&
+                          function.Title == pageDataVO.WhereCondition[1].Value &&
+                          function.IsMenu == isMenu
+                          orderby function.FunctionID
+                          select new FunctionDTO()
+                          {
+                              FunctionID = function.FunctionID,
+                              Url = function.Url,
+                              Description = function.Description
+                          });
+
+            return result.Count();
         }
 
         /// <summary>

@@ -64,6 +64,7 @@ namespace Login.BO.Tests
             PageDataVO pageDataVO = new PageDataVO()
             {
                 PageNumber = 1,
+                PageSize = 5,
                 WhereCondition = new List<KeyValueVO>()
                    {
                         new KeyValueVO()

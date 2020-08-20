@@ -11,7 +11,9 @@ namespace Login.DAL
 {
     public interface IFunctionRepository
     {
-        IEnumerable<FunctionDTO> GetFunctionData();
+        IEnumerable<FunctionDTO> GetFunctionData(PageDataVO pageDataVO);
+
+        int GetFunctionCount(PageDataVO pageDataVO);
 
         IEnumerable<KeyValuePairDTO> GetParentKeyValue();
 

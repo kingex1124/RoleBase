@@ -39,7 +39,12 @@ namespace RoleBase.Controllers
         [HttpPost]
         public IEnumerable<FunctionVO> FunctionAddEditDelete()
         {
-            var functionData = _functionService.GetFunctionData();
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                PageSize = 0
+            };
+            var functionData = _functionService.GetFunctionData(pageDataVO);
             return functionData;
         }
 

@@ -50,13 +50,27 @@ namespace Login.Service.Tests
                 new FunctionVO(){ FunctionID = 3 , Url="Role/EditRole" , Title = "編輯" , Description = "編輯角色" , IsMenu = false , Parent = -1 , ParentName = "Not Menu" }
             };
 
-            _functionBO.Stub(o => o.GetFunctionData()).Return(reFunctionVO);
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                PageSize = 5,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "Url",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _functionBO.Stub(o => o.GetFunctionData(pageDataVO)).Return(reFunctionVO);
 
             #endregion
 
             #region act
 
-            var result = _target.GetFunctionData().ToList();
+            var result = _target.GetFunctionData(pageDataVO).ToList();
 
             #endregion
 

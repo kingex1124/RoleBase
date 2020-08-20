@@ -41,17 +41,103 @@ namespace Login.DAL
         /// 取得Function資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<FunctionDTO> GetFunctionData()
+        public IEnumerable<FunctionDTO> GetFunctionData(PageDataVO pageDataVO)
         {
-            string sqlStr = @"Select *, 
+            List<string> param = new List<string>();
+
+            string condition = string.Empty;
+
+            if (pageDataVO.WhereCondition != null)
+            {
+                for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+                {
+                    if (i != pageDataVO.WhereCondition.Count - 1)
+                    {
+                        if (pageDataVO.WhereCondition[i].Key == "IsMenu")
+                        {
+                            condition = condition + pageDataVO.WhereCondition[i].Key + " = @p" + i.ToString() + " And ";
+                            param.Add(pageDataVO.WhereCondition[i].Value);
+                            continue;
+                        }
+                        else
+                            condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
+                    }
+                    else
+                    {
+                        if (pageDataVO.WhereCondition[i].Key == "IsMenu")
+                        {
+                            condition = condition + pageDataVO.WhereCondition[i].Key + " = @p" + i.ToString() + " ";
+                            param.Add(pageDataVO.WhereCondition[i].Value);
+                            continue;
+                        }
+                        condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
+                    }
+                    param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+                }
+            }
+            else
+                condition = "1=1";
+
+            string sqlStr = string.Format(@"Select [FunctionID], [Url], [Description], [IsMenu], [Parent], [Title] , 
 case when A.[Parent] = -1
 then 'Not Menu'
 when  A.[Parent] = 0 
 then 'No'
 else (select B.[Title] from [Function] B where B.FunctionID = A.[Parent]) end as 'ParentName'
-From [Function] A Order by FunctionID ";
+From (Select ROW_NUMBER() OVER(ORDER BY FunctionID ) AS row, * from [Function] where {0} ) as A
+ where row > @p{1}  and row < @p{2} ", condition, param.Count, param.Count + 1);
 
-            return _dataAccess.QueryDataTable<FunctionDTO>(sqlStr);
+            param.Add(pageDataVO.LowerBound.ToString());
+            param.Add(pageDataVO.UpperBound.ToString());
+
+            return _dataAccess.QueryDataTable<FunctionDTO>(sqlStr, param.ToArray());
+        }
+
+        /// <summary>
+        /// 取得功能資料總筆數
+        /// </summary>
+        /// <param name="pageDataVO"></param>
+        /// <returns></returns>
+        public int GetFunctionCount(PageDataVO pageDataVO)
+        {
+            List<string> param = new List<string>();
+
+            string condition = string.Empty;
+
+            if (pageDataVO.WhereCondition != null)
+            {
+                for (int i = 0; i < pageDataVO.WhereCondition.Count; i++)
+                {
+                    if (i != pageDataVO.WhereCondition.Count - 1)
+                    {
+                        if (pageDataVO.WhereCondition[i].Value == "False" || pageDataVO.WhereCondition[i].Value == "True")
+                        {
+                            condition = condition + pageDataVO.WhereCondition[i].Key + " = @p" + i.ToString() + " And ";
+                            param.Add(pageDataVO.WhereCondition[i].Value);
+                            continue;
+                        }
+                        else
+                            condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " And ";
+                    }
+                    else
+                    {
+                        if (pageDataVO.WhereCondition[i].Value == "False" || pageDataVO.WhereCondition[i].Value == "True")
+                        {
+                            condition = condition + pageDataVO.WhereCondition[i].Key + " = @p" + i.ToString() + " ";
+                            param.Add(pageDataVO.WhereCondition[i].Value);
+                            continue;
+                        }
+                        condition = condition + pageDataVO.WhereCondition[i].Key + " like @p" + i.ToString() + " ";
+                    }
+                    param.Add("%" + pageDataVO.WhereCondition[i].Value + "%");
+                }
+            }
+            else
+                condition = "1=1";
+
+            string sqlStr = string.Format(@"Select count(*) From [Function] where {0}", condition);
+
+            return (int)_dataAccess.ExecuteScalar(sqlStr, param.ToArray());
         }
 
         /// <summary>

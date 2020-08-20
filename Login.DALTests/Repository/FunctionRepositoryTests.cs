@@ -53,13 +53,30 @@ namespace Login.DAL.Tests
                 new FunctionDTO(){ FunctionID = 3 , Url="Role/EditRole" , Title = "編輯" , Description = "編輯角色" , IsMenu = false , Parent = -1 , ParentName = "Not Menu"}
             };
 
-            _dataAccess.Stub(o => o.QueryDataTable<FunctionDTO>(Arg<string>.Is.Anything)).Return(reFunctionDTO);
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageSize = 3,
+                DataCount = 3,
+                PageNumber = 1,
+                LowerBound = 0,
+                UpperBound = 2,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "Url",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _dataAccess.Stub(o => o.QueryDataTable<FunctionDTO>(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reFunctionDTO);
 
             #endregion
 
             #region act
 
-            var result = _target.GetFunctionData().ToList();
+            var result = _target.GetFunctionData(pageDataVO).ToList();
 
             #endregion
 
@@ -75,6 +92,55 @@ namespace Login.DAL.Tests
                 Assert.AreEqual(result[i].Parent, reFunctionDTO[i].Parent);
                 Assert.AreEqual(result[i].ParentName, reFunctionDTO[i].ParentName);
             }
+
+            #endregion
+        }
+
+        #endregion
+
+
+        #region GetFunctionCount
+
+        /// <summary>
+        /// 取得功能資料總筆數
+        /// </summary>
+        [TestMethod()]
+        public void GetFunctionCountTest()
+        {
+            #region arrange
+
+            int reNumber = 3;
+
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageSize = 3,
+                DataCount = 3,
+                PageNumber = 1,
+                LowerBound = 0,
+                UpperBound = 2,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "Url",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _dataAccess.Stub(o => o.ExecuteScalar(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reNumber);
+
+            #endregion
+
+            #region act
+
+            var result = _target.GetFunctionCount(pageDataVO);
+
+            #endregion
+
+            #region assert
+
+            Assert.AreEqual(result, reNumber);
 
             #endregion
         }

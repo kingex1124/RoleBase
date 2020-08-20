@@ -63,7 +63,7 @@
         (function () {
 
             // 綁定查詢事件
-            $("#btnQueryRole").on("click", SetAuth);
+            $("#btnQueryRole").on("click", QueryRoleClick);
 
             // #region 綁定新增事件
             $("#btnAddRole").on("click", function () {
@@ -95,6 +95,11 @@
             // #endregion
 
     }());
+
+    function QueryRoleClick() {
+        _pageNumber = 1;
+        SetAuth();
+    }
 
     function SetAuth() {
 
