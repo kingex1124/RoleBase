@@ -76,11 +76,16 @@
         <tbody id="functionQueryTbody">
         </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination" id="pagUI">
+        </ul>
+    </nav>
     <!-- #endregion-->
 
 }
 
 <script>
+    var _pageNumber = 1;
     (function () {
 
     // #region 綁定新增事件
@@ -160,9 +165,14 @@
     // #endregion
 
     // 綁定查詢事件
-    $("#btnQueryFunction").on("click", SetAuth);
+        $("#btnQueryFunction").on("click", QueryFunctionDataClick);
 
     }());
+
+    function QueryFunctionDataClick() {
+        _pageNumber = 1;
+        SetAuth();
+    }
 
     function SetAuth() {
 
@@ -196,21 +206,28 @@
         $.ajax({
             type: "POST",
             url: "@Url.Action("QueryFunction", "Function")",
-            //data: JSON.stringify({
-            //    "WhereCondition": [{ "Key": "RoleName", "Value": $("#textQueryRoleName").val() }]
-            //}),
+            data: JSON.stringify({
+                "PageNumber": _pageNumber,
+                "WhereCondition": [
+                    { "Key": "Url", "Value": $("#textQueryUrl").val() },
+                    { "Key": "Title", "Value": $("#textQueryTitle").val() },
+                    { "Key": "IsMenu", "Value": $("#chkQueryIsMenu").prop("checked") }
+                ]
+            }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         }).done(function (data) {
-            for (var i = 0; i < data.length; i++) {
+            var functionData = data.FunctionData;
 
-                var cell1 = $('<td></td>').text(data[i].FunctionID);
-                var cell2 = $('<td><label id="labFunctionUrl_' + data[i].FunctionID + '">' + data[i].Url + '</label><input type="text" id="textFunctionUrl_' + data[i].FunctionID + '" value="' + data[i].Url + '" hidden></td>');
-                var cell3 = $('<td><lable id="labTitle_' + data[i].FunctionID + '">' + data[i].Title + '</lable><input type="text" id="textTitle_' + data[i].FunctionID + '" value="' + data[i].Title + '" hidden /></td>');
-                var cell4 = $('<td><lable id="labDescription_' + data[i].FunctionID + '">' + data[i].Description + '</lable><input type="text" id="textDescription_' + data[i].FunctionID + '" value="' + data[i].Description + '" hidden /></td>');
-                var cell5 = $('<td><lable id="labIsMenu_' + data[i].FunctionID + '">' + data[i].IsMenu + '</lable><input type="checkbox" id="ckIsMenu_' + data[i].FunctionID + '"' + (data[i].IsMenu ? " checked " : " ") + '" hidden /></td>');
+            for (var i = 0; i < functionData.length; i++) {
+          
+                var cell1 = $('<td></td>').text(functionData[i].FunctionID);
+                var cell2 = $('<td><label id="labFunctionUrl_' + functionData[i].FunctionID + '">' + functionData[i].Url + '</label><input type="text" id="textFunctionUrl_' + functionData[i].FunctionID + '" value="' + functionData[i].Url + '" hidden></td>');
+                var cell3 = $('<td><lable id="labTitle_' + functionData[i].FunctionID + '">' + functionData[i].Title + '</lable><input type="text" id="textTitle_' + functionData[i].FunctionID + '" value="' + functionData[i].Title + '" hidden /></td>');
+                var cell4 = $('<td><lable id="labDescription_' + functionData[i].FunctionID + '">' + functionData[i].Description + '</lable><input type="text" id="textDescription_' + functionData[i].FunctionID + '" value="' + functionData[i].Description + '" hidden /></td>');
+                var cell5 = $('<td><lable id="labIsMenu_' + functionData[i].FunctionID + '">' + functionData[i].IsMenu + '</lable><input type="checkbox" id="ckIsMenu_' + functionData[i].FunctionID + '"' + (functionData[i].IsMenu ? " checked " : " ") + '" hidden /></td>');
 
-                var cell6 = $('<td><lable id="labParentName_' + data[i].FunctionID + '">' + data[i].ParentName + '</lable><select id="cbParentName_' + data[i].FunctionID + '" hidden ></select><lable id="labParentNameVal_' + data[i].FunctionID + '" hidden>' + data[i].Parent + '</lable></td>');
+                var cell6 = $('<td><lable id="labParentName_' + functionData[i].FunctionID + '">' + functionData[i].ParentName + '</lable><select id="cbParentName_' + functionData[i].FunctionID + '" hidden ></select><lable id="labParentNameVal_' + functionData[i].FunctionID + '" hidden>' + functionData[i].Parent + '</lable></td>');
 
                 var cell7 = $('<td></td>');
 
@@ -219,15 +236,15 @@
                     //if (loginInfo.find(o => o.Url == "Function/EditFunction") != undefined)
                     if (loginInfo.find(function (o) { return o.Url === "Function/EditFunction" }) !== undefined)
                     {
-                        var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + data[i].FunctionID + '" onclick="EditFunction(' + data[i].FunctionID + ')">編輯</button>');
-                        var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + data[i].FunctionID + '" onclick="SaveFunction(' + data[i].FunctionID + ')" hidden>儲存</button>');
-                        var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + data[i].FunctionID + '" onclick="CancleFunction(' + data[i].FunctionID + ')" hidden>取消</button>');
+                        var btn1 = $('<button class="btn btn-primary mx-2" id="btnEdit_' + functionData[i].FunctionID + '" onclick="EditFunction(' + functionData[i].FunctionID + ')">編輯</button>');
+                        var btn2 = $('<button class="btn btn-success mx-2" id="btnSave_' + functionData[i].FunctionID + '" onclick="SaveFunction(' + functionData[i].FunctionID + ')" hidden>儲存</button>');
+                        var btn3 = $('<button class="btn btn-secondary mx-2" id="btnCancle_' + functionData[i].FunctionID + '" onclick="CancleFunction(' + functionData[i].FunctionID + ')" hidden>取消</button>');
                         cell7.append([btn1, btn2, btn3]);
                     }
                     //if (loginInfo.find(o => o.Url == "Function/DeleteFunction") != undefined)
                     if (loginInfo.find(function (o) { return o.Url === "Function/DeleteFunction" }) !== undefined)
                     {
-                        var btn4 = $('<button class="btn btn-danger" onclick="DeleteFunction(' + data[i].FunctionID + ')">刪除</button>');
+                        var btn4 = $('<button class="btn btn-danger" onclick="DeleteFunction(' + functionData[i].FunctionID + ')">刪除</button>');
                         cell7.append([btn4]);
                     }
                 }
@@ -236,6 +253,57 @@
 
                 $("#functionQueryTbody").append(row);
             }
+
+            // 加入分頁UI
+
+            // 處理分頁按鈕
+            $("#pagUI > li").remove();
+
+            // 上一頁
+            var preLi = $("<li class='page-item'></li>");
+            var prePage = parseInt(_pageNumber) - 1;
+            if (prePage <= 0)
+                prePage = 1;
+
+            var preA = $("<a class='page-link' href='#' aria-label='Previous' onclick=Search(" + prePage + ")></a>");
+
+            var preSpane = $("<span aria-hidden='true'>&laquo;</span>");
+            var preSpane1 = $("<span class='sr-only'>Previous</span>");
+            preA.append([preSpane, preSpane1]);
+            preLi.append(preA);
+            $("#pagUI").append(preLi);
+
+            var tableMaxPage = data.TableMaxPage;
+
+            for (var i = 0; i < tableMaxPage; i++) {
+                var pagedata = (parseInt(i) + 1);
+                if (i + 1 === _pageNumber) {
+                    var li = $("<li class='page-item active'> </li>");
+                    var a = $(" <a class='page-link' href='#' id='Page - +" + pagedata + ")' onclick='Search( " + pagedata + ")'> " + pagedata + "</a>");
+                    li.append(a);
+                    $("#pagUI").append(li);
+                }
+                else {
+                    var li = $("<li class='page-item'> </li>");
+                    var a = $(" <a class='page-link' href='#' id='Page - +" + pagedata + ")' onclick='Search( " + pagedata + ")'> " + pagedata + "</a>");
+                    li.append(a);
+                    $("#pagUI").append(li);
+                }
+            }
+
+            // 下一頁
+            var nexLi = $("<li class='page-item'></li>");
+            var nexPage = parseInt(_pageNumber) + 1;
+            if (nexPage >= tableMaxPage)
+                nexPage = tableMaxPage;
+
+            var nexA = $("<a class='page-link' href='#' aria-label='Next' onclick=Search(" + nexPage + ")></a>");
+
+            var nexSpane = $("<span aria-hidden='true'>&raquo;</span>");
+            var nexSpane1 = $("<span class='sr-only'>Next</span>");
+            nexA.append([nexSpane, nexSpane1]);
+            nexLi.append(nexA);
+            $("#pagUI").append(nexLi);
 
             $('#btnQueryFunction').prop("disabled", false);
 
@@ -252,6 +320,11 @@
 
         // #endregion
 
+    }
+
+    function Search(page) {
+        _pageNumber = page;
+        SetAuth();
     }
 
     function EditFunction(id) {

@@ -48,7 +48,7 @@ namespace Login.BO
         /// <returns></returns>
         public IEnumerable<RoleVO> GetRoleData(PageDataVO pageDataVO)
         {
-            pageDataVO.PageSize = Convert.ToInt32(ConfigurationManager.AppSettings["TablePageCount"]);
+            pageDataVO.PageSize = pageDataVO.PageSize ?? Convert.ToInt32(ConfigurationManager.AppSettings["TablePageCount"]);
 
             pageDataVO.DataCount = _roleEfRepo.GetRoleCount(pageDataVO);
 

@@ -118,10 +118,12 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         [UserSession]
         [HttpPost]
-        public ActionResult QueryFunction()
+        public ActionResult QueryFunction(PageDataVO pageDataVO)
         {
-            var functionData = _functionService.GetFunctionData();
-            return Json(functionData, JsonRequestBehavior.AllowGet);
+            FunctionTableResultVO result = new FunctionTableResultVO();
+            result.FunctionData = _functionService.GetFunctionData(pageDataVO);
+            result.TableMaxPage = pageDataVO.AllPageNumber;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>

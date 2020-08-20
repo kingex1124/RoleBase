@@ -48,6 +48,7 @@
     <Compile Include="VO\FunctionCheckVO.cs" />
     <Compile Include="VO\FunctionMenuNode.cs" />
     <Compile Include="VO\FunctionMenuVO.cs" />
+    <Compile Include="VO\FunctionTableResultVO.cs" />
     <Compile Include="VO\FunctionVO.cs" />
     <Compile Include="VO\KeyValueVO.cs" />
     <Compile Include="VO\KeyValuePairVO.cs" />

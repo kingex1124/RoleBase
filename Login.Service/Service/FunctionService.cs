@@ -35,9 +35,9 @@ namespace Login.Service
         /// 取得Function資料
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<FunctionVO> GetFunctionData()
+        public IEnumerable<FunctionVO> GetFunctionData(PageDataVO pageDataVO)
         {
-            return _functionBO.GetFunctionData();
+            return _functionBO.GetFunctionData(pageDataVO);
         }
 
         /// <summary>
@@ -49,12 +49,12 @@ namespace Login.Service
             return _functionBO.GetParentKeyValue();
         }
 
-    /// <summary>
-    /// 新增功能
-    /// </summary>
-    /// <param name="functionVO"></param>
-    /// <returns></returns>
-    public string AddFunction(FunctionVO functionVO)
+        /// <summary>
+        /// 新增功能
+        /// </summary>
+        /// <param name="functionVO"></param>
+        /// <returns></returns>
+        public string AddFunction(FunctionVO functionVO)
         {
             return _functionBO.AddFunction(functionVO);
         }

@@ -9,7 +9,7 @@ namespace Login.Service
 {
     public interface IFunctionService
     {
-        IEnumerable<FunctionVO> GetFunctionData();
+        IEnumerable<FunctionVO> GetFunctionData(PageDataVO pageDataVO);
         string AddFunction(FunctionVO functionVO);
         string DeleteFunction(string id);
         string EditFunction(FunctionVO functionVO);

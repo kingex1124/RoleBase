@@ -100,29 +100,45 @@ namespace RoleBase.Controllers.Tests
                 new FunctionVO(){ FunctionID = 3 , Url="Role/EditRole" , Title = "編輯" , Description = "編輯角色" , IsMenu = false , Parent = -1 , ParentName = "Not Menu" }
             };
 
-            _functionService.Stub(o => o.GetFunctionData()).Return(reFunctionList);
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                PageSize = 5,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "Url",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _functionService.Stub(o => o.GetFunctionData(pageDataVO)).Return(reFunctionList);
 
             #endregion
 
             #region act
 
-            var resultData = _target.QueryFunction();
+            var resultData = _target.QueryFunction(pageDataVO);
 
-            var result = (List<FunctionVO>)((JsonResult)resultData).Data;
+            var result = (FunctionTableResultVO)((JsonResult)resultData).Data;
+
+            var roleData = result.FunctionData.ToList();
 
             #endregion
 
             #region assert
 
-            for (int i = 0; i < result.Count; i++)
+            for (int i = 0; i < roleData.Count; i++)
             {
-                Assert.AreEqual(result[i].FunctionID, reFunctionList[i].FunctionID);
-                Assert.AreEqual(result[i].Url, reFunctionList[i].Url);
-                Assert.AreEqual(result[i].Title, reFunctionList[i].Title);
-                Assert.AreEqual(result[i].Description, reFunctionList[i].Description);
-                Assert.AreEqual(result[i].IsMenu, reFunctionList[i].IsMenu);
-                Assert.AreEqual(result[i].Parent, reFunctionList[i].Parent);
-                Assert.AreEqual(result[i].ParentName, reFunctionList[i].ParentName);
+                Assert.AreEqual(roleData[i].FunctionID, reFunctionList[i].FunctionID);
+                Assert.AreEqual(roleData[i].Url, reFunctionList[i].Url);
+                Assert.AreEqual(roleData[i].Title, reFunctionList[i].Title);
+                Assert.AreEqual(roleData[i].Description, reFunctionList[i].Description);
+                Assert.AreEqual(roleData[i].IsMenu, reFunctionList[i].IsMenu);
+                Assert.AreEqual(roleData[i].Parent, reFunctionList[i].Parent);
+                Assert.AreEqual(roleData[i].ParentName, reFunctionList[i].ParentName);
             }
 
             #endregion

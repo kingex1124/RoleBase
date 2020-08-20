@@ -64,13 +64,30 @@ namespace Login.BO.Tests
                 new FunctionDTO(){ FunctionID = 3 , Url="Role/EditRole" , Title = "編輯" , Description = "編輯角色" , IsMenu = false , Parent = -1 , ParentName = "Not Menu" }
             };
 
-            _functionRepo.Stub(o => o.GetFunctionData()).Return(reFunctionDTO);
+            int renumber = 3;
+
+            PageDataVO pageDataVO = new PageDataVO()
+            {
+                PageNumber = 1,
+                WhereCondition = new List<KeyValueVO>()
+                   {
+                        new KeyValueVO()
+                        {
+                             Key = "Url",
+                             Value = ""
+                        }
+                   }
+            };
+
+            _functionRepo.Stub(o => o.GetFunctionCount(pageDataVO)).Return(renumber);
+
+            _functionRepo.Stub(o => o.GetFunctionData(pageDataVO)).Return(reFunctionDTO);
 
             #endregion
 
             #region act
 
-            var result = _target.GetFunctionData().ToList();
+            var result = _target.GetFunctionData(pageDataVO).ToList();
 
             #endregion
 
