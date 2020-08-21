@@ -72,7 +72,7 @@ namespace RoleBase.Controllers.Tests
         public void ErrorPageTest()
         {
             // act
-            var result = _target.NoCompetence() as ViewResult;
+            var result = _target.ErrorPage() as ViewResult;
 
             // assert
             // 驗證 Action
