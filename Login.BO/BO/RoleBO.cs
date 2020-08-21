@@ -77,6 +77,8 @@ namespace Login.BO
                 pageDataVO.UpperBound = pageDataVO.DataCount + 1;
                 pageDataVO.LowerBound = 0;
             }
+            if (string.IsNullOrEmpty(pageDataVO.OrderByColumn))
+                pageDataVO.OrderByColumn = "RoleID";
 
             IEnumerable<RoleVO> result = Utility.MigrationIEnumerable<RoleDTO, RoleVO>(_roleRepo.GetRoleData(pageDataVO));
 

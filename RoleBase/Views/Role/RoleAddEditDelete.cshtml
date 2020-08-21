@@ -41,9 +41,9 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>@Html.DisplayNameFor(model => model.RoleID)</th>
-                <th>@Html.DisplayNameFor(model => model.RoleName)</th>
-                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th><span id="spRoleID" onclick=QueryOrderBy("RoleID","spRoleID")>@Html.DisplayNameFor(model => model.RoleID)</span></th>
+                <th><span id="spRoleName" onclick=QueryOrderBy("RoleName","spRoleName")>@Html.DisplayNameFor(model => model.RoleName)</span></th>
+                <th><span id="spDescription" onclick=QueryOrderBy("Description","spDescription")>@Html.DisplayNameFor(model => model.Description)</span></th>
                 <th>功能</th>
             </tr>
         </thead>
@@ -61,7 +61,6 @@
 <script>
     var _pageNumber = 1;
         (function () {
-
             // 綁定查詢事件
             $("#btnQueryRole").on("click", QueryRoleClick);
 
@@ -96,6 +95,31 @@
             // #endregion
 
     }());
+
+    var _toggleSp;
+    var _orderByCol = "RoleID";
+    var _orderByTyoe = "ASC";
+    function QueryOrderBy(col, id) {
+        if (_toggleSp === id) {
+            $("#" + id).toggleClass("orderMark-Rote"); 
+            $("#" + id).toggleClass("activeOrder"); 
+            if (_orderByTyoe === "ASC") {
+                _orderByTyoe = "DESC"
+            } else {
+                _orderByTyoe = "ASC";
+            }
+            QueryRoleClick();
+        } else {
+            $("#" + _toggleSp).removeClass("orderMark");
+            $("#" + _toggleSp).removeClass("orderMark-Rote");
+            $("#" + _toggleSp).removeClass("activeOrder");
+            $("#" + id).toggleClass("orderMark");
+            _toggleSp = id;
+            _orderByCol = col;
+            _orderByTyoe = "DESC";
+            QueryRoleClick();
+        }
+    }
 
     function QueryRoleClick() {
         _pageNumber = 1;
@@ -137,6 +161,8 @@
             type: "POST",
             url: "@Url.Action("QueryRole", "Role")",
             data: JSON.stringify({
+                "OrderByColumn": _orderByCol,
+                "OrderByType": _orderByTyoe,
                 "PageNumber": _pageNumber,
                 "WhereCondition": [{ "Key": "RoleName", "Value": $("#textQueryRoleName").val() }]
             }),

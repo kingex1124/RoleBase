@@ -84,8 +84,8 @@ then 'Not Menu'
 when  A.[Parent] = 0 
 then 'No'
 else (select B.[Title] from [Function] B where B.FunctionID = A.[Parent]) end as 'ParentName'
-From (Select ROW_NUMBER() OVER(ORDER BY FunctionID ) AS row, * from [Function] where {0} ) as A
- where row > @p{1}  and row < @p{2} ", condition, param.Count, param.Count + 1);
+From (Select ROW_NUMBER() OVER(ORDER BY {0} {1} ) AS row, * from [Function] where {2} ) as A
+ where row > @p{3}  and row < @p{4} ", pageDataVO.OrderByColumn, pageDataVO.OrderByType, condition, param.Count, param.Count + 1);
 
             param.Add(pageDataVO.LowerBound.ToString());
             param.Add(pageDataVO.UpperBound.ToString());

@@ -74,6 +74,9 @@ namespace Login.BO
                 pageDataVO.LowerBound = 0;
             }
 
+            if (string.IsNullOrEmpty(pageDataVO.OrderByColumn))
+                pageDataVO.OrderByColumn = "FunctionID";
+
             IEnumerable<FunctionVO> result = Utility.MigrationIEnumerable<FunctionDTO, FunctionVO>(_functionRepo.GetFunctionData(pageDataVO));
 
             return result;
