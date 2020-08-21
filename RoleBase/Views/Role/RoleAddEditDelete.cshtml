@@ -253,10 +253,11 @@
             $('#btnQueryRole').prop("disabled", false);
 
         }).fail(function (data) {
-            if (data.responseJSON != undefined) {
+            if (data.responseJSON != undefined || data.responseText != undefined) {
+                window.location.href = data.responseText;
                 var Message = data.responseJSON;
                 console.log(Message);
-                alert("fail Message:" + Message);
+                //alert("fail Message:" + Message);
             }
             else {
                  window.location.href = "@Url.Action("ErrorPage", "Home")";
