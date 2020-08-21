@@ -104,7 +104,8 @@
             dataType: "json"
         }).done(function (data) {
             alert("Add success");
-              window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
+            SetAuth();
+            // window.location.href = "@Url.Action("FunctionAddEditDelete", "Function")";
         }).fail(function (data) {
             if (data.responseJSON != undefined) {
                 var Message = data.responseJSON.Message;
