@@ -64,11 +64,11 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>@Html.DisplayNameFor(model => model.FunctionID)</th>
-                <th>@Html.DisplayNameFor(model => model.Url)</th>
-                <th>@Html.DisplayNameFor(model => model.Title)</th>
-                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                <th>IsMenu</th>
+                <th><span id="spFunctionID" onclick=QueryOrderBy("FunctionID","spFunctionID")>@Html.DisplayNameFor(model => model.FunctionID)</span></th>
+                <th><span id="spUrl" onclick=QueryOrderBy("Url","spUrl")>@Html.DisplayNameFor(model => model.Url)</span></th>
+                <th><span id="spTitle" onclick=QueryOrderBy("Title","spTitle")>@Html.DisplayNameFor(model => model.Title)</span></th>
+                <th><span id="spDescription" onclick=QueryOrderBy("Description","spDescription")>@Html.DisplayNameFor(model => model.Description)</span></th>
+                <th><span id="spIsMenu" onclick=QueryOrderBy("IsMenu","spIsMenu")>IsMenu</span></th>
                 <th>@Html.DisplayNameFor(model => model.ParentName)</th>
                 <th>功能</th>
             </tr>
@@ -171,6 +171,31 @@
 
     }());
 
+    var _toggleSp;
+    var _orderByCol = "FunctionID";
+    var _orderByTyoe = "ASC";
+    function QueryOrderBy(col, id) {
+        if (_toggleSp === id) {
+            $("#" + id).toggleClass("orderMark-Rote");
+            $("#" + id).toggleClass("activeOrder");
+            if (_orderByTyoe === "ASC") {
+                _orderByTyoe = "DESC"
+            } else {
+                _orderByTyoe = "ASC";
+            }
+            QueryFunctionDataClick();
+        } else {
+            $("#" + _toggleSp).removeClass("orderMark");
+            $("#" + _toggleSp).removeClass("orderMark-Rote");
+            $("#" + _toggleSp).removeClass("activeOrder");
+            $("#" + id).toggleClass("orderMark");
+            _toggleSp = id;
+            _orderByCol = col;
+            _orderByTyoe = "DESC";
+            QueryFunctionDataClick();
+        }
+    }
+
     function QueryFunctionDataClick() {
         _pageNumber = 1;
         SetAuth();
@@ -212,6 +237,8 @@
             type: "POST",
             url: "@Url.Action("QueryFunction", "Function")",
             data: JSON.stringify({
+                "OrderByColumn": _orderByCol,
+                "OrderByType": _orderByTyoe,
                 "PageNumber": _pageNumber,
                 "WhereCondition": [
                     { "Key": "Url", "Value": $("#textQueryUrl").val() },
