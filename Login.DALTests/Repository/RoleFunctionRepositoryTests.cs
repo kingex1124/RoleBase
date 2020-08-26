@@ -9,6 +9,7 @@ using KevanFramework.DataAccessDAL.SQLDAL.Interface;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using Login.DTO;
+using Login.VO;
 
 namespace Login.DAL.Tests
 {
@@ -134,11 +135,13 @@ namespace Login.DAL.Tests
 
             _dataAccess.Stub(o => o.QueryDataTable<FunctionCheckDTO>(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reFunctionCheckDTO);
 
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
             #endregion
 
             #region act
 
-            var result = _target.GetFunctionCheckByRole(id).ToList();
+            var result = _target.GetFunctionCheckByRole(id, pageDataVO).ToList();
 
             #endregion
 

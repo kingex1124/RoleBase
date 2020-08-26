@@ -126,7 +126,8 @@ namespace RoleBase.Controllers
         [HttpPost]
         public IEnumerable<FunctionCheckVO> GetFunctionByRole(RoleVO roleVO)
         {
-            var functionCheckData = _functionService.GetFunctionCheckByRole(roleVO.RoleID.ToString());
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "FunctionID", OrderByType = "ASC" };
+            var functionCheckData = _functionService.GetFunctionCheckByRole(roleVO.RoleID.ToString(), pageDataVO);
             return functionCheckData;
         }
 

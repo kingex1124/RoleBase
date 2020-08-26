@@ -13,7 +13,7 @@ namespace Login.Service
         string AddFunction(FunctionVO functionVO);
         string DeleteFunction(string id);
         string EditFunction(FunctionVO functionVO);
-        IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID);
+        IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID, PageDataVO pageDataVO);
         string SaveRoleFunctionSetting(IEnumerable<FunctionCheckVO> functionCheckVO);
         string ClearRoleFunctionByRoleID(string roleID);
         IEnumerable<KeyValuePairVO> GetParentKeyValue();

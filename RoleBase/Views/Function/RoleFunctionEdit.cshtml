@@ -80,11 +80,11 @@
         <thead>
             <tr>
                 <th>Check</th>
-                <th>FunctionID</th>
-                <th>Url</th>
-                <th>名稱</th>
-                <th>敘述</th>
-                <th>是否為Menu</th>
+                <th><span id="spFunctionID" onclick=QueryFunctionOrderBy("FunctionID","spFunctionID")>FunctionID</span></th>
+                <th><span id="spUrl" onclick=QueryFunctionOrderBy("Url","spUrl")>Url</span></th>
+                <th><span id="spTitle" onclick=QueryFunctionOrderBy("Title","spTitle")>名稱</span></th>
+                <th><span id="spFunctionDescription" onclick=QueryFunctionOrderBy("Description","spFunctionDescription")>敘述</span></th>
+                <th><span id="spIsMenu" onclick=QueryFunctionOrderBy("IsMenu","spIsMenu")>是否為Menu</span></th>
                 <th>上層</th>
             </tr>
         </thead>
@@ -116,7 +116,7 @@
     (function () {
         // 綁定查詢事件
         $("#btnQueryRole").on("click", QueryRoleDataClick);
-        $("#btnQueryFunction").on("click", SetAuthByFunction);
+        $("#btnQueryFunction").on("click", QueryFunctionDataClick);
     })();
 
     var _toggleSp;
@@ -292,6 +292,35 @@
         SetAuthByRole();
     }
 
+    var _functionToggleSp;
+    var _functionOrderByCol = "FunctionID";
+    var _functionOrderByType = "ASC";
+    function QueryFunctionOrderBy(col, id) {
+        if (_functionToggleSp === id) {
+            $("#" + id).toggleClass("orderMark-Rote");
+            $("#" + id).toggleClass("activeOrder");
+            if (_functionOrderByType === "ASC") {
+                _functionOrderByType = "DESC"
+            } else {
+                _functionOrderByType = "ASC";
+            }
+            QueryFunctionDataClick();
+        } else {
+            $("#" + _functionToggleSp).removeClass("orderMark");
+            $("#" + _functionToggleSp).removeClass("orderMark-Rote");
+            $("#" + _functionToggleSp).removeClass("activeOrder");
+            $("#" + id).toggleClass("orderMark");
+            _functionToggleSp = id;
+            _functionOrderByCol = col;
+            _functionOrderByType = "DESC";
+            QueryFunctionDataClick();
+        }
+    }
+
+    function QueryFunctionDataClick() {
+        SetAuthByFunction();
+    }
+
     function SetAuthByFunction() {
 
         // #region 取得授權資料
@@ -326,7 +355,11 @@
             type: "POST",
             url: "@Url.Action("GetFunctionByRole", "Function")",
             data: JSON.stringify({
-                "id": roleID
+                "id": roleID,
+                "pageDataVO": {
+                    "OrderByColumn": _functionOrderByCol,
+                    "OrderByType": _functionOrderByType
+                }
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"

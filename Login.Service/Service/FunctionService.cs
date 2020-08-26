@@ -84,9 +84,9 @@ namespace Login.Service
         /// </summary>
         /// <param name="roleID"></param>
         /// <returns></returns>
-        public IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID)
+        public IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID, PageDataVO pageDataVO)
         {
-            return _functionBO.GetFunctionCheckByRole(roleID);
+            return _functionBO.GetFunctionCheckByRole(roleID, pageDataVO);
         }
 
         /// <summary>

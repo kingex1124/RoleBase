@@ -398,13 +398,15 @@ namespace Login.BO.Tests
                 new FunctionCheckDTO(){ FunctionID = 3 , Url = "Role/EditRole", Title = "編輯" , Description = "編輯角色" , IsMenu = false, ParentName = "Not Menu" , Check = false }
             };
 
-            _roleFunctionRepo.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything)).Return(reFunctionCheckDTO);
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
+            _roleFunctionRepo.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything, Arg<PageDataVO>.Is.Anything)).Return(reFunctionCheckDTO);
 
             #endregion
 
             #region act
 
-            var result = _target.GetFunctionCheckByRole(roleID).ToList();
+            var result = _target.GetFunctionCheckByRole(roleID, pageDataVO).ToList();
 
             #endregion
 

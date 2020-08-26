@@ -243,9 +243,9 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         [UserSession]
         [HttpPost]
-        public ActionResult GetFunctionByRole(string id)
+        public ActionResult GetFunctionByRole(string id, PageDataVO pageDataVO)
         {
-            var functionCheckData = _functionService.GetFunctionCheckByRole(id);
+            var functionCheckData = _functionService.GetFunctionCheckByRole(id, pageDataVO);
             return Json(functionCheckData, JsonRequestBehavior.AllowGet);
         }
 

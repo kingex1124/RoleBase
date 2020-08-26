@@ -2,6 +2,7 @@
 using KevanFramework.DataAccessDAL.SQLDAL;
 using KevanFramework.DataAccessDAL.SQLDAL.Interface;
 using Login.DTO;
+using Login.VO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -88,11 +89,11 @@ on C.FunctionID = D.FunctionID";
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IEnumerable<FunctionCheckDTO> GetFunctionCheckByRole(string id)
+        public IEnumerable<FunctionCheckDTO> GetFunctionCheckByRole(string id, PageDataVO pageDataVO)
         {
             List<string> param = new List<string>();
 
-            string sqlStr = @"SELECT 
+            string sqlStr = string.Format(@"SELECT 
 case when A.[RoleID] IS NULL then CAST(0 AS BIT) Else CAST(1 AS BIT) end AS 'Check' ,
       B.[FunctionID],B.Url,B.Title, B.Description, B.IsMenu , 
 case when B.[Parent] = -1
@@ -103,7 +104,7 @@ else (select C.[Title] from [Function] C where C.FunctionID = B.[Parent]) end as
   FROM 
   (Select * From [RoleFunction] where RoleID = @p0 ) A 
   Right join [Function] B on A.FunctionID = B.FunctionID 
-  Order By B.[FunctionID] ";
+  Order By B.[{0}] {1} ", pageDataVO.OrderByColumn, pageDataVO.OrderByType);
 
             param.Add(id);
 
