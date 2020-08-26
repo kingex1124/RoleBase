@@ -75,9 +75,9 @@
         <thead>
             <tr>
                 <th>Check</th>
-                <th>UserID</th>
-                <th>UserAccount</th>
-                <th>UserName</th>
+                <th><span id="spUserID" onclick=QueryUserOrderBy("UserID","spUserID")>UserID</span></th>
+                <th><span id="spAccountName" onclick=QueryUserOrderBy("AccountName","spAccountName")>UserAccount</span></th>
+                <th><span id="spUserName" onclick=QueryUserOrderBy("UserName","spUserName")>UserName</span></th>
             </tr>
         </thead>
         <tbody id="userTableBody">
@@ -111,20 +111,20 @@
     (function () {
         // 綁定查詢事件
         $("#btnQueryRole").on("click", QueryRoleClick);
-        $("#btnQueryUser").on("click", SetAuthByUser);
+        $("#btnQueryUser").on("click", QueryUserClick);
     })();
 
     var _toggleSp;
     var _orderByCol = "RoleID";
-    var _orderByTyoe = "ASC";
+    var _orderByType = "ASC";
     function QueryOrderBy(col, id) {
         if (_toggleSp === id) {
             $("#" + id).toggleClass("orderMark-Rote");
             $("#" + id).toggleClass("activeOrder");
-            if (_orderByTyoe === "ASC") {
-                _orderByTyoe = "DESC"
+            if (_orderByType === "ASC") {
+                _orderByType = "DESC"
             } else {
-                _orderByTyoe = "ASC";
+                _orderByType = "ASC";
             }
             QueryRoleClick();
         } else {
@@ -134,7 +134,7 @@
             $("#" + id).toggleClass("orderMark");
             _toggleSp = id;
             _orderByCol = col;
-            _orderByTyoe = "DESC";
+            _orderByType = "DESC";
             QueryRoleClick();
         }
     }
@@ -180,7 +180,7 @@
             url: "@Url.Action("QueryRoleUserEditRole", "Role")",
             data: JSON.stringify({
                 "OrderByColumn": _orderByCol,
-                "OrderByType": _orderByTyoe,
+                "OrderByType": _orderByType,
                 "PageNumber": _pageNumber,
                 "WhereCondition": [{ "Key": "RoleName", "Value": $("#textQueryRoleName").val() }]
             }),
@@ -286,6 +286,35 @@
         SetAuthByRole();
     }
 
+    var _userToggleSp;
+    var _userOrderByCol = "UserID";
+    var _userOrderByType = "ASC";
+    function QueryUserOrderBy(col, id) {
+        if (_userToggleSp === id) {
+            $("#" + id).toggleClass("orderMark-Rote");
+            $("#" + id).toggleClass("activeOrder");
+            if (_userOrderByType === "ASC") {
+                _userOrderByType = "DESC"
+            } else {
+                _userOrderByType = "ASC";
+            }
+            QueryUserClick();
+        } else {
+            $("#" + _userToggleSp).removeClass("orderMark");
+            $("#" + _userToggleSp).removeClass("orderMark-Rote");
+            $("#" + _userToggleSp).removeClass("activeOrder");
+            $("#" + id).toggleClass("orderMark");
+            _userToggleSp = id;
+            _userOrderByCol = col;
+            _userOrderByType = "DESC";
+            QueryUserClick();
+        }
+    }
+
+    function QueryUserClick() {
+        SetAuthByUser();
+    }
+
     function SetAuthByUser() {
 
         // #region 取得授權資料
@@ -322,7 +351,11 @@
             type: "POST",
             url: "@Url.Action("GetUserByRole", "Role")",
             data: JSON.stringify({
-                "id": roleID
+                "id": roleID,
+                "pageDataVO":{
+                    "OrderByColumn": _userOrderByCol,
+                    "OrderByType": _userOrderByType
+                }
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"

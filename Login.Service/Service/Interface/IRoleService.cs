@@ -13,7 +13,7 @@ namespace Login.Service
         string AddRole(RoleVO roleVO);
         string DeleteRole(string id);
         string EditRole(RoleVO roleVO);
-        IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID);
+        IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID, PageDataVO pageDataVO);
         string SaveRoleUserSetting(IEnumerable<UserCheckVO> userCheckVO);
         string ClearRoleUserByRoleID(string roleID);
     }

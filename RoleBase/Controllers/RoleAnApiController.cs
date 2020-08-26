@@ -107,7 +107,9 @@ namespace RoleBase.Controllers
         [HttpPost]
         public IEnumerable<UserCheckVO> GetUserByRole(RoleVO roleVO)
         {
-            var userCheckData = _roleService.GetUserCheckByRole(roleVO.RoleID.ToString());
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
+            var userCheckData = _roleService.GetUserCheckByRole(roleVO.RoleID.ToString(), pageDataVO);
             return userCheckData;
         }
 

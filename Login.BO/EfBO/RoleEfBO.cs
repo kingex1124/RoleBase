@@ -130,7 +130,7 @@ namespace Login.BO
         /// </summary>
         /// <param name="roleID"></param>
         /// <returns></returns>
-        public IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID)
+        public IEnumerable<UserCheckVO> GetUserCheckByRole(string roleID, PageDataVO pageDataVO)
         {
             return Utility.MigrationIEnumerable<UserCheckDTO, UserCheckVO>(_roleUserEfRepo.GetUserCheckByRole(roleID).ToList());
         }

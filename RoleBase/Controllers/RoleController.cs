@@ -186,9 +186,9 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         [UserSession]
         [HttpPost]
-        public ActionResult GetUserByRole(string id)
+        public ActionResult GetUserByRole(string id, PageDataVO pageDataVO)
         {
-            var userCheckData = _roleService.GetUserCheckByRole(id);
+            var userCheckData = _roleService.GetUserCheckByRole(id, pageDataVO);
             return Json(userCheckData, JsonRequestBehavior.AllowGet);
         }
 

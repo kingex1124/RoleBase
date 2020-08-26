@@ -296,13 +296,15 @@ namespace Login.Service.Tests
                 new UserCheckVO(){ RoleID = 1 , UserID = 3 , UserName = "B" , AccountName = "B1" , Check = false }
             };
 
-            _roleBO.Stub(o => o.GetUserCheckByRole(Arg<string>.Is.Anything)).Return(reUserCheckVOList);
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
+            _roleBO.Stub(o => o.GetUserCheckByRole(Arg<string>.Is.Anything, Arg<PageDataVO>.Is.Anything)).Return(reUserCheckVOList);
 
             #endregion
 
             #region act
 
-            var result = _target.GetUserCheckByRole(roleID).ToList();
+            var result = _target.GetUserCheckByRole(roleID, pageDataVO).ToList();
 
             #endregion
 

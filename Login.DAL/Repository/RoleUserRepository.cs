@@ -2,6 +2,7 @@
 using KevanFramework.DataAccessDAL.SQLDAL;
 using KevanFramework.DataAccessDAL.SQLDAL.Interface;
 using Login.DTO;
+using Login.VO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -41,17 +42,17 @@ namespace Login.DAL
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public IEnumerable<UserCheckDTO> GetUserCheckByRole(string id)
+        public IEnumerable<UserCheckDTO> GetUserCheckByRole(string id, PageDataVO pageDataVO)
         {
             List<string> param = new List<string>();
 
-            string sqlStr = @"SELECT 
+            string sqlStr = string.Format(@"SELECT 
 case when A.[RoleID] IS NULL then CAST(0 AS BIT) Else CAST(1 AS BIT) end AS 'Check' ,
       B.[UserID],B.AccountName,B.UserName
   FROM 
   (Select * From [RoleUser] where RoleID=@p0) A 
   Right join [User] B on A.UserID = B.UserID 
-  Order By B.[UserID] ";
+  Order By B.[{0}] {1}", pageDataVO.OrderByColumn, pageDataVO.OrderByType);
 
             param.Add(id);
 
