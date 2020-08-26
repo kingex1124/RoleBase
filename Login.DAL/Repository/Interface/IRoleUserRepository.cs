@@ -1,4 +1,5 @@
 ﻿using Login.DTO;
+using Login.VO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -10,7 +11,7 @@ namespace Login.DAL
 {
     public interface IRoleUserRepository
     {
-        IEnumerable<UserCheckDTO> GetUserCheckByRole(string id);
+        IEnumerable<UserCheckDTO> GetUserCheckByRole(string id, PageDataVO pageDataVO);
 
         int DeleteRoleUserByRoleID(string roleID, ref SqlConnection conn, ref SqlTransaction tran);
 

@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using Rhino.Mocks;
 using Rhino.Mocks.Constraints;
 using Login.DTO;
+using Login.VO;
 
 namespace Login.DAL.Tests
 {
@@ -52,13 +53,15 @@ namespace Login.DAL.Tests
                 new UserCheckDTO(){ UserID = 3 , UserName = "B" , AccountName = "B1" , Check = false }
             };
 
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
             _dataAccess.Stub(o => o.QueryDataTable<UserCheckDTO>(Arg<string>.Is.Anything, Arg<object[]>.Is.Anything)).Return(reUserCheckDTO);
 
             #endregion
 
             #region act
 
-            var result = _target.GetUserCheckByRole(id).ToList();
+            var result = _target.GetUserCheckByRole(id, pageDataVO).ToList();
 
             #endregion
 

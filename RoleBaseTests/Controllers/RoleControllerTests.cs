@@ -502,13 +502,15 @@ namespace RoleBase.Controllers.Tests
                 new UserCheckVO(){ RoleID = 1 , UserID = 3 , Check = false , UserName = "B" , AccountName = "B"}
             };
 
-            _roleService.Stub(o => o.GetUserCheckByRole(Arg<string>.Is.Anything)).Return(reUserCheckVO);
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
+            _roleService.Stub(o => o.GetUserCheckByRole(Arg<string>.Is.Anything, Arg<PageDataVO>.Is.Anything)).Return(reUserCheckVO);
 
             #endregion
 
             #region act
 
-            var resultData = _target.GetUserByRole(roleID);
+            var resultData = _target.GetUserByRole(roleID, pageDataVO);
 
             var result = (List<UserCheckVO>)((JsonResult)resultData).Data;
 

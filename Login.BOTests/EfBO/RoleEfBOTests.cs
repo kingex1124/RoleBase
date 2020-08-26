@@ -347,13 +347,15 @@ namespace Login.BO.Tests
                 new UserCheckVO(){ RoleID = 1 , UserID = 3 , UserName = "B" , AccountName = "B1" , Check = false }
             };
 
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
             _roleUserEfRepo.Stub(o => o.GetUserCheckByRole(Arg<string>.Is.Anything)).Return(reUserCheckDTOList);
 
             #endregion
 
             #region act
 
-            var result = _target.GetUserCheckByRole(roleID).ToList();
+            var result = _target.GetUserCheckByRole(roleID, pageDataVO).ToList();
 
             #endregion
 
