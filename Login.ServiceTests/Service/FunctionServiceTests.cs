@@ -343,13 +343,15 @@ namespace Login.Service.Tests
                 new FunctionCheckVO(){ FunctionID = 3 , Url = "Role/EditRole", Title = "編輯" , Description = "編輯角色" , IsMenu = false, ParentName = "Not Menu" , Check = false }
             };
 
-            _functionBO.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything)).Return(reFunctionCheckVO);
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
+            _functionBO.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything, Arg<PageDataVO>.Is.Anything)).Return(reFunctionCheckVO);
 
             #endregion
 
             #region act
 
-            var result = _target.GetFunctionCheckByRole(roleID).ToList();
+            var result = _target.GetFunctionCheckByRole(roleID, pageDataVO).ToList();
 
             #endregion
 

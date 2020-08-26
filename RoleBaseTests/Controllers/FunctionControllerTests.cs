@@ -608,13 +608,15 @@ namespace RoleBase.Controllers.Tests
                 new FunctionCheckVO(){ FunctionID = 3 , Url = "Role/EditRole", Title = "編輯" , Description = "編輯角色" , IsMenu = false, ParentName = "Not Menu" , Check = false }
             };
 
-            _functionService.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything)).Return(reFunctionCheckVO);
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
+            _functionService.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything, Arg<PageDataVO>.Is.Anything)).Return(reFunctionCheckVO);
 
             #endregion
 
             #region act
 
-            var resultData = _target.GetFunctionByRole(id);
+            var resultData = _target.GetFunctionByRole(id, pageDataVO);
 
             var result = (List<FunctionCheckVO>)((JsonResult)resultData).Data;
 

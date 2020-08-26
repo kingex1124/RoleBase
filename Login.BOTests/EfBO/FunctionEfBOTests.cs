@@ -392,11 +392,13 @@ namespace Login.BO.Tests
 
             _roleFunctionEfRepo.Stub(o => o.GetFunctionCheckByRole(Arg<string>.Is.Anything)).Return(reFunctionCheckDTO);
 
+            PageDataVO pageDataVO = new PageDataVO() { OrderByColumn = "UserID", OrderByType = "ASC" };
+
             #endregion
 
             #region act
 
-            var result = _target.GetFunctionCheckByRole(roleID).ToList();
+            var result = _target.GetFunctionCheckByRole(roleID, pageDataVO).ToList();
 
             #endregion
 

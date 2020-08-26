@@ -152,9 +152,9 @@ namespace Login.BO
         /// </summary>
         /// <param name="roleID"></param>
         /// <returns></returns>
-        public IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID)
+        public IEnumerable<FunctionCheckVO> GetFunctionCheckByRole(string roleID, PageDataVO pageDataVO)
         {
-            IEnumerable<FunctionCheckVO> result = Utility.MigrationIEnumerable<FunctionCheckDTO, FunctionCheckVO>(_roleFunctionRepo.GetFunctionCheckByRole(roleID));
+            IEnumerable<FunctionCheckVO> result = Utility.MigrationIEnumerable<FunctionCheckDTO, FunctionCheckVO>(_roleFunctionRepo.GetFunctionCheckByRole(roleID, pageDataVO));
             return result;
         }
 

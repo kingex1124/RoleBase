@@ -1,4 +1,5 @@
 ﻿using Login.DTO;
+using Login.VO;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -14,7 +15,7 @@ namespace Login.DAL
 
         int DeleteRoleFunctionByFunctionID(string functionID, ref SqlConnection conn, ref SqlTransaction tran);
 
-        IEnumerable<FunctionCheckDTO> GetFunctionCheckByRole(string id);
+        IEnumerable<FunctionCheckDTO> GetFunctionCheckByRole(string id, PageDataVO pageDataVO);
 
         int DeleteRoleFunctionByRoleID(string roleID, ref SqlConnection conn, ref SqlTransaction tran);
 
