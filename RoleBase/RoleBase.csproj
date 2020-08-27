@@ -259,6 +259,7 @@
     <Compile Include="ActionFilters\UserSessionAttribute.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Caching\Caching.cs" />
     <Compile Include="Controllers\AccountAnApiController.cs" />
     <Compile Include="Controllers\AccountAnController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
