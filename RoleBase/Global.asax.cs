@@ -15,6 +15,9 @@ namespace RoleBase
         void Application_Start(object sender, EventArgs e)
         {
             // 應用程式啟動時執行的程式碼
+
+            // 測試暫存機制用的靜態方法
+            //Caching.GetTableDataToCaching();
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);            
