@@ -9,7 +9,7 @@ namespace RoleBase.Helper
     public interface IUnityContainer : IDisposable
     {
         void Register<TInterface, TImplementation>() where TImplementation : TInterface;
-        TInterface Resolve<TInterface>();
+        TInterface Resolve<TInterface, TImplementation>() where TImplementation : TInterface;
         void Release();
     }
 }
