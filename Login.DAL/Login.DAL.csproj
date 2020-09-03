@@ -72,6 +72,8 @@
     <Compile Include="EfRepository\RoleFunctionEfRepository.cs" />
     <Compile Include="EfRepository\RoleUserEfRepository.cs" />
     <Compile Include="EfRepository\UserEfRepository.cs" />
+    <Compile Include="Interceptor\MSSQLConfiguration.cs" />
+    <Compile Include="Interceptor\MSSQLInterceptorLogging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\FunctionRepository.cs" />
     <Compile Include="Repository\Interface\IFunctionRepository.cs" />
