@@ -52,8 +52,8 @@ namespace RoleBase.Controllers
 
         public BaseController()
         {
-            _loginServiceBase = RouteConfig.Container.Resolve<ILoginService>();
-            _securityServiceBase = RouteConfig.Container.Resolve<ISecurityService>();
+            _loginServiceBase = RouteConfig.Container.Resolve<ILoginService, LoginService>();
+            _securityServiceBase = RouteConfig.Container.Resolve<ISecurityService, SecurityService>();
         }
 
 

@@ -63,10 +63,10 @@ namespace RoleBase.Controllers
 
         public FunctionController()
         {
-            _functionService = RouteConfig.Container.Resolve<IFunctionService>();
-            _roleService = RouteConfig.Container.Resolve<IRoleService>();
-            _loginService = RouteConfig.Container.Resolve<ILoginService>();
-            _securityService = RouteConfig.Container.Resolve<ISecurityService>();
+            _functionService = RouteConfig.Container.Resolve<IFunctionService, FunctionService>();
+            _roleService = RouteConfig.Container.Resolve<IRoleService, RoleService>();
+            _loginService = RouteConfig.Container.Resolve<ILoginService, LoginService>();
+            _securityService = RouteConfig.Container.Resolve<ISecurityService, SecurityService>();
         }
 
         public FunctionController(IFunctionService functionService, IRoleService roleService, ILoginService loginService, ISecurityService securityService)

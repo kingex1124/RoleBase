@@ -60,9 +60,9 @@ namespace RoleBase.Controllers
 
         public AccountController()
         {
-            _registService = RouteConfig.Container.Resolve<IRegistService>();
-            _loginService = RouteConfig.Container.Resolve<ILoginService>();
-            _securityService = RouteConfig.Container.Resolve<ISecurityService>();
+            _registService = RouteConfig.Container.Resolve<IRegistService, RegistService>();
+            _loginService = RouteConfig.Container.Resolve<ILoginService, LoginService>();
+            _securityService = RouteConfig.Container.Resolve<ISecurityService, SecurityService>();
             //_registService = new RegistService();
             //_loginService = new LoginService();
             //_securityService = new SecurityService();

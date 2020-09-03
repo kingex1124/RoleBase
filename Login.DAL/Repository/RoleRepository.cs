@@ -25,7 +25,7 @@ namespace Login.DAL
         public RoleRepository()
         {
             UnityContainer.Register<IDataAccess, DataAccess>();
-            _dataAccess = UnityContainer.Resolve<IDataAccess>("AccountConn");
+            _dataAccess = UnityContainer.Resolve<IDataAccess, DataAccess>("AccountConn");
         }
 
         public RoleRepository(IDataAccess dataAccess)

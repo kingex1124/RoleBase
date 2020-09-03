@@ -36,7 +36,7 @@ namespace RoleBase.Controllers
 
         public RoleController()
         {
-            _roleService = RouteConfig.Container.Resolve<IRoleService>();
+            _roleService = RouteConfig.Container.Resolve<IRoleService, RoleService>();
         }
 
         public RoleController(IRoleService roleService)
