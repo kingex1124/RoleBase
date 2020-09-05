@@ -21,7 +21,8 @@ namespace Login.Service
 
         public LoginService()
         {
-            _loginBO = new LoginBO();
+             _loginBO = new LoginBO();
+            //_loginBO = new LoginEfBO();
         }
 
         public LoginService(ILoginBO loginBO)
