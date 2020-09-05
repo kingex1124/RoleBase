@@ -26,7 +26,10 @@ namespace Login.DAL
         /// <returns></returns>
         public IEnumerable<UserDTO> FindAccountName(string accountName)
         {
+            RoleBaseEntities _dba = new RoleBaseEntities();
+            var test = _dba.User.ToList();
             var result = (from user in _db.User
+                          //where user.AccountName == accountName
                           select new UserDTO()
                           {
                               UserID = user.UserID,
@@ -48,6 +51,7 @@ namespace Login.DAL
         public UserDTO FindAccountData(string accountName)
         {
             var result = (from user in _db.User
+                          where user.AccountName == accountName
                           select new UserDTO()
                           {
                               UserID = user.UserID,
