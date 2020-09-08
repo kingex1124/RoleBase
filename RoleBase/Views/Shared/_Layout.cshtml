@@ -72,7 +72,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-2">
-                <ul id="sinopac-nav-menu">
+                <ul id="rolebase-nav-menu">
                 </ul>
             </div>
             <div class="col-md-10">@RenderBody()</div>
@@ -100,7 +100,7 @@
             dataType: "json"
         }).done(function (data) {
 
-            GernerateMenu(data, $('#sinopac-nav-menu'));
+            GernerateMenu(data, $('#rolebase-nav-menu'));
             Setting();
         }).fail(function (data) {
             if (data.responseJSON != undefined) {
@@ -125,11 +125,11 @@
                     // 處理第一筆資料
 
                     if (data[i].Next !== null) {
-                        var li = $('<li class="sinopac-menu-parent"></li>');
+                        var li = $('<li class="rolebase-menu-parent"></li>');
 
-                        var span = $('<span class= "sinopac-menu-node" > <a href="/' + data[i].Val.Url + '">' + data[i].Val.Title + '</a></span >');
+                        var span = $('<span class= "rolebase-menu-node" > <a href="/' + data[i].Val.Url + '">' + data[i].Val.Title + '</a></span >');
 
-                        var ul = $('<ul class="sinopac-sub-menu">');
+                        var ul = $('<ul class="rolebase-sub-menu">');
 
                         GernerateMenu(data[i].Next, ul);
                         li.append([span, ul]);
@@ -145,13 +145,13 @@
     }
 
     function Setting() {
-        var toggler = document.getElementsByClassName("sinopac-menu-node");
+        var toggler = document.getElementsByClassName("rolebase-menu-node");
         var i;
 
         for (i = 0; i < toggler.length; i++) {
             toggler[i].addEventListener("click", function () {
-                this.parentElement.querySelector(".sinopac-sub-menu").classList.toggle("active");
-                this.classList.toggle("sinopac-menu-node-opec");
+                this.parentElement.querySelector(".rolebase-sub-menu").classList.toggle("active");
+                this.classList.toggle("rolebase-menu-node-opec");
             });
         }
     };
