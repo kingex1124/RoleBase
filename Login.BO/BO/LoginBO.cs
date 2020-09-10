@@ -3,6 +3,7 @@ using Login.DTO;
 using Login.VO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,6 +50,10 @@ namespace Login.BO
                 accountInfoData.Message = "該帳號不存在。";
                 return accountInfoData;
             }
+
+            string key = ConfigurationManager.AppSettings["EncryptKey"];
+
+            accountInfoData.Password = AESEncryptHelper.AESEncryptBase64(accountInfoData.Password, key);
 
             //驗證密碼
             if (_userRepo.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
