@@ -9,8 +9,8 @@ namespace Login.BO
 {
     public interface IRegistBO
     {
-        Account RegistValid(Account account);
+        ExecuteResult RegistValid(Account account);
 
-        Account Regist(Account account);
+        ExecuteResult Regist(Account account);
     }
 }

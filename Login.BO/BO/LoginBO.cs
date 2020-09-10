@@ -42,27 +42,37 @@ namespace Login.BO
         /// </summary>
         /// <param name="accountInfoData"></param>
         /// <returns></returns>
-        public AccountInfoData AccountValid(AccountInfoData accountInfoData)
+        public ExecuteResult AccountValid(AccountInfoData accountInfoData)
         {
-            //驗證帳號
-            if (!_userRepo.FindAccountName(accountInfoData.AccountName).Any())
+            ExecuteResult result = new ExecuteResult();
+
+            try
             {
-                accountInfoData.Message = "該帳號不存在。";
-                return accountInfoData;
+                result.IsSuccessed = _userRepo.FindAccountName(accountInfoData.AccountName).Any();
+                //驗證帳號
+                if (!result.IsSuccessed)
+                {
+                    result.Message = "該帳號不存在。";
+                    return result;
+                }
+
+                string key = ConfigurationManager.AppSettings["EncryptKey"] == null ? "1qaz@WSX" : ConfigurationManager.AppSettings["EncryptKey"];
+
+                accountInfoData.Password = AESEncryptHelper.AESEncryptBase64(accountInfoData.Password, key);
+
+                result.IsSuccessed = _userRepo.FindAccountData(accountInfoData.AccountName).Password == accountInfoData.Password;
+                //驗證密碼
+                if (!result.IsSuccessed)
+                    result.Message = "密碼輸入錯誤。";
+
             }
-
-            string key = ConfigurationManager.AppSettings["EncryptKey"];
-
-            accountInfoData.Password = AESEncryptHelper.AESEncryptBase64(accountInfoData.Password, key);
-
-            //驗證密碼
-            if (_userRepo.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
+            catch (Exception ex)
             {
-                accountInfoData.Message = "密碼輸入錯誤。";
-                return accountInfoData;
+                result.IsSuccessed = false;
+                result.Message = ex.Message;
             }
-
-            return accountInfoData;
+           
+            return result;
         }
 
         /// <summary>

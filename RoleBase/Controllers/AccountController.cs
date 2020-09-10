@@ -96,24 +96,31 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult RegistAccount(Account account)
         {
+            ExecuteResult result = new ExecuteResult();
 
+            // 前端欄位驗證
             if (!ModelState.IsValid)
             {
                 CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                account.Message = "請填寫必填欄位";
+                result.IsSuccessed = false;
+                result.Message = "請填寫必填欄位";
             }
             else
             {
-                account = _registService.RegistValid(account);
-                if (!string.IsNullOrWhiteSpace(account.Message))
+                result = _registService.RegistValid(account);
+                if (!result.IsSuccessed)
                     CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 else
                 {
-                    _registService.Regist(account);
-                    CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                    result = _registService.Regist(account);
+                    if (result.IsSuccessed)
+                        CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.OK;
+                    else
+                        CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 }
             }
-            return Json(account, JsonRequestBehavior.AllowGet);
+
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
@@ -133,6 +140,8 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult Login(AccountInfoData accountInfoData)
         {
+            ExecuteResult result = new ExecuteResult();
+
             if (!ModelState.IsValid)
             {
                 CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -141,10 +150,11 @@ namespace RoleBase.Controllers
             }
             else
             {
-                accountInfoData = _loginService.AccountValid(accountInfoData);
-                if (!string.IsNullOrWhiteSpace(accountInfoData.Message))
+                result = _loginService.AccountValid(accountInfoData);
+                if (!result.IsSuccessed)
                 {
                     CurrentHttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    accountInfoData.Message = result.Message;
                     return View(accountInfoData);
                 }
                 else

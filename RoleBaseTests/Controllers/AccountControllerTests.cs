@@ -83,13 +83,9 @@ namespace RoleBase.Controllers.Tests
             };
 
             // 回傳參數
-            Account reData = new Account()
+            ExecuteResult reData = new ExecuteResult()
             {
-                UserName = "Kevan",
-                Password = "1qaz@WSX",
-                PasswordConfirm = "1qaz@WSX",
-                AccountName = "Kevan",
-                Email = "kevan@gmail.com"
+                IsSuccessed = true
             };
 
             // 驗證資料
@@ -105,7 +101,7 @@ namespace RoleBase.Controllers.Tests
 
             var resultData = _target.RegistAccount(account);
 
-            var result = (Account)(((JsonResult)resultData).Data);
+            var result = (ExecuteResult)(((JsonResult)resultData).Data);
 
             #endregion
 
@@ -115,11 +111,7 @@ namespace RoleBase.Controllers.Tests
             Assert.AreEqual(_target.CurrentHttpContext.Response.StatusCode, 200);
 
             // 測試註冊結果
-            Assert.AreEqual(result.UserName, "Kevan");
-            Assert.AreEqual(result.Password, "1qaz@WSX");
-            Assert.AreEqual(result.PasswordConfirm, "1qaz@WSX");
-            Assert.AreEqual(result.AccountName, "Kevan");
-            Assert.AreEqual(result.Email, "kevan@gmail.com");
+            Assert.AreEqual(result.IsSuccessed, true);
 
             #endregion
         }
@@ -147,13 +139,9 @@ namespace RoleBase.Controllers.Tests
             };
 
             // 回傳參數
-            Account reData = new Account()
+            ExecuteResult reData = new ExecuteResult()
             {
-                UserName = "Kevan",
-                Password = "1qaz@WSX",
-                PasswordConfirm = "111111",
-                AccountName = "Kevan",
-                Email = "kevan@gmail.com",
+                IsSuccessed = false,
                 Message = "密碼確認與密碼輸入不相同"
             };
 
@@ -169,7 +157,7 @@ namespace RoleBase.Controllers.Tests
 
             var resultData = _target.RegistAccount(account);
 
-            var result = (Account)(((JsonResult)resultData).Data);
+            var result = (ExecuteResult)(((JsonResult)resultData).Data);
 
             #endregion
 
@@ -218,10 +206,9 @@ namespace RoleBase.Controllers.Tests
             };
 
             // 輸出參數
-            AccountInfoData reData = new AccountInfoData()
+            ExecuteResult reExcuteResult = new ExecuteResult()
             {
-                AccountName = "kevan",
-                Password = "1qaz@WSX"
+                IsSuccessed = true
             };
 
             // 透過帳號名稱所取得的帳號資訊
@@ -276,7 +263,7 @@ namespace RoleBase.Controllers.Tests
             reSRF.AddRange(reSRFRole3);
 
             // 驗證使用者帳號密碼
-            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
+            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reExcuteResult);
 
             // 取得帳號資料
             _loginService.Stub(o => o.GetUserDataByAccountName(Arg<AccountInfoData>.Is.Anything)).Return(reUserDTO);
@@ -353,15 +340,14 @@ namespace RoleBase.Controllers.Tests
             };
 
             // 輸出參數 驗證後結果
-            AccountInfoData reData = new AccountInfoData()
+            ExecuteResult reExcuteResult = new ExecuteResult()
             {
-                AccountName = "Jon",
-                Password = "1qaz@WSX",
+                IsSuccessed = false,
                 Message = "該帳號不存在。"
             };
 
             // 驗證帳號密碼
-            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
+            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reExcuteResult);
 
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
@@ -377,9 +363,9 @@ namespace RoleBase.Controllers.Tests
             #region assert
 
             // 驗證資料
-            Assert.AreEqual(((AccountInfoData)result.Model).AccountName, reData.AccountName);
-            Assert.AreEqual(((AccountInfoData)result.Model).Password, reData.Password);
-            Assert.AreEqual(((AccountInfoData)result.Model).Message, reData.Message);
+            Assert.AreEqual(((AccountInfoData)result.Model).AccountName, accountInfoData.AccountName);
+            Assert.AreEqual(((AccountInfoData)result.Model).Password, accountInfoData.Password);
+            Assert.AreEqual(((AccountInfoData)result.Model).Message, reExcuteResult.Message);
 
             #endregion
         }
@@ -404,14 +390,13 @@ namespace RoleBase.Controllers.Tests
             };
 
             // 輸出參數
-            AccountInfoData reData = new AccountInfoData()
+            ExecuteResult reExcuteResult = new ExecuteResult()
             {
-                AccountName = "kevan",
-                Password = "111111",
+                IsSuccessed = false,
                 Message = "密碼輸入錯誤。"
             };
 
-            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reData);
+            _loginService.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reExcuteResult);
 
             // 設定httpContext
             _target.CurrentHttpContext = httpContext;
@@ -427,9 +412,9 @@ namespace RoleBase.Controllers.Tests
             #region assert
 
             // 驗證資料
-            Assert.AreEqual(((AccountInfoData)result.Model).AccountName, reData.AccountName);
-            Assert.AreEqual(((AccountInfoData)result.Model).Password, reData.Password);
-            Assert.AreEqual(((AccountInfoData)result.Model).Message, reData.Message);
+            Assert.AreEqual(((AccountInfoData)result.Model).AccountName, accountInfoData.AccountName);
+            Assert.AreEqual(((AccountInfoData)result.Model).Password, accountInfoData.Password);
+            Assert.AreEqual(((AccountInfoData)result.Model).Message, reExcuteResult.Message);
 
             #endregion
         }

@@ -46,11 +46,11 @@ namespace Login.Service.Tests
             // 輸入的帳號
             AccountInfoData accountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan" };
 
-            AccountInfoData reAccountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = true };
 
             string reMessage = accountID.Message;
 
-            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reAccountID);
+            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -79,9 +79,9 @@ namespace Login.Service.Tests
             // 輸入的帳號
             AccountInfoData accountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan" };
 
-            AccountInfoData reAccountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan", Message = "該帳號不存在。" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = false, Message = "該帳號不存在。" };
 
-            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reAccountID);
+            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -93,7 +93,7 @@ namespace Login.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccountID.Message);
+            Assert.AreEqual(result.Message, reExcuteResult.Message);
 
             #endregion
         }
@@ -110,9 +110,9 @@ namespace Login.Service.Tests
             // 輸入的帳號
             AccountInfoData accountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "XXXXXX", UserName = "kevan" };
 
-            AccountInfoData reAccountID = new AccountInfoData() { UserId = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan", Message = "密碼輸入錯誤。" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = false, Message = "密碼輸入錯誤。" };
 
-            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reAccountID);
+            _loginBO.Stub(o => o.AccountValid(Arg<AccountInfoData>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -124,7 +124,7 @@ namespace Login.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccountID.Message);
+            Assert.AreEqual(result.Message, reExcuteResult.Message);
 
             #endregion
         }

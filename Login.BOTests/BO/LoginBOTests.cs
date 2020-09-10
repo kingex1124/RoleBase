@@ -51,10 +51,10 @@ namespace Login.BO.Tests
 
             List<UserDTO> reUserDTOList = new List<UserDTO>()
             {
-                new UserDTO(){ UserID = 1, AccountName = "kevan" , Password = "1qaz@WSX" , UserName = "kevan" , Email = "kevan@gmail.com"}
+                new UserDTO(){ UserID = 1, AccountName = "kevan" , Password = "l5fsZ1OyCY9MzRTok5V29A==" , UserName = "kevan" , Email = "kevan@gmail.com"}
             };
 
-            UserDTO reUserDTO = new UserDTO() { UserID = 1, AccountName = "kevan", Password = "1qaz@WSX", UserName = "kevan", Email = "kevan@gmail.com" };
+            UserDTO reUserDTO = new UserDTO() { UserID = 1, AccountName = "kevan", Password = "l5fsZ1OyCY9MzRTok5V29A==", UserName = "kevan", Email = "kevan@gmail.com" };
 
             string reMessage = accountID.Message;
 

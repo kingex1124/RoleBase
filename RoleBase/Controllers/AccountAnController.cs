@@ -46,19 +46,22 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult Login(AccountInfoData accountInfoData)
         {
+            ExecuteResult result = new ExecuteResult();
+
             if (!ModelState.IsValid)
             {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                accountInfoData.Message = "請填寫必填欄位";
-                return Json(accountInfoData, JsonRequestBehavior.AllowGet);
+                result.IsSuccessed = false;
+                result.Message = "請填寫必填欄位";
+                return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                accountInfoData = _loginService.AccountValid(accountInfoData);
-                if (!string.IsNullOrWhiteSpace(accountInfoData.Message))
+                result = _loginService.AccountValid(accountInfoData);
+                if (!result.IsSuccessed)
                 {
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    return Json(accountInfoData, JsonRequestBehavior.AllowGet);
+                    return Json(result, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -103,6 +106,8 @@ namespace RoleBase.Controllers
         [HttpPost]
         public ActionResult RegistAccount(Account account)
         {
+            ExecuteResult result = new ExecuteResult();
+
             if (!ModelState.IsValid)
             {
                 Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -110,8 +115,8 @@ namespace RoleBase.Controllers
             }
             else
             {
-                account = _registService.RegistValid(account);
-                if (!string.IsNullOrWhiteSpace(account.Message))
+                result = _registService.RegistValid(account);
+                if (!result.IsSuccessed)
                     Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 else
                 {
@@ -119,7 +124,7 @@ namespace RoleBase.Controllers
                     Response.StatusCode = (int)HttpStatusCode.OK;
                 }
             }
-            return Json(account, JsonRequestBehavior.AllowGet);
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
