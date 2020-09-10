@@ -61,8 +61,11 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json"
                 }).done(function (data) {
-                    alert("success");
-                    window.location.href = "@Url.Action("Login", "Account")";
+                    if (data.IsSuccessed) {
+                        alert("success");
+                        window.location.href = "@Url.Action("Login", "Account")";
+                    }
+      
                 }).fail(function (data) {
                    
                     var Message = data.responseJSON.Message;

@@ -10,7 +10,7 @@ namespace Login.Service
 {
     public interface ILoginService
     {
-        AccountInfoData AccountValid(AccountInfoData accountInfoData);
+        ExecuteResult AccountValid(AccountInfoData accountInfoData);
         UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData);
         IEnumerable<RoleDTO> GetRoleDataByUserID(string userID);
     }

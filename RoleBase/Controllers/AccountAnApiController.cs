@@ -41,19 +41,23 @@ namespace RoleBase.Controllers
         /// <returns></returns>
         [EnableCors(origins: "*", headers: "*", methods: "GET, POST, PUT, DELETE, OPTIONS")]
         [HttpPost]
-        public Account RegistAccount(Account account)
+        public ExecuteResult RegistAccount(Account account)
         {
             HttpResponseMessage response = Request.CreateResponse();
+            ExecuteResult result = new ExecuteResult();
 
             if (!ModelState.IsValid)
-                account.Message = "請填寫必填欄位";
+            {
+                result.IsSuccessed = false;
+                result.Message = "請填寫必填欄位";
+            }
             else
             {
-                account = _registService.RegistValid(account);
-                if (string.IsNullOrWhiteSpace(account.Message))
-                    _registService.Regist(account);
+                result = _registService.RegistValid(account);
+                if (result.IsSuccessed)
+                    result = _registService.Regist(account);
             }
-            return account;
+            return result;
         }
 
         #endregion

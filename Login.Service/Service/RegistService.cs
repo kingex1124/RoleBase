@@ -37,7 +37,7 @@ namespace Login.Service
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public Account RegistValid(Account account)
+        public ExecuteResult RegistValid(Account account)
         {
             return _registBO.RegistValid(account);
         }
@@ -47,7 +47,7 @@ namespace Login.Service
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public Account Regist(Account account)
+        public ExecuteResult Regist(Account account)
         {
             return _registBO.Regist(account);
         }

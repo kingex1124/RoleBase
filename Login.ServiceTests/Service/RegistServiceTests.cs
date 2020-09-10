@@ -46,11 +46,11 @@ namespace Login.Service.Tests
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
             // 回傳的參數
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = true };
 
             string reMessage = account.Message;
 
-            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reAccount);
+            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -62,7 +62,7 @@ namespace Login.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reExcuteResult.Message);
 
             #endregion
         }
@@ -80,9 +80,9 @@ namespace Login.Service.Tests
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
             // 回傳的參數
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com", Message = "帳號名稱已被使用" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = false, Message = "帳號名稱已被使用" };
 
-            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reAccount);
+            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -94,7 +94,7 @@ namespace Login.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reExcuteResult.Message);
 
             #endregion
         }
@@ -112,9 +112,9 @@ namespace Login.Service.Tests
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "xxxxxx", Email = "kevan@gmail.com" };
 
             // 回傳的參數
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com", Message = "密碼確認與密碼輸入不相同" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = false, Message = "密碼確認與密碼輸入不相同" };
 
-            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reAccount);
+            _registBO.Stub(o => o.RegistValid(Arg<Account>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -126,7 +126,7 @@ namespace Login.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reExcuteResult.Message);
 
             #endregion
         }
@@ -147,9 +147,9 @@ namespace Login.Service.Tests
             // 傳入的參數
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = true };
 
-            _registBO.Stub(o => o.Regist(Arg<Account>.Is.Anything)).Return(reAccount);
+            _registBO.Stub(o => o.Regist(Arg<Account>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -161,7 +161,7 @@ namespace Login.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reExcuteResult.Message);
 
             #endregion
         }
@@ -178,9 +178,9 @@ namespace Login.Service.Tests
             // 傳入的參數
             Account account = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com" };
 
-            Account reAccount = new Account() { AccountName = "kevan", UserName = "kevan", Password = "1qaz@WSX", PasswordConfirm = "1qaz@WSX", Email = "kevan@gmail.com", Message = "註冊失敗" };
+            ExecuteResult reExcuteResult = new ExecuteResult() { IsSuccessed = false, Message = "註冊失敗" };
 
-            _registBO.Stub(o => o.Regist(Arg<Account>.Is.Anything)).Return(reAccount);
+            _registBO.Stub(o => o.Regist(Arg<Account>.Is.Anything)).Return(reExcuteResult);
 
             #endregion
 
@@ -192,7 +192,7 @@ namespace Login.Service.Tests
 
             #region assert
 
-            Assert.AreEqual(result.Message, reAccount.Message);
+            Assert.AreEqual(result.Message, reExcuteResult.Message);
 
             #endregion
         }

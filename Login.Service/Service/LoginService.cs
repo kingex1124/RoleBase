@@ -39,7 +39,7 @@ namespace Login.Service
         /// </summary>
         /// <param name="accountInfoData"></param>
         /// <returns></returns>
-        public AccountInfoData AccountValid(AccountInfoData accountInfoData)
+        public ExecuteResult AccountValid(AccountInfoData accountInfoData)
         {
             return _loginBO.AccountValid(accountInfoData);
         }

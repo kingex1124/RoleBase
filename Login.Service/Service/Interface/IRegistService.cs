@@ -9,7 +9,7 @@ namespace Login.Service
 {
     public interface IRegistService
     {
-        Account RegistValid(Account account);
-        Account Regist(Account account);
+        ExecuteResult RegistValid(Account account);
+        ExecuteResult Regist(Account account);
     }
 }

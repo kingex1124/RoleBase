@@ -4,6 +4,7 @@ using Login.DTO.EFModel;
 using Login.VO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,23 +43,36 @@ namespace Login.BO
         /// </summary>
         /// <param name="accountInfoData"></param>
         /// <returns></returns>
-        public AccountInfoData AccountValid(AccountInfoData accountInfoData)
+        public ExecuteResult AccountValid(AccountInfoData accountInfoData)
         {
-            //驗證帳號
-            if (!_userEfRepo.FindAccountName(accountInfoData.AccountName).Any())
+            ExecuteResult result = new ExecuteResult();
+
+            try
             {
-                accountInfoData.Message = "該帳號不存在。";
-                return accountInfoData;
+                result.IsSuccessed = _userEfRepo.FindAccountName(accountInfoData.AccountName).Any();
+                //驗證帳號
+                if (!result.IsSuccessed)
+                {
+                    result.Message = "該帳號不存在。";
+                    return result;
+                }
+
+                string key = ConfigurationManager.AppSettings["EncryptKey"] == null ? "1qaz@WSX" : ConfigurationManager.AppSettings["EncryptKey"];
+
+                accountInfoData.Password = AESEncryptHelper.AESEncryptBase64(accountInfoData.Password, key);
+
+                result.IsSuccessed = _userEfRepo.FindAccountData(accountInfoData.AccountName).Password == accountInfoData.Password;
+                //驗證密碼
+                if (!result.IsSuccessed)
+                    result.Message = "密碼輸入錯誤。";
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccessed = false;
+                result.Message = ex.Message;
             }
 
-            //驗證密碼
-            if (_userEfRepo.FindAccountData(accountInfoData.AccountName).Password != accountInfoData.Password)
-            {
-                accountInfoData.Message = "密碼輸入錯誤。";
-                return accountInfoData;
-            }
-
-            return accountInfoData;
+            return result;
         }
 
         /// <summary>

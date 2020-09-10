@@ -3,6 +3,7 @@ using Login.DTO.EFModel;
 using Login.VO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,23 +39,37 @@ namespace Login.BO
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public Account RegistValid(Account account)
+        public ExecuteResult RegistValid(Account account)
         {
-            // 驗證帳號
-            if (_userEfRepo.FindAccountName(account.AccountName).Any())
+            ExecuteResult result = new ExecuteResult();
+
+            try
             {
-                account.Message = "帳號名稱已被使用";
-                return account;
+                // 驗證帳號
+                result.IsSuccessed = !_userEfRepo.FindAccountName(account.AccountName).Any();
+
+                if (!result.IsSuccessed)
+                {
+                    result.Message = "帳號名稱已被使用";
+                    return result;
+                }
+
+                //驗證密碼與密碼確認
+                if (account.Password != account.PasswordConfirm)
+                {
+                    result.IsSuccessed = false;
+                    result.Message = "密碼確認與密碼輸入不相同";
+                    return result;
+                }
+            }
+            catch (Exception ex)
+            {
+                result.IsSuccessed = false;
+                result.Message = ex.Message;
             }
 
-            //驗證密碼與密碼確認
-            if (account.Password != account.PasswordConfirm)
-            {
-                account.Message = "密碼確認與密碼輸入不相同";
-                return account;
-            }
 
-            return account;
+            return result;
         }
 
         /// <summary>
@@ -62,15 +77,27 @@ namespace Login.BO
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        public Account Regist(Account account)
+        public ExecuteResult Regist(Account account)
         {
-            if (_userEfRepo.UserInsert(account) > 0)
-                return account;
-            else
+            ExecuteResult result = new ExecuteResult();
+
+            try
             {
-                account.Message = "註冊失敗";
+                string key = ConfigurationManager.AppSettings["EncryptKey"];
+
+                account.Password = AESEncryptHelper.AESEncryptBase64(account.Password, key);
+
+                result.IsSuccessed = _userEfRepo.UserInsert(account) > 0;
+
+                if (!result.IsSuccessed)
+                    result.Message = "註冊失敗";
             }
-            return account;
+            catch (Exception ex)
+            {
+                result.IsSuccessed = false;
+                result.Message = ex.Message;
+            }
+            return result;
         }
 
         #endregion

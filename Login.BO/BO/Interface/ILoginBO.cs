@@ -10,7 +10,7 @@ namespace Login.BO
 {
     public interface ILoginBO
     {
-        AccountInfoData AccountValid(AccountInfoData accountInfoData);
+        ExecuteResult AccountValid(AccountInfoData accountInfoData);
 
         UserDTO GetUserDataByAccountName(AccountInfoData accountInfoData);
 
