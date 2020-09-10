@@ -61,6 +61,7 @@
     <Compile Include="EfBO\RegistEfBO.cs" />
     <Compile Include="EfBO\RoleEfBO.cs" />
     <Compile Include="EfBO\SecurityEfBO.cs" />
+    <Compile Include="Helper\AESEncryptHelper.cs" />
     <Compile Include="Helper\ObjectMappingAttribute.cs" />
     <Compile Include="Helper\Utility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

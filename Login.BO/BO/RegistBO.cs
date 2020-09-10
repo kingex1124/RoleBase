@@ -2,6 +2,7 @@
 using Login.VO;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,6 +64,10 @@ namespace Login.BO
         /// <returns></returns>
         public Account Regist(Account account)
         {
+            string key = ConfigurationManager.AppSettings["EncryptKey"];
+
+            account.Password = AESEncryptHelper.AESEncryptBase64(account.Password, key);
+
             if (_userRepo.UserInsert(account) > 0)
                 return account;
             else
